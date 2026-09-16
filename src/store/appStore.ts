@@ -11,6 +11,9 @@ export interface AppState {
   notificationsPrompted: boolean;
   marketingOptIn: boolean;
   acceptedTermsAt: string | null;
+  /** The product alerts intro sheet was shown (once, after the first saved food). */
+  featureIntroShown: boolean;
+  setFeatureIntroShown: () => void;
   setLanguage: (language: LanguageCode) => void;
   setSession: (session: AuthSession | null) => void;
   setNotificationsEnabled: (enabled: boolean) => void;
@@ -29,6 +32,8 @@ export const useAppStore = create<AppState>()(
       notificationsPrompted: false,
       marketingOptIn: true,
       acceptedTermsAt: null,
+      featureIntroShown: false,
+      setFeatureIntroShown: () => set({ featureIntroShown: true }),
       setLanguage: (language) => set({ language }),
       setSession: (session) => set({ session }),
       setNotificationsEnabled: (enabled) => set({ notificationsEnabled: enabled }),
@@ -42,6 +47,7 @@ export const useAppStore = create<AppState>()(
           notificationsPrompted: false,
           marketingOptIn: true,
           acceptedTermsAt: null,
+          featureIntroShown: false,
         }),
     }),
     {

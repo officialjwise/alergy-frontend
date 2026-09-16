@@ -27,4 +27,10 @@ export const queryKeys = {
     search: (query: string) => ['products', 'search', query] as const,
     barcode: (code: string) => ['products', 'barcode', code] as const,
   },
+  insights: {
+    all: ['insights'] as const,
+    home: (profileId: string, date: string) => ['insights', 'home', profileId, date] as const,
+    days: (profileId: string, from: string, to: string) =>
+      ['insights', 'days', profileId, from, to] as const,
+  },
 } as const;

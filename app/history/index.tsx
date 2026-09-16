@@ -27,22 +27,29 @@ const FILTERS: { key: Filter; labelKey: string }[] = [
   { key: 'saved', labelKey: 'history.filterSaved' },
 ];
 
+function filterFromParams(params: { saved?: string; verdict?: string }): Filter {
+  if (params.saved === '1') return 'saved';
+  const match = FILTERS.find((item) => item.key === params.verdict);
+  return match ? match.key : 'all';
+}
+
 /** Personal food library: search, verdict / saved filters, grouped by day. */
 export default function HistoryScreen() {
   const { t, i18n } = useTranslation();
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const params = useLocalSearchParams<{ saved?: string }>();
+  const params = useLocalSearchParams<{ saved?: string; verdict?: string }>();
   const profile = useProfileStore(selectActiveProfile);
   const [query, setQuery] = useState('');
-  const [filter, setFilter] = useState<Filter>(params.saved === '1' ? 'saved' : 'all');
-  const [lastSavedParam, setLastSavedParam] = useState(params.saved);
+  const paramFilter = filterFromParams(params);
+  const [filter, setFilter] = useState<Filter>(paramFilter);
+  const [lastParamFilter, setLastParamFilter] = useState(paramFilter);
   const debounced = useDebounced(query, 180);
 
-  // "See all" from Home passes ?saved=1 while this tab may already be mounted: derive, don't effect.
-  if (params.saved !== lastSavedParam) {
-    setLastSavedParam(params.saved);
-    if (params.saved === '1') setFilter('saved');
+  // Home passes ?saved=1 or ?verdict= while this screen may already be mounted: derive, don't effect.
+  if (paramFilter !== lastParamFilter) {
+    setLastParamFilter(paramFilter);
+    setFilter(paramFilter);
   }
 
   const history = useHistory(profile?.id ?? null, {

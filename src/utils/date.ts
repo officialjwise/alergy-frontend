@@ -64,8 +64,38 @@ export function formatRelativeDay(
   return date.toLocaleDateString(locale, { month: 'short', day: 'numeric' });
 }
 
+/** Local calendar day key, YYYY-MM-DD. */
+export function dayKey(date: Date | string): string {
+  const d = typeof date === 'string' ? new Date(date) : date;
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${d.getFullYear()}-${month}-${day}`;
+}
+
+/** Parses a YYYY-MM-DD key as local midnight. */
+export function fromDayKey(key: string): Date {
+  const [year = 0, month = 1, day = 1] = key.split('-').map(Number);
+  return new Date(year, month - 1, day);
+}
+
+export function addDays(date: Date, days: number): Date {
+  const next = new Date(date);
+  next.setDate(next.getDate() + days);
+  return next;
+}
+
+/** Whole days between two day keys (b - a). */
+export function daysBetween(a: string, b: string): number {
+  return Math.round((fromDayKey(b).getTime() - fromDayKey(a).getTime()) / 86_400_000);
+}
+
 export function formatTime(iso: string, locale: string): string {
   return new Date(iso).toLocaleTimeString(locale, { hour: 'numeric', minute: '2-digit' });
+}
+
+/** "Sep 15" style date for compact titles. */
+export function formatShortDate(iso: string, locale: string): string {
+  return new Date(iso).toLocaleDateString(locale, { month: 'short', day: 'numeric' });
 }
 
 export function formatLongDate(iso: string, locale: string): string {

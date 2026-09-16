@@ -37,8 +37,7 @@ without approval (the two placeholders the brief itself allows are marked).
 | Home | streak pill | `/(tabs)/insights` |
 | Home | profile switcher | ProfileSwitcherSheet |
 | Home | week strip day | loads that day |
-| Home | hero chevron | toggles Foods checked / Safe rate |
-| Home | hero ring | `/scan` |
+| Home | hero card (chevron) | toggles Foods checked / Safe rate |
 | Home | stat cards (swipe) | pages; Safe/Caution/Not safe cards open `/history?verdict=` |
 | Home | "Top flagged ingredient" card | `/ingredients/[id]` |
 | Home | "Saved foods" card | `/saved` |

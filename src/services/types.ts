@@ -1,6 +1,8 @@
 import type {
   AuthSession,
+  DaySummary,
   HistoryFilter,
+  HomeSummary,
   Ingredient,
   Product,
   ScanResult,
@@ -73,12 +75,20 @@ export interface AuthService {
   restoreSession(): Promise<AuthSession | null>;
 }
 
+export interface InsightsService {
+  /** Dashboard numbers for one local day (YYYY-MM-DD). */
+  homeSummary(profileId: string, date: string): Promise<HomeSummary>;
+  /** One summary per day from `fromDate` to `toDate` inclusive (YYYY-MM-DD), oldest first. */
+  daySummaries(profileId: string, fromDate: string, toDate: string): Promise<DaySummary[]>;
+}
+
 export interface Services {
   ingredients: IngredientService;
   profiles: ProfileService;
   scan: ScanService;
   history: HistoryService;
   auth: AuthService;
+  insights: InsightsService;
 }
 
 export class ServiceError extends Error {
