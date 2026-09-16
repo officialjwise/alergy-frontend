@@ -66,15 +66,22 @@ export default function RootLayout() {
               <Stack.Screen
                 name="scan/index"
                 options={{
-                  presentation: 'fullScreenModal',
+                  // iOS sheet with rounded corners and swipe-down to close, as in the reference.
+                  presentation: 'modal',
                   animation: 'slide_from_bottom',
                   gestureEnabled: true,
                   gestureDirection: 'vertical',
+                  contentStyle: { backgroundColor: colors.primary },
                 }}
               />
               <Stack.Screen
                 name="scan/analyzing"
-                options={{ animation: 'fade', gestureEnabled: false }}
+                options={{
+                  presentation: 'fullScreenModal',
+                  animation: 'fade',
+                  gestureEnabled: false,
+                  contentStyle: { backgroundColor: colors.primary },
+                }}
               />
               <Stack.Screen name="scan/result/[id]" />
               <Stack.Screen name="scan/manual" />

@@ -14,8 +14,8 @@
       "bundleIdentifier": "com.officialjwise.allergyapp",
       "usesAppleSignIn": true,
       "infoPlist": {
-        "NSCameraUsageDescription": "The camera is used to scan food labels, menus and packages so we can check them against your food profile.",
-        "NSPhotoLibraryUsageDescription": "Choose a photo of a label or menu to check it against your food profile.",
+        "NSCameraUsageDescription": "We use your camera to scan food, labels and menus and check them against your restrictions.",
+        "NSPhotoLibraryUsageDescription": "We use your photo library so you can check a photo of a food, label or menu against your restrictions.",
         "ITSAppUsesNonExemptEncryption": false
       }
     },
@@ -49,13 +49,13 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "The camera is used to scan food labels, menus and packages so we can check them against your food profile."
+          "cameraPermission": "We use your camera to scan food, labels and menus and check them against your restrictions."
         }
       ],
       [
         "expo-image-picker",
         {
-          "photosPermission": "Choose a photo of a label or menu to check it against your food profile."
+          "photosPermission": "We use your photo library so you can check a photo of a food, label or menu against your restrictions."
         }
       ],
       [

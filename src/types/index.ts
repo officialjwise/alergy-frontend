@@ -148,12 +148,18 @@ export interface Product {
 
 export type ScanSource = 'camera' | 'barcode' | 'gallery' | 'manual';
 
+/** What the scanner was pointed at. */
+export type ScanMode = 'food' | 'barcode' | 'label' | 'menu';
+
 export interface ScanResult {
   id: string;
   profileId: string;
   product: Product;
   verdict: Verdict;
   source: ScanSource;
+  mode?: ScanMode;
+  /** Text read from a label or menu photo (label result variant). */
+  labelText?: string;
   scannedAt: string;
   saved: boolean;
 }

@@ -1,6 +1,7 @@
 import { simulate } from './support';
+import { mockConfig } from '../config';
+import { ServiceError, type ScanService } from '../types';
 import { evaluateProduct } from '../verdictEngine';
-import type { ScanService } from '../types';
 import { PRODUCTS } from '@/mocks/products';
 import type { Product, ScanResult } from '@/types';
 import { createId } from '@/utils/id';
@@ -32,16 +33,25 @@ function productFromCapture(labelText?: string): Product {
 }
 
 export const mockScanService: ScanService = {
-  async analyze({ profile, source, product, labelText, imageUri }) {
-    await simulate(source === 'camera' || source === 'gallery' ? 3 : 1.2);
+  async analyze({ profile, source, mode, product, labelText, imageUri }) {
+    const fromPhoto = source === 'camera' || source === 'gallery';
+    await simulate(fromPhoto ? 3 : 1.2);
+    if (fromPhoto && mockConfig.unreadableNext) {
+      mockConfig.unreadableNext = false;
+      throw new ServiceError('Photo too blurry or dark to read', 'unreadable');
+    }
     const resolved = product ?? productFromCapture(labelText);
     const withImage = imageUri ? { ...resolved, imageUri } : resolved;
+    const textMode = mode === 'label' || mode === 'menu';
     const result: ScanResult = {
       id: createId('scan'),
       profileId: profile.id,
       product: withImage,
       verdict: evaluateProduct(withImage, profile),
       source,
+      mode,
+      // Mock OCR: the label variant shows the ingredient list as the scanned text.
+      labelText: textMode ? (labelText ?? withImage.ingredientsText) : undefined,
       scannedAt: new Date().toISOString(),
       saved: false,
     };
