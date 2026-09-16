@@ -1,0 +1,108 @@
+import type { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+
+type IoniconName = keyof typeof Ionicons.glyphMap;
+type MciName = keyof typeof MaterialCommunityIcons.glyphMap;
+
+export type IconGlyph =
+  { family: 'ionicons'; name: IoniconName } | { family: 'mci'; name: MciName };
+
+/**
+ * Semantic icon names -> vector glyphs. The PDF uses filled SF-Symbols-style
+ * glyphs in option chips and thin outline glyphs in feature circles / cards.
+ * `outline` on <Icon> switches Ionicons names to their `-outline` variant.
+ */
+export const ICONS = {
+  // people
+  person: { family: 'ionicons', name: 'person' },
+  people: { family: 'ionicons', name: 'people' },
+  heart: { family: 'ionicons', name: 'heart' },
+  pray: { family: 'mci', name: 'hands-pray' },
+  // time
+  calendar: { family: 'ionicons', name: 'calendar' },
+  clock: { family: 'ionicons', name: 'time' },
+  // devices / actions
+  phone: { family: 'ionicons', name: 'phone-portrait' },
+  camera: { family: 'ionicons', name: 'camera' },
+  scan: { family: 'ionicons', name: 'scan' },
+  barcode: { family: 'ionicons', name: 'barcode' },
+  search: { family: 'ionicons', name: 'search' },
+  image: { family: 'ionicons', name: 'images' },
+  keyboard: { family: 'ionicons', name: 'keypad' },
+  flash: { family: 'ionicons', name: 'flash' },
+  flashOff: { family: 'ionicons', name: 'flash-off' },
+  mail: { family: 'ionicons', name: 'mail' },
+  apple: { family: 'ionicons', name: 'logo-apple' },
+  google: { family: 'ionicons', name: 'logo-google' },
+  bell: { family: 'ionicons', name: 'notifications' },
+  globe: { family: 'ionicons', name: 'globe' },
+  lock: { family: 'ionicons', name: 'lock-closed' },
+  trash: { family: 'ionicons', name: 'trash' },
+  logout: { family: 'ionicons', name: 'log-out' },
+  settings: { family: 'ionicons', name: 'settings' },
+  edit: { family: 'ionicons', name: 'create' },
+  refresh: { family: 'ionicons', name: 'refresh' },
+  filter: { family: 'ionicons', name: 'options' },
+  swap: { family: 'ionicons', name: 'swap-horizontal' },
+  bookmark: { family: 'ionicons', name: 'bookmark' },
+  sparkles: { family: 'ionicons', name: 'sparkles' },
+  wifiOff: { family: 'mci', name: 'wifi-off' },
+  database: { family: 'ionicons', name: 'server' },
+  document: { family: 'ionicons', name: 'document-text' },
+  link: { family: 'ionicons', name: 'link' },
+  bulb: { family: 'ionicons', name: 'bulb' },
+  cart: { family: 'ionicons', name: 'cart' },
+  storefront: { family: 'ionicons', name: 'storefront' },
+  restaurant: { family: 'ionicons', name: 'restaurant' },
+  target: { family: 'mci', name: 'bullseye-arrow' },
+  home: { family: 'ionicons', name: 'home' },
+  history: { family: 'ionicons', name: 'time' },
+  // status
+  check: { family: 'ionicons', name: 'checkmark' },
+  checkCircle: { family: 'ionicons', name: 'checkmark-circle' },
+  close: { family: 'ionicons', name: 'close' },
+  closeCircle: { family: 'ionicons', name: 'close-circle' },
+  ban: { family: 'ionicons', name: 'ban' },
+  warning: { family: 'ionicons', name: 'warning' },
+  alert: { family: 'ionicons', name: 'alert-circle' },
+  info: { family: 'ionicons', name: 'information-circle' },
+  question: { family: 'ionicons', name: 'help' },
+  helpCircle: { family: 'ionicons', name: 'help-circle' },
+  eyeOff: { family: 'ionicons', name: 'eye-off' },
+  shield: { family: 'ionicons', name: 'shield' },
+  shieldCheck: { family: 'ionicons', name: 'shield-checkmark' },
+  star: { family: 'ionicons', name: 'star' },
+  arrowBack: { family: 'ionicons', name: 'arrow-back' },
+  arrowForward: { family: 'ionicons', name: 'arrow-forward' },
+  chevronRight: { family: 'ionicons', name: 'chevron-forward' },
+  chevronDown: { family: 'ionicons', name: 'chevron-down' },
+  plus: { family: 'ionicons', name: 'add' },
+  minus: { family: 'ionicons', name: 'remove' },
+  moon: { family: 'ionicons', name: 'moon' },
+  // food
+  peanut: { family: 'mci', name: 'peanut' },
+  nut: { family: 'mci', name: 'peanut' },
+  stomach: { family: 'mci', name: 'stomach' },
+  wheat: { family: 'mci', name: 'barley' },
+  leaf: { family: 'ionicons', name: 'leaf' },
+  sprout: { family: 'mci', name: 'sprout' },
+  milk: { family: 'mci', name: 'bottle-soda-classic' },
+  avocado: { family: 'ionicons', name: 'nutrition' },
+  fruit: { family: 'ionicons', name: 'nutrition' },
+  fish: { family: 'ionicons', name: 'fish' },
+  shellfish: { family: 'mci', name: 'fish' },
+  meat: { family: 'mci', name: 'food-drumstick' },
+  egg: { family: 'ionicons', name: 'egg' },
+  sesame: { family: 'mci', name: 'dots-hexagon' },
+  soy: { family: 'mci', name: 'seed' },
+  seed: { family: 'mci', name: 'seed' },
+  corn: { family: 'mci', name: 'corn' },
+  wine: { family: 'ionicons', name: 'wine' },
+  flask: { family: 'ionicons', name: 'flask' },
+  honey: { family: 'mci', name: 'bee' },
+  coconut: { family: 'mci', name: 'palm-tree' },
+  tomato: { family: 'mci', name: 'fruit-cherries' },
+  chocolate: { family: 'mci', name: 'candy' },
+  coffee: { family: 'ionicons', name: 'cafe' },
+} as const satisfies Record<string, IconGlyph>;
+
+export type IconName = keyof typeof ICONS;
