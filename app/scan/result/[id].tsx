@@ -95,7 +95,7 @@ export default function ScanResultScreen() {
           <Button
             title={t('verdict.scanAgain')}
             variant={result.verdict.kind === 'safe' ? 'text' : 'primary'}
-            onPress={() => router.replace('/(tabs)/scan' as Href)}
+            onPress={() => router.replace('/scan' as Href)}
           />
         </View>
       }
