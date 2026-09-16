@@ -295,9 +295,11 @@
   },
   "tabs": {
     "home": "Home",
+    "insights": "Insights",
+    "groups": "Groups",
+    "profile": "Profile",
     "scan": "Scan",
-    "history": "History",
-    "profile": "Profile"
+    "history": "History"
   },
   "home": {
     "greeting": "Hi{{name}}",
@@ -519,5 +521,13 @@
     "profile": "Profile",
     "scan": "Scan",
     "history": "Scan history"
+  },
+  "plus": {
+    "open": "Open menu",
+    "close": "Close menu",
+    "logReaction": "Log reaction",
+    "savedFoods": "Saved foods",
+    "foodSearch": "Food search",
+    "scanFood": "Scan food"
   }
 }

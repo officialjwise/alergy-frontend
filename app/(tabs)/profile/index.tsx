@@ -151,7 +151,10 @@ export default function ProfileScreen() {
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.background },
-  content: { paddingHorizontal: rs(layout.screenPaddingH) },
+  content: {
+    paddingHorizontal: rs(layout.screenPaddingH),
+    paddingBottom: rs(layout.tabBarHeight + layout.tabBarBottom + spacing.huge),
+  },
   titleRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   settingsButton: {
     width: 44,

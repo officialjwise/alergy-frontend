@@ -166,7 +166,7 @@ export default function HistoryScreen() {
                 title={t('history.emptyTitle')}
                 body={t('history.emptyBody')}
                 actionLabel={t('home.quickScan')}
-                onAction={() => router.push('/(tabs)/scan' as Href)}
+                onAction={() => router.push('/scan' as Href)}
               />
             )
           }

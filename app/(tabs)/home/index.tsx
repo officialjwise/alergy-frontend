@@ -87,7 +87,7 @@ export default function HomeScreen() {
         ) : null}
 
         <PressableScale
-          onPress={() => router.push('/(tabs)/scan' as Href)}
+          onPress={() => router.push('/scan' as Href)}
           haptic="medium"
           accessibilityRole="button"
           accessibilityLabel={t('home.quickScan')}
@@ -115,7 +115,7 @@ export default function HomeScreen() {
 
         <Section
           title={t('home.recent')}
-          onSeeAll={() => router.push('/(tabs)/history' as Href)}
+          onSeeAll={() => router.push('/history' as Href)}
           seeAllLabel={t('common.seeAll')}
           showSeeAll={(recent.data?.length ?? 0) > 4}
         >
@@ -150,9 +150,7 @@ export default function HomeScreen() {
 
         <Section
           title={t('home.saved')}
-          onSeeAll={() =>
-            router.push({ pathname: '/(tabs)/history', params: { saved: '1' } } as Href)
-          }
+          onSeeAll={() => router.push({ pathname: '/history', params: { saved: '1' } } as Href)}
           seeAllLabel={t('common.seeAll')}
           showSeeAll={(saved.data?.length ?? 0) > 4}
         >
@@ -173,7 +171,11 @@ export default function HomeScreen() {
             </View>
           )}
         </Section>
-        <View style={{ height: spacing.xl }} />
+        <View
+          style={{
+            height: insets.bottom + rs(layout.tabBarHeight + layout.tabBarBottom + spacing.xl),
+          }}
+        />
       </ScrollView>
       <ProfileSwitcherSheet ref={switcherRef} />
     </View>

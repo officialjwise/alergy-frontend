@@ -6,7 +6,16 @@ import { useTranslation } from 'react-i18next';
 import { Linking, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Button, Icon, PressableScale, ScanFrame, Spinner, StateView, Text } from '@/components/ui';
+import {
+  Button,
+  HeaderButton,
+  Icon,
+  PressableScale,
+  ScanFrame,
+  Spinner,
+  StateView,
+  Text,
+} from '@/components/ui';
 import { useAnalyze, useBarcodeLookup } from '@/features/scan/useAnalyze';
 import { haptic } from '@/hooks/useHaptics';
 import { selectActiveProfile, useProfileStore } from '@/store/profileStore';
@@ -117,7 +126,15 @@ export default function ScanScreen() {
   if (!permission.granted) {
     const blocked = !permission.canAskAgain;
     return (
-      <View style={[styles.root, { paddingTop: insets.top }]}>
+      <View style={[styles.root, { paddingTop: insets.top + spacing.md }]}>
+        <View style={styles.topRow}>
+          <HeaderButton
+            icon="close"
+            label={t('common.close')}
+            onDark
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)/home'))}
+          />
+        </View>
         <StateView
           icon="camera"
           title={blocked ? t('permissions.cameraDeniedTitle') : t('permissions.cameraTitle')}
@@ -149,7 +166,13 @@ export default function ScanScreen() {
         pointerEvents="box-none"
       >
         <View style={styles.topRow}>
-          <Text variant="label" color="onPrimary" style={styles.hint}>
+          <HeaderButton
+            icon="close"
+            label={t('common.close')}
+            onDark
+            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)/home'))}
+          />
+          <Text variant="label" color="onPrimary" style={styles.hint} align="center">
             {t('scan.hint')}
           </Text>
           <PressableScale
@@ -284,7 +307,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   shutterInner: { width: 60, height: 60, borderRadius: 30, backgroundColor: colors.onPrimary },
-  permission: { flex: 1, justifyContent: 'center' },
+  permission: { flex: 1, justifyContent: 'center', backgroundColor: colors.background },
   noProfile: {
     position: 'absolute',
     left: rs(layout.screenPaddingH),

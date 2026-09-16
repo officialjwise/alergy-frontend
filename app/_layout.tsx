@@ -64,10 +64,21 @@ export default function RootLayout() {
               <Stack.Screen name="(auth)" />
               <Stack.Screen name="(tabs)" options={{ animation: 'fade' }} />
               <Stack.Screen
-                name="scan/result/[id]"
-                options={{ presentation: 'modal', gestureEnabled: true }}
+                name="scan/index"
+                options={{
+                  presentation: 'fullScreenModal',
+                  animation: 'slide_from_bottom',
+                  gestureEnabled: true,
+                  gestureDirection: 'vertical',
+                }}
               />
+              <Stack.Screen
+                name="scan/analyzing"
+                options={{ animation: 'fade', gestureEnabled: false }}
+              />
+              <Stack.Screen name="scan/result/[id]" />
               <Stack.Screen name="scan/manual" />
+              <Stack.Screen name="history/index" />
               <Stack.Screen name="product/[id]" />
               <Stack.Screen name="profiles/index" />
               <Stack.Screen name="profiles/edit/[section]" />
