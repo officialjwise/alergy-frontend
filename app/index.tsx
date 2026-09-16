@@ -1,4 +1,4 @@
-import { Redirect, type Href } from 'expo-router';
+import { Redirect } from 'expo-router';
 
 import { stepHref } from '@/features/onboarding/navigation';
 import { ONBOARDING_STEPS } from '@/features/onboarding/steps';
@@ -16,8 +16,7 @@ export default function Index() {
   const hasProfile = useProfileStore((state) => state.profiles.length > 0);
 
   if (completed && hasProfile) {
-    // The tabs group lands in milestone 7; typed routes cannot see it yet.
-    return <Redirect href={'/(tabs)/home' as Href} />;
+    return <Redirect href="/(tabs)/home" />;
   }
   if (hasStarted && currentStep && ONBOARDING_STEPS.some((step) => step.route === currentStep)) {
     return <Redirect href={stepHref(currentStep)} />;

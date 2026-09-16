@@ -58,6 +58,16 @@ export default function RootLayout() {
               <Stack.Screen name="index" options={{ animation: 'none' }} />
               <Stack.Screen name="(onboarding)" options={{ animation: 'fade' }} />
               <Stack.Screen name="(auth)" />
+              <Stack.Screen name="(tabs)" options={{ animation: 'fade' }} />
+              <Stack.Screen
+                name="scan/result/[id]"
+                options={{ presentation: 'modal', gestureEnabled: true }}
+              />
+              <Stack.Screen name="scan/manual" />
+              <Stack.Screen name="product/[id]" />
+              <Stack.Screen name="profiles/index" />
+              <Stack.Screen name="profiles/edit/[section]" />
+              <Stack.Screen name="settings/index" />
               <Stack.Screen name="legal/[doc]" options={{ presentation: 'modal' }} />
               <Stack.Screen name="dev/components" options={{ presentation: 'modal' }} />
             </Stack>
