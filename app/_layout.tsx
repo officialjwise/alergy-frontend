@@ -16,6 +16,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { AppErrorBoundary } from '@/components/app/AppErrorBoundary';
+import { ConfirmDialogHost, PaddingGuideOverlay, ToastHost } from '@/components/ui';
 import { detectDeviceLanguage, initI18n } from '@/i18n';
 import { queryClient } from '@/services/queryClient';
 import { useAppStore } from '@/store/appStore';
@@ -74,6 +75,9 @@ export default function RootLayout() {
               <Stack.Screen name="legal/[doc]" options={{ presentation: 'modal' }} />
               <Stack.Screen name="dev/components" options={{ presentation: 'modal' }} />
             </Stack>
+            <ToastHost />
+            <ConfirmDialogHost />
+            <PaddingGuideOverlay />
           </BottomSheetModalProvider>
         </QueryClientProvider>
       </SafeAreaProvider>

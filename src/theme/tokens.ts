@@ -95,6 +95,13 @@ export const layout = {
   /** Progress bar: gap after the back button and inset from the right edge. */
   progressGapLeft: 24,
   progressInsetRight: 8,
+  /** Gap between a large tab title and the first card. */
+  largeTitleBottom: 20,
+  /** Floating pill tab bar (main app): height and gap above the home indicator. */
+  tabBarHeight: 64,
+  tabBarBottom: 12,
+  /** Gap between sections on a page. */
+  sectionGap: 24,
 } as const;
 
 export const radii = {
@@ -141,6 +148,9 @@ export const sizes = {
   wheelHighlight: 52,
   spinner: 28,
   touchTarget: 44,
+  plusButton: 60, // round dark + button beside the tab bar
+  tabAvatar: 28,
+  plusTileIcon: 28,
 } as const;
 
 export const borders = {

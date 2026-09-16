@@ -31,3 +31,26 @@ export { OfflineBanner, useIsOffline } from './OfflineBanner';
 export { WheelPicker } from './WheelPicker';
 export { ReText } from './ReText';
 export type { WheelItem } from './WheelPicker';
+
+// Main app layout and content components (Phase 2)
+export { NavHeader, HeaderButton } from './NavHeader';
+export type { NavHeaderProps } from './NavHeader';
+export { LargeTitleHeader } from './LargeTitleHeader';
+export { StickyFooter } from './StickyFooter';
+export { SectionHeader } from './SectionHeader';
+export { SettingsSection, SettingsRow } from './SettingsSection';
+export type { SettingsRowProps } from './SettingsSection';
+export { ListRow as ListItem } from './ListRow';
+export { Sheet as BottomSheet } from './Sheet';
+export { StatCard } from './StatCard';
+export type { StatCardProps } from './StatCard';
+export { Ring } from './Ring';
+export { ChartCard } from './ChartCard';
+export type { ChartCardProps } from './ChartCard';
+export { SegmentedControl } from './SegmentedControl';
+export type { SegmentedOption } from './SegmentedControl';
+export { ToastHost, showToast, useToast } from './Toast';
+export type { ToastOptions } from './Toast';
+export { ConfirmDialogHost, confirm } from './ConfirmDialog';
+export type { ConfirmOptions } from './ConfirmDialog';
+export { PaddingGuideOverlay } from './PaddingGuideOverlay';

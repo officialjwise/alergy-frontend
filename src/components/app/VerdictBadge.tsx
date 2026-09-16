@@ -39,6 +39,9 @@ export function VerdictBadge({ kind, size = 'sm', name }: VerdictBadgeProps) {
   );
 }
 
+/** Name used by the main app; same component as the Phase 1 badge. */
+export const VerdictPill = VerdictBadge;
+
 const styles = StyleSheet.create({
   badge: {
     flexDirection: 'row',

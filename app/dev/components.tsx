@@ -7,33 +7,55 @@ import {
   Avatar,
   Button,
   Card,
+  ChartCard,
   Checkbox,
   Chip,
+  confirm,
   Divider,
   EmptyState,
   ErrorState,
   Icon,
   ICONS,
   IconChip,
+  LargeTitleHeader,
   ListRow,
+  NavHeader,
   OfflineBanner,
   OptionCard,
   ProgressHeader,
   RadioCheck,
+  Ring,
   ScanFrame,
   SearchInput,
+  SectionHeader,
+  SegmentedControl,
+  SettingsRow,
+  SettingsSection,
   Sheet,
+  showToast,
   Skeleton,
   Spinner,
   Stars,
+  StatCard,
   Text,
   useSheetRef,
   WheelPicker,
   WorksForYouBadge,
   type IconName,
 } from '@/components/ui';
+import { VerdictCard } from '@/components/app/VerdictCard';
+import { useDevStore } from '@/store/devStore';
 import { colors, spacing, type ColorToken } from '@/theme/tokens';
 import { typography, type TypographyToken } from '@/theme/typography';
+import type { VerdictKind } from '@/types';
+
+const VERDICTS: VerdictKind[] = ['safe', 'caution', 'unsafe', 'unknown'];
+const WEEKS = [
+  { key: 'this', label: 'This wk' },
+  { key: 'last', label: 'Last wk' },
+  { key: 'two', label: '2 wk ago' },
+  { key: 'three', label: '3 wk ago' },
+] as const;
 
 const avatar1 = require('@/assets/images/avatar-1.png');
 
@@ -62,6 +84,13 @@ export default function ComponentsGallery() {
   const [day, setDay] = useState(15);
   const [year, setYear] = useState(2001);
   const [showOffline, setShowOffline] = useState(false);
+  const [week, setWeek] = useState<(typeof WEEKS)[number]['key']>('this');
+  const [ringValue, setRingValue] = useState(0.62);
+  const [reminders, setReminders] = useState(true);
+  const showGuides = useDevStore((state) => state.showGuides);
+  const setShowGuides = useDevStore((state) => state.setShowGuides);
+  const mockDataset = useDevStore((state) => state.mockDataset);
+  const setMockDataset = useDevStore((state) => state.setMockDataset);
 
   const toggleMulti = (value: string) =>
     setMulti((current) =>
@@ -83,6 +112,259 @@ export default function ComponentsGallery() {
           <Text variant="titleLg">Components</Text>
           <Button title="Close" variant="text" onPress={() => router.back()} />
         </View>
+
+        <Section title="Developer toggles">
+          <SettingsSection>
+            <SettingsRow
+              label="Show padding guides"
+              description="Draws page padding, header and tab bar bounds on every screen"
+              icon="target"
+              toggle={{ value: showGuides, onChange: setShowGuides }}
+            />
+            <SettingsRow
+              label="Mock data: active user"
+              description="Off serves the new-user data set (empty states)"
+              icon="database"
+              toggle={{
+                value: mockDataset === 'active',
+                onChange: (value) => setMockDataset(value ? 'active' : 'new'),
+              }}
+            />
+          </SettingsSection>
+        </Section>
+
+        <Section title="Headers">
+          <NavHeader
+            title="Notifications"
+            rightIcon="filter"
+            rightLabel="More"
+            onRightPress={() => undefined}
+          />
+          <NavHeader
+            title="Over a photo"
+            onDark
+            rightIcon="bookmark"
+            rightLabel="Save"
+            onRightPress={() => undefined}
+            style={styles.darkHeader}
+          />
+          <LargeTitleHeader
+            title="Insights"
+            right={<Avatar name="Jane Doe" size={40} bordered={false} />}
+          />
+          <SectionHeader
+            title="Recently scanned"
+            actionLabel="See all"
+            onAction={() => undefined}
+          />
+          <SectionHeader
+            title="Discover groups"
+            actionLabel="Private group"
+            actionIcon="plus"
+            onAction={() => undefined}
+          />
+          <SectionHeader
+            title="Widgets"
+            variant="label"
+            actionLabel="How to add?"
+            onAction={() => undefined}
+          />
+        </Section>
+
+        <Section title="Settings rows">
+          <SettingsSection title="Account">
+            <SettingsRow label="Personal details" icon="person" onPress={() => undefined} />
+            <SettingsRow label="Language" icon="globe" value="English" onPress={() => undefined} />
+            <SettingsRow
+              label="Sync data"
+              icon="refresh"
+              value="Last synced 4:10 PM"
+              chevron={false}
+              onPress={() => undefined}
+            />
+            <SettingsRow
+              label="Scan reminders"
+              icon="bell"
+              toggle={{ value: reminders, onChange: setReminders }}
+            />
+            <SettingsRow label="Disabled row" icon="lock" disabled onPress={() => undefined} />
+          </SettingsSection>
+          <SettingsSection title="Account actions">
+            <SettingsRow label="Logout" icon="logout" onPress={() => undefined} />
+            <SettingsRow
+              label="Delete account"
+              icon="trash"
+              destructive
+              onPress={() => undefined}
+            />
+          </SettingsSection>
+        </Section>
+
+        <Section title="Stat cards and rings">
+          <StatCard
+            layout="hero"
+            value={12}
+            label="Foods checked today"
+            caption="Tap to switch to safe rate"
+            ring={{ progress: ringValue, color: 'success', icon: 'shieldCheck' }}
+            onPress={() => setRingValue((v) => (v >= 1 ? 0.1 : Math.min(1, v + 0.3)))}
+          />
+          <View style={styles.row}>
+            <StatCard
+              value={9}
+              label="Safe"
+              ring={{ progress: 0.75, color: 'success', icon: 'checkCircle' }}
+              style={styles.third}
+            />
+            <StatCard
+              value={2}
+              label="Caution"
+              ring={{ progress: 0.17, color: 'warning', icon: 'warning' }}
+              style={styles.third}
+            />
+            <StatCard
+              value={1}
+              label="Not safe"
+              ring={{ progress: 0.08, color: 'danger', icon: 'closeCircle' }}
+              style={styles.third}
+            />
+          </View>
+          <View style={styles.row}>
+            <StatCard
+              layout="square"
+              value={5}
+              label="Day streak"
+              art={<Icon name="shieldCheck" size={44} color="success" />}
+              style={styles.half}
+            />
+            <StatCard
+              layout="square"
+              value={0}
+              label="Badges earned"
+              art={<Icon name="star" size={44} color="gold" outline />}
+              style={styles.half}
+            />
+          </View>
+          <View style={styles.row}>
+            <Ring size={40} thickness={4} progress={0} dashed />
+            <Ring size={40} thickness={4} progress={1} color="success" />
+            <Ring size={40} thickness={4} progress={1} color="warning" />
+            <Ring size={40} thickness={4} progress={1} color="danger" />
+            <Ring size={56} thickness={6} progress={0.4} color="info">
+              <Text variant="statSm">40%</Text>
+            </Ring>
+          </View>
+        </Section>
+
+        <Section title="Chart cards and segmented control">
+          <ChartCard
+            title="Flagged foods over time"
+            badge={{
+              label: '82% safe',
+              icon: 'shieldCheck',
+              color: 'success',
+              tint: 'successTint',
+            }}
+            legend={[
+              { label: 'Safe', color: 'success' },
+              { label: 'Caution', color: 'warning' },
+              { label: 'Not safe', color: 'danger' },
+            ]}
+            footer={<SegmentedControl options={WEEKS} value={week} onChange={setWeek} />}
+          >
+            <Skeleton height={120} radius={12} />
+          </ChartCard>
+          <ChartCard
+            title="Most flagged ingredients"
+            onHelp={() => undefined}
+            helpLabel="What is this?"
+            locked={{ message: 'Unlocks after 7 days of scans' }}
+          >
+            <Skeleton height={80} radius={12} />
+          </ChartCard>
+          <SegmentedControl
+            variant="chips"
+            options={[
+              { key: '90d', label: '90D' },
+              { key: '6m', label: '6M' },
+              { key: '1y', label: '1Y' },
+              { key: 'all', label: 'ALL' },
+            ]}
+            value="90d"
+            onChange={() => undefined}
+          />
+        </Section>
+
+        <Section title="Verdict cards">
+          <View style={styles.stack}>
+            {VERDICTS.map((kind) => (
+              <VerdictCard
+                key={kind}
+                kind={kind}
+                reason={kind === 'unsafe' ? 'Contains peanuts' : undefined}
+              />
+            ))}
+            <VerdictCard kind="safe" floating reason="No flagged ingredients" />
+          </View>
+        </Section>
+
+        <Section title="Toast and confirm dialog">
+          <View style={styles.row}>
+            <Button
+              title="Toast"
+              size="md"
+              variant="secondary"
+              style={styles.half}
+              onPress={() => showToast({ message: 'Saved to your foods', icon: 'bookmark' })}
+            />
+            <Button
+              title="Toast with undo"
+              size="md"
+              variant="secondary"
+              style={styles.half}
+              onPress={() =>
+                showToast({
+                  message: 'Scan deleted',
+                  icon: 'trash',
+                  action: { label: 'Undo', onPress: () => showToast({ message: 'Restored' }) },
+                })
+              }
+            />
+          </View>
+          <View style={styles.row}>
+            <Button
+              title="Confirm"
+              size="md"
+              variant="secondary"
+              style={styles.half}
+              onPress={() =>
+                void confirm({
+                  title: 'Log out?',
+                  message: 'You can sign back in at any time.',
+                  confirmLabel: 'Log out',
+                  cancelLabel: 'Cancel',
+                  icon: 'logout',
+                }).then((ok) => showToast({ message: ok ? 'Confirmed' : 'Cancelled' }))
+              }
+            />
+            <Button
+              title="Destructive"
+              size="md"
+              variant="secondary"
+              style={styles.half}
+              onPress={() =>
+                void confirm({
+                  title: 'Delete this scan?',
+                  message: 'This cannot be undone.',
+                  confirmLabel: 'Delete',
+                  cancelLabel: 'Cancel',
+                  destructive: true,
+                  icon: 'trash',
+                }).then((ok) => showToast({ message: ok ? 'Deleted' : 'Kept' }))
+              }
+            />
+          </View>
+        </Section>
 
         <Section title="Typography">
           {(Object.keys(typography) as TypographyToken[]).map((variant) => (
@@ -416,6 +698,8 @@ const styles = StyleSheet.create({
   row: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, flexWrap: 'wrap' },
   wrap: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
   half: { flex: 1 },
+  third: { flex: 1 },
+  darkHeader: { backgroundColor: colors.primary, borderRadius: 16, paddingHorizontal: 8 },
   swatches: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
   swatch: { width: 96, gap: 4 },
   swatchColor: { height: 40, borderRadius: 10, borderWidth: 1, borderColor: colors.border },

@@ -100,3 +100,20 @@ Built with the same tokens: 20pt gutters, 16pt-radius bordered cards, 24pt-radiu
 - Whether the auth buttons are intentionally taller (76pt) than the primary button (62pt).
 - Exact icon set (SF Symbols vs custom) so the glyphs can be matched 1:1.
 - Dark mode is out of scope for now; the theme hook is ready for it.
+
+## Main app, Phase 2 (Cal AI references)
+
+- **Background tint.** The reference captures have a soft warm gradient at the
+  top of every screen. Our palette has no warm surface token, and adding one
+  would make the main app look like a different product from the onboarding,
+  so screens stay plain white (`colors.background`).
+- **Numbers.** Every figure in a stat card uses the `stat` / `statLg` styles
+  with tabular numerals so counters do not jump as digits change.
+- **Shared building blocks.** Screens are composed only from `Screen`,
+  `NavHeader`, `LargeTitleHeader`, `StickyFooter`, `BottomSheet`, `Card`,
+  `StatCard`, `SectionHeader`, `SettingsSection` / `SettingsRow`, `ListItem`,
+  `VerdictPill` / `VerdictCard`, `Ring`, `ChartCard`, `SegmentedControl`,
+  `EmptyState` / `ErrorState`, `Skeleton`, `Avatar`, `Toast` and
+  `ConfirmDialog`. Page padding is always `layout.screenPaddingH` (20pt).
+- **Developer aids.** The hidden gallery (`/dev/components`) has a padding
+  guide overlay and a mock data switch (new user / active user).
