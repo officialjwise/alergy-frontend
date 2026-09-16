@@ -1,11 +1,10 @@
 import 'i18next';
 
-import type en from './locales/en.json';
-
 declare module 'i18next' {
   interface CustomTypeOptions {
     defaultNS: 'translation';
-    resources: { translation: typeof en };
     returnNull: false;
+    // Keys are intentionally untyped: screen copy is driven by config objects
+    // (question configs, option lists) whose keys are plain strings.
   }
 }

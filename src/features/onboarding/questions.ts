@@ -7,6 +7,7 @@ import type {
   Frequency,
   Goal,
   OnboardingAnswers,
+  ProfileFor,
   WatchCategory,
 } from '@/types';
 
@@ -157,3 +158,47 @@ export const questions = {
   diet: dietQuestion,
   goal: goalQuestion,
 } as const;
+
+export interface BooleanQuestionConfig<K extends 'triedOtherApps' | 'rememberFoods'> {
+  kind: 'boolean';
+  answerKey: K;
+  titleKey: string;
+  subtitleKey?: string;
+  yes: { labelKey: string; icon: IconName };
+  no: { labelKey: string; icon: IconName };
+}
+
+export const whoQuestion: SingleQuestionConfig<'profileFor', ProfileFor> = {
+  kind: 'single',
+  answerKey: 'profileFor',
+  titleKey: 'who.title',
+  options: [
+    { value: 'myself', labelKey: 'who.myself', icon: 'person' },
+    { value: 'child', labelKey: 'who.child', icon: 'people' },
+    { value: 'family', labelKey: 'who.family', icon: 'people' },
+    { value: 'care', labelKey: 'who.care', icon: 'heart' },
+  ],
+};
+
+export const triedAppsQuestion: BooleanQuestionConfig<'triedOtherApps'> = {
+  kind: 'boolean',
+  answerKey: 'triedOtherApps',
+  titleKey: 'triedApps.title',
+  yes: { labelKey: 'triedApps.yes', icon: 'phone' },
+  no: { labelKey: 'triedApps.no', icon: 'ban' },
+};
+
+export const rememberQuestion: BooleanQuestionConfig<'rememberFoods'> = {
+  kind: 'boolean',
+  answerKey: 'rememberFoods',
+  titleKey: 'remember.title',
+  subtitleKey: 'remember.subtitle',
+  yes: { labelKey: 'remember.yes', icon: 'database' },
+  no: { labelKey: 'remember.no', icon: 'eyeOff' },
+};
+
+export type AnyQuestionConfig =
+  | QuestionConfig
+  | SingleQuestionConfig<'profileFor', ProfileFor>
+  | BooleanQuestionConfig<'triedOtherApps'>
+  | BooleanQuestionConfig<'rememberFoods'>;
