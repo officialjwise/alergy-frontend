@@ -29,4 +29,5 @@ export { Spinner } from './Spinner';
 export { StateView, EmptyState, ErrorState } from './StateView';
 export { OfflineBanner, useIsOffline } from './OfflineBanner';
 export { WheelPicker } from './WheelPicker';
+export { ReText } from './ReText';
 export type { WheelItem } from './WheelPicker';
