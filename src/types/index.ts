@@ -158,6 +158,34 @@ export interface ScanResult {
   saved: boolean;
 }
 
+/** Scan counts for one local calendar day (`date` is YYYY-MM-DD). */
+export interface DaySummary {
+  date: string;
+  total: number;
+  safe: number;
+  caution: number;
+  unsafe: number;
+  unknown: number;
+}
+
+export interface FlaggedIngredientCount {
+  ingredientId: string;
+  name: string;
+  count: number;
+}
+
+/** Everything the Home dashboard shows for one selected day. */
+export interface HomeSummary {
+  day: DaySummary;
+  /** Consecutive days with scans and nothing unsafe, ending today or yesterday. */
+  streak: number;
+  /** Share of safe scans on the day, 0..1, or null when nothing was scanned. */
+  safeRate: number | null;
+  topFlagged: FlaggedIngredientCount | null;
+  savedCount: number;
+  totalScans: number;
+}
+
 export interface HistoryFilter {
   query?: string;
   verdict?: VerdictKind | 'all';

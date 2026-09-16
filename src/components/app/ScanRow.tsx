@@ -14,11 +14,19 @@ export interface ScanRowProps {
   scan: ScanResult;
   onPress: (scan: ScanResult) => void;
   showTime?: boolean;
+  /** Show the flagged ingredients as small chips under the verdict (Home). */
+  showTriggers?: boolean;
 }
 
+const MAX_TRIGGER_CHIPS = 3;
+
 /** A history / recent-scan row: product thumbnail, name, brand, verdict badge. */
-function ScanRowComponent({ scan, onPress, showTime = true }: ScanRowProps) {
+function ScanRowComponent({ scan, onPress, showTime = true, showTriggers = false }: ScanRowProps) {
   const { i18n } = useTranslation();
+  const triggerNames = showTriggers
+    ? Array.from(new Set(scan.verdict.triggers.map((trigger) => trigger.ingredientName)))
+    : [];
+  const extraTriggers = Math.max(0, triggerNames.length - MAX_TRIGGER_CHIPS);
   return (
     <PressableScale
       onPress={() => onPress(scan)}
@@ -60,6 +68,24 @@ function ScanRowComponent({ scan, onPress, showTime = true }: ScanRowProps) {
         <View style={styles.badge}>
           <VerdictBadge kind={scan.verdict.kind} />
         </View>
+        {triggerNames.length ? (
+          <View style={styles.chips} accessibilityLabel={triggerNames.join(', ')}>
+            {triggerNames.slice(0, MAX_TRIGGER_CHIPS).map((name) => (
+              <View key={name} style={styles.chip}>
+                <Text variant="small" color="textBody" numberOfLines={1}>
+                  {name}
+                </Text>
+              </View>
+            ))}
+            {extraTriggers > 0 ? (
+              <View style={styles.chip}>
+                <Text variant="small" color="textMuted">
+                  +{extraTriggers}
+                </Text>
+              </View>
+            ) : null}
+          </View>
+        ) : null}
       </View>
       <View style={styles.trailing}>
         {scan.saved ? <Icon name="bookmark" size={rs(18)} color="primary" /> : null}
@@ -94,5 +120,12 @@ const styles = StyleSheet.create({
   },
   text: { flex: 1, gap: 2 },
   badge: { marginTop: 4 },
+  chips: { flexDirection: 'row', flexWrap: 'wrap', gap: rs(6), marginTop: rs(6) },
+  chip: {
+    paddingHorizontal: rs(spacing.xs),
+    paddingVertical: 2,
+    borderRadius: radii.pill,
+    backgroundColor: colors.surfaceStrong,
+  },
   trailing: { flexDirection: 'row', alignItems: 'center', gap: rs(4) },
 });

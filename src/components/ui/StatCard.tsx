@@ -16,6 +16,8 @@ export interface StatCardProps {
   /** Small text after the value ("/ 12", "%"). */
   unit?: string;
   caption?: string;
+  /** Small control after the label (the hero metric toggle chevron). */
+  labelTrailing?: ReactNode;
   /** Ring below the figures (small cards) or on the right (hero). */
   ring?: { progress: number; color: ColorToken; icon?: IconName; dashed?: boolean };
   /** Illustration or icon block above the figure (square cards). */
@@ -33,6 +35,7 @@ export function StatCard({
   label,
   unit,
   caption,
+  labelTrailing,
   ring,
   art,
   layout = 'stack',
@@ -72,9 +75,12 @@ export function StatCard({
       <View style={styles.heroRow}>
         <View style={styles.heroText}>
           {figure}
-          <Text variant="body" color="textMuted">
-            {label}
-          </Text>
+          <View style={styles.labelRow}>
+            <Text variant="body" color="textMuted">
+              {label}
+            </Text>
+            {labelTrailing}
+          </View>
           {caption ? (
             <Text variant="small" color="textMuted" style={styles.caption}>
               {caption}
@@ -97,6 +103,11 @@ export function StatCard({
         <Text variant="small" color="textMuted" numberOfLines={2}>
           {label}
         </Text>
+        {caption ? (
+          <Text variant="small" color="textPlaceholder" numberOfLines={1}>
+            {caption}
+          </Text>
+        ) : null}
         {ringNode ? <View style={styles.stackRing}>{ringNode}</View> : null}
       </View>
     );
@@ -136,6 +147,7 @@ const styles = StyleSheet.create({
   unit: { marginBottom: 2 },
   heroRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   heroText: { flex: 1, gap: rs(2) },
+  labelRow: { flexDirection: 'row', alignItems: 'center', gap: rs(4) },
   caption: { marginTop: rs(4) },
   square: { alignItems: 'center', gap: rs(4) },
   art: { marginBottom: rs(spacing.xs) },

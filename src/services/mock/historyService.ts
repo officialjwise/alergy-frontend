@@ -1,6 +1,7 @@
 import { simulate } from './support';
 import { ServiceError, type HistoryService } from '../types';
 import { seedHistory } from '@/mocks/scans';
+import { useDevStore } from '@/store/devStore';
 import { storage, storageKeys } from '@/store/storage';
 import { useProfileStore } from '@/store/profileStore';
 import type { HistoryFilter, ScanResult } from '@/types';
@@ -56,11 +57,21 @@ function applyFilter(items: ScanResult[], filter?: HistoryFilter): ScanResult[] 
   return [...out].sort((a, b) => b.scannedAt.localeCompare(a.scannedAt));
 }
 
+const SEED_PREFIX = 'scan_seed_';
+
+/** The "new user" mock data set hides the seeded scans so every empty state can be checked. */
+function visibleItems(profileId: string): ScanResult[] {
+  if (useDevStore.getState().mockDataset === 'new') {
+    return load().filter((r) => !r.id.startsWith(SEED_PREFIX));
+  }
+  return ensureSeeded(profileId);
+}
+
 export const mockHistoryService: HistoryService = {
   async list(profileId, filter) {
     await simulate(0.6);
     return applyFilter(
-      ensureSeeded(profileId).filter((r) => r.profileId === profileId),
+      visibleItems(profileId).filter((r) => r.profileId === profileId),
       filter,
     );
   },

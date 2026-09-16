@@ -44,6 +44,7 @@ import {
   type IconName,
 } from '@/components/ui';
 import { VerdictCard } from '@/components/app/VerdictCard';
+import { queryClient } from '@/services/queryClient';
 import { useDevStore } from '@/store/devStore';
 import { colors, spacing, type ColorToken } from '@/theme/tokens';
 import { typography, type TypographyToken } from '@/theme/typography';
@@ -127,7 +128,10 @@ export default function ComponentsGallery() {
               icon="database"
               toggle={{
                 value: mockDataset === 'active',
-                onChange: (value) => setMockDataset(value ? 'active' : 'new'),
+                onChange: (value) => {
+                  setMockDataset(value ? 'active' : 'new');
+                  void queryClient.invalidateQueries();
+                },
               }}
             />
           </SettingsSection>

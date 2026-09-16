@@ -1,7 +1,15 @@
 import { http } from './client';
 import type { Services } from '../types';
 import { evaluateProduct } from '../verdictEngine';
-import type { Ingredient, Product, ScanResult, UserProfile, AuthSession } from '@/types';
+import type {
+  AuthSession,
+  DaySummary,
+  HomeSummary,
+  Ingredient,
+  Product,
+  ScanResult,
+  UserProfile,
+} from '@/types';
 import { createId } from '@/utils/id';
 
 /**
@@ -75,5 +83,11 @@ export const httpServices: Services = {
     signOut: () => http<void>('/auth/signout', { method: 'POST' }),
     deleteAccount: () => http<void>('/auth/account', { method: 'DELETE' }),
     restoreSession: () => http<AuthSession | null>('/auth/session'),
+  },
+  insights: {
+    homeSummary: (profileId, date) =>
+      http<HomeSummary>(`/profiles/${profileId}/insights/home?date=${date}`),
+    daySummaries: (profileId, fromDate, toDate) =>
+      http<DaySummary[]>(`/profiles/${profileId}/insights/days?from=${fromDate}&to=${toDate}`),
   },
 };
