@@ -56,6 +56,9 @@ export default function RootLayout() {
               }}
             >
               <Stack.Screen name="index" options={{ animation: 'none' }} />
+              <Stack.Screen name="(onboarding)" options={{ animation: 'fade' }} />
+              <Stack.Screen name="(auth)" />
+              <Stack.Screen name="legal/[doc]" options={{ presentation: 'modal' }} />
               <Stack.Screen name="dev/components" options={{ presentation: 'modal' }} />
             </Stack>
           </BottomSheetModalProvider>

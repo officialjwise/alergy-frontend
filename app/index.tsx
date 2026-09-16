@@ -1,23 +1,26 @@
-import { useRouter } from 'expo-router';
+import { Redirect, type Href } from 'expo-router';
 
-import { Button, Screen, Text } from '@/components/ui';
-import { spacing } from '@/theme/tokens';
+import { stepHref } from '@/features/onboarding/navigation';
+import { ONBOARDING_STEPS } from '@/features/onboarding/steps';
+import { useOnboardingStore } from '@/store/onboardingStore';
+import { useProfileStore } from '@/store/profileStore';
 
-// Placeholder entry until the welcome screen lands in milestone 3.
+/**
+ * Entry point: resumes onboarding at the persisted step, or goes to the main
+ * app once a profile exists. Rendering a Redirect keeps the splash seamless.
+ */
 export default function Index() {
-  const router = useRouter();
-  return (
-    <Screen
-      footer={
-        <Button title="Open component gallery" onPress={() => router.push('/dev/components')} />
-      }
-    >
-      <Text variant="title" style={{ marginTop: spacing.huge }}>
-        Allergy App
-      </Text>
-      <Text variant="subtitle" color="textMuted" style={{ marginTop: spacing.sm }}>
-        Milestone 2: UI kit. Onboarding screens arrive in milestone 3.
-      </Text>
-    </Screen>
-  );
+  const completed = useOnboardingStore((state) => state.completed);
+  const hasStarted = useOnboardingStore((state) => state.hasStarted);
+  const currentStep = useOnboardingStore((state) => state.currentStep);
+  const hasProfile = useProfileStore((state) => state.profiles.length > 0);
+
+  if (completed && hasProfile) {
+    // The tabs group lands in milestone 7; typed routes cannot see it yet.
+    return <Redirect href={'/(tabs)/home' as Href} />;
+  }
+  if (hasStarted && currentStep && ONBOARDING_STEPS.some((step) => step.route === currentStep)) {
+    return <Redirect href={stepHref(currentStep)} />;
+  }
+  return <Redirect href="/(onboarding)/welcome" />;
 }
