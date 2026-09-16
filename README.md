@@ -49,6 +49,20 @@ npm start                # Metro only (dev client), when the native app is alrea
 5. `npm run android` (this runs `npx expo run:android --device` and prompts if several devices are connected).
 6. If Metro cannot be reached from the phone, run `adb reverse tcp:8081 tcp:8081`.
 
+### Android emulator (when no device is plugged in)
+
+```bash
+export ANDROID_HOME=$HOME/Library/Android/sdk
+export PATH=$ANDROID_HOME/emulator:$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin:$PATH
+sdkmanager "system-images;android-34;google_apis;arm64-v8a" "platforms;android-36"
+avdmanager create avd -n Pixel_8 -k "system-images;android-34;google_apis;arm64-v8a" -d pixel_8
+emulator -avd Pixel_8 &
+npm run android          # add --device to pick the emulator if several devices are listed
+```
+
+`npx expo run:android` needs `ANDROID_HOME` (or `android/local.properties` with `sdk.dir=...`) and a
+JDK 17 or newer on the path.
+
 ### Release builds
 
 ```bash
