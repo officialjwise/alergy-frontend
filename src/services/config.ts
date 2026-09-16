@@ -16,6 +16,8 @@ export const mockConfig = {
   latency: 450,
   /** When true every mock call rejects with a network error. */
   failNext: false,
+  /** When true the next camera or gallery analysis reports an unreadable photo. */
+  unreadableNext: false,
   /** Verification code accepted by the mock email flow. */
   emailCode: '123456',
 };

@@ -1,6 +1,7 @@
+import { BottomSheetModalProvider } from '@gorhom/bottom-sheet';
 import { CameraView, useCameraPermissions, type BarcodeScanningResult } from 'expo-camera';
 import * as ImagePicker from 'expo-image-picker';
-import { useFocusEffect, useRouter, type Href } from 'expo-router';
+import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Linking, StyleSheet, View } from 'react-native';
@@ -12,39 +13,55 @@ import {
   Icon,
   PressableScale,
   ScanFrame,
-  Spinner,
-  StateView,
   Text,
+  useSheetRef,
 } from '@/components/ui';
-import { useAnalyze, useBarcodeLookup } from '@/features/scan/useAnalyze';
+import { CameraPermissionView } from '@/features/scan/components/CameraPermissionView';
+import { ModeTiles, ZoomPills } from '@/features/scan/components/ModeTiles';
+import { ScannerHelpSheet } from '@/features/scan/components/ScannerHelpSheet';
+import {
+  isScanMode,
+  SCAN_MODES,
+  ULTRA_WIDE_LENS_PATTERN,
+  ZOOM_LEVELS,
+  type ZoomLevel,
+} from '@/features/scan/modes';
 import { haptic } from '@/hooks/useHaptics';
 import { selectActiveProfile, useProfileStore } from '@/store/profileStore';
-import { colors, layout, radii, spacing } from '@/theme/tokens';
+import { colors, layout, radii, sizes, spacing } from '@/theme/tokens';
 import { rs } from '@/theme/responsive';
-import type { Product, ScanSource } from '@/types';
+import type { ScanMode } from '@/types';
+
+const BARCODE_TYPES = ['ean13', 'ean8', 'upc_a', 'upc_e', 'qr', 'code128'] as const;
 
 /**
- * Live scanner: camera preview with the design's scan-frame corners, torch,
- * gallery import, manual search fallback, and barcode detection.
- * Recognition is mocked; the capture flows through ScanService.analyze.
+ * Live scanner sheet: grab handle, close and help buttons, white corner frame,
+ * zoom pills, Food / Barcode / Label / Menu tiles, flash, shutter and gallery.
+ * Barcode mode detects automatically; every capture hands off to /scan/analyzing.
  */
-export default function ScanScreen() {
+export default function ScannerScreen() {
   const { t } = useTranslation();
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const params = useLocalSearchParams<{ mode?: string; from?: string }>();
   const [permission, requestPermission] = useCameraPermissions();
+  const [mode, setMode] = useState<ScanMode>(isScanMode(params.mode) ? params.mode : 'food');
   const [torch, setTorch] = useState(false);
+  const [zoom, setZoom] = useState<ZoomLevel>('1');
+  const [lenses, setLenses] = useState<string[]>([]);
   const [active, setActive] = useState(true);
   const [busy, setBusy] = useState(false);
+  const [requesting, setRequesting] = useState(false);
   const cameraRef = useRef<CameraView>(null);
   const scannedRef = useRef<string | null>(null);
+  const helpRef = useSheetRef();
   const profile = useProfileStore(selectActiveProfile);
-  const analyze = useAnalyze();
-  const lookup = useBarcodeLookup();
+  const from = params.from ?? 'home';
 
   useFocusEffect(
     useCallback(() => {
       setActive(true);
+      setBusy(false);
       scannedRef.current = null;
       return () => {
         setActive(false);
@@ -53,36 +70,21 @@ export default function ScanScreen() {
     }, []),
   );
 
-  const finish = useCallback(
-    async (input: { source: ScanSource; imageUri?: string; product?: Product | null }) => {
-      if (!profile || busy) return;
-      setBusy(true);
-      try {
-        const result = await analyze.mutateAsync({
-          source: input.source,
-          imageUri: input.imageUri,
-          product: input.product ?? undefined,
-        });
-        haptic(
-          result.verdict.kind === 'safe'
-            ? 'success'
-            : result.verdict.kind === 'unsafe'
-              ? 'error'
-              : 'warning',
-        );
-        router.push(`/scan/result/${result.id}` as Href);
-      } finally {
-        setBusy(false);
-        setTimeout(() => {
-          scannedRef.current = null;
-        }, 1500);
-      }
+  const close = useCallback(
+    () => (router.canGoBack() ? router.back() : router.replace('/(tabs)/home')),
+    [router],
+  );
+
+  const goAnalyze = useCallback(
+    (extra: Record<string, string>) => {
+      router.replace({ pathname: '/scan/analyzing', params: { mode, from, ...extra } });
     },
-    [analyze, busy, profile, router],
+    [from, mode, router],
   );
 
   const capture = useCallback(async () => {
-    if (busy) return;
+    if (busy || mode === 'barcode') return;
+    setBusy(true);
     haptic('medium');
     let uri: string | undefined;
     try {
@@ -92,226 +94,245 @@ export default function ScanScreen() {
       });
       uri = photo?.uri;
     } catch {
+      // No camera (simulator) or capture failed: the mock still analyses without a photo.
       uri = undefined;
     }
-    await finish({ source: 'camera', imageUri: uri });
-  }, [busy, finish]);
+    goAnalyze({ source: 'camera', ...(uri ? { uri } : {}) });
+  }, [busy, goAnalyze, mode]);
 
   const pickFromGallery = useCallback(async () => {
+    if (busy) return;
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
       quality: 0.7,
     });
     const asset = result.assets?.[0];
     if (result.canceled || !asset) return;
-    await finish({ source: 'gallery', imageUri: asset.uri });
-  }, [finish]);
+    setBusy(true);
+    goAnalyze({ source: 'gallery', uri: asset.uri });
+  }, [busy, goAnalyze]);
 
   const onBarcode = useCallback(
-    async (event: BarcodeScanningResult) => {
-      if (busy || scannedRef.current === event.data) return;
+    (event: BarcodeScanningResult) => {
+      if (busy || mode !== 'barcode' || scannedRef.current === event.data) return;
       scannedRef.current = event.data;
-      const product = await lookup.mutateAsync(event.data);
-      if (product) {
-        await finish({ source: 'barcode', product });
-      } else {
-        router.push({ pathname: '/scan/manual', params: { query: event.data } } as Href);
-      }
+      setBusy(true);
+      haptic('success');
+      goAnalyze({ source: 'barcode', barcode: event.data });
     },
-    [busy, finish, lookup, router],
+    [busy, goAnalyze, mode],
   );
+
+  const onCameraReady = useCallback(async () => {
+    try {
+      const available = await cameraRef.current?.getAvailableLensesAsync();
+      if (available) setLenses(available);
+    } catch {
+      // Lens listing is a nice-to-have; the .5x pill simply stays hidden.
+    }
+  }, []);
+
+  const ultraWide = lenses.find((lens) => ULTRA_WIDE_LENS_PATTERN.test(lens));
+  const zoomValue = ZOOM_LEVELS.find((level) => level.key === zoom)?.zoom ?? 0;
+  const selectedLens = zoom === '0.5' && ultraWide ? ultraWide : undefined;
+  const modeConfig = SCAN_MODES.find((item) => item.key === mode) ?? SCAN_MODES[0]!;
 
   if (!permission) return <View style={styles.root} />;
 
   if (!permission.granted) {
-    const blocked = !permission.canAskAgain;
     return (
-      <View style={[styles.root, { paddingTop: insets.top + spacing.md }]}>
-        <View style={styles.topRow}>
-          <HeaderButton
-            icon="close"
-            label={t('common.close')}
-            onDark
-            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)/home'))}
-          />
-        </View>
-        <StateView
-          icon="camera"
-          title={blocked ? t('permissions.cameraDeniedTitle') : t('permissions.cameraTitle')}
-          body={blocked ? t('permissions.cameraDeniedSubtitle') : t('permissions.cameraSubtitle')}
-          actionLabel={blocked ? t('common.openSettings') : t('common.allow')}
-          onAction={() => (blocked ? void Linking.openSettings() : void requestPermission())}
-          secondaryLabel={t('scan.manual')}
-          onSecondary={() => router.push('/scan/manual' as Href)}
-          style={styles.permission}
-        />
-      </View>
+      <CameraPermissionView
+        variant={permission.canAskAgain ? 'ask' : 'denied'}
+        busy={requesting}
+        onAllow={() => {
+          setRequesting(true);
+          void requestPermission().finally(() => setRequesting(false));
+        }}
+        onOpenSettings={() => void Linking.openSettings()}
+        onTypeInstead={() => router.replace('/scan/manual')}
+        onClose={close}
+      />
     );
   }
 
+  // The scanner is a native modal, so sheets need a provider inside it or they render behind it.
   return (
-    <View style={styles.root}>
-      {active ? (
-        <CameraView
-          ref={cameraRef}
-          style={StyleSheet.absoluteFill}
-          facing="back"
-          enableTorch={torch}
-          barcodeScannerSettings={{ barcodeTypes: ['ean13', 'ean8', 'upc_a', 'upc_e', 'qr'] }}
-          onBarcodeScanned={busy ? undefined : (event) => void onBarcode(event)}
-        />
-      ) : null}
-      <View
-        style={[styles.overlay, { paddingTop: insets.top + spacing.md }]}
-        pointerEvents="box-none"
-      >
-        <View style={styles.topRow}>
-          <HeaderButton
-            icon="close"
-            label={t('common.close')}
-            onDark
-            onPress={() => (router.canGoBack() ? router.back() : router.replace('/(tabs)/home'))}
+    <BottomSheetModalProvider>
+      <View style={styles.root} testID="scanner">
+        {active ? (
+          <CameraView
+            ref={cameraRef}
+            style={StyleSheet.absoluteFill}
+            facing="back"
+            enableTorch={torch}
+            zoom={zoomValue}
+            selectedLens={selectedLens}
+            onCameraReady={() => void onCameraReady()}
+            barcodeScannerSettings={{ barcodeTypes: [...BARCODE_TYPES] }}
+            onBarcodeScanned={mode === 'barcode' && !busy ? onBarcode : undefined}
           />
-          <Text variant="label" color="onPrimary" style={styles.hint} align="center">
-            {t('scan.hint')}
+        ) : null}
+        <View
+          style={[
+            styles.overlay,
+            {
+              paddingTop: insets.top + rs(spacing.xs),
+              paddingBottom: Math.max(insets.bottom, spacing.md),
+            },
+          ]}
+          pointerEvents="box-none"
+        >
+          <View style={styles.handle} accessibilityLabel={t('scan.handleA11y')} />
+          <View style={styles.topRow}>
+            <HeaderButton
+              icon="close"
+              label={t('scan.close')}
+              onDark
+              onPress={close}
+              testID="scanner-close"
+            />
+            <HeaderButton
+              icon="question"
+              label={t('scan.help')}
+              onDark
+              onPress={() => helpRef.current?.present()}
+              testID="scanner-help"
+            />
+          </View>
+          <Text variant="label" color="textOnDark" align="center" style={styles.hint}>
+            {t(modeConfig.hintKey)}
           </Text>
-          <PressableScale
-            onPress={() => setTorch((v) => !v)}
-            haptic="light"
-            accessibilityRole="button"
-            accessibilityLabel={torch ? t('scan.flashOn') : t('scan.flashOff')}
-            accessibilityState={{ selected: torch }}
-            style={styles.roundButton}
-          >
-            <Icon name={torch ? 'flash' : 'flashOff'} size={rs(22)} color="onPrimary" />
-          </PressableScale>
-        </View>
-        <View style={styles.frameArea}>
-          <View style={styles.frame}>
-            <ScanFrame color={colors.onPrimary} thickness={3} />
-            {busy ? (
-              <View style={styles.analyzing}>
-                <Spinner color="onPrimary" />
-                <Text variant="label" color="onPrimary">
-                  {t('scan.analyzing')}
-                </Text>
-              </View>
-            ) : null}
+          <View style={styles.frameArea}>
+            <View style={[styles.frame, mode === 'barcode' ? styles.frameWide : null]}>
+              <ScanFrame color={colors.onPrimary} thickness={3} />
+            </View>
+          </View>
+          <ZoomPills value={zoom} onChange={setZoom} hasUltraWide={!!ultraWide} />
+          <View style={styles.modes}>
+            <ModeTiles
+              mode={mode}
+              onChange={(next) => {
+                setMode(next);
+                scannedRef.current = null;
+              }}
+            />
+          </View>
+          <View style={styles.controls}>
+            <PressableScale
+              onPress={() => setTorch((value) => !value)}
+              haptic="light"
+              accessibilityRole="button"
+              accessibilityLabel={torch ? t('scan.flashOn') : t('scan.flashOff')}
+              accessibilityState={{ selected: torch }}
+              style={styles.roundButton}
+              testID="scanner-flash"
+            >
+              <Icon name={torch ? 'flash' : 'flashOff'} size={rs(22)} color="onPrimary" />
+            </PressableScale>
+            <PressableScale
+              onPress={() => void capture()}
+              haptic="medium"
+              pressedScale={0.92}
+              accessibilityRole="button"
+              accessibilityLabel={mode === 'barcode' ? t('scan.shutterBarcode') : t('scan.capture')}
+              accessibilityState={{ disabled: busy || mode === 'barcode' }}
+              style={[styles.shutter, mode === 'barcode' ? styles.shutterOff : null]}
+              disabled={busy || mode === 'barcode'}
+              testID="scanner-shutter"
+            >
+              <View style={styles.shutterInner} />
+            </PressableScale>
+            <PressableScale
+              onPress={() => void pickFromGallery()}
+              haptic="light"
+              accessibilityRole="button"
+              accessibilityLabel={t('scan.gallery')}
+              style={styles.roundButton}
+              disabled={busy}
+              testID="scanner-gallery"
+            >
+              <Icon name="image" size={rs(22)} color="onPrimary" outline />
+            </PressableScale>
           </View>
         </View>
-        <View style={[styles.controls, { paddingBottom: spacing.lg }]}>
-          <PressableScale
-            onPress={() => void pickFromGallery()}
-            haptic="light"
-            accessibilityRole="button"
-            accessibilityLabel={t('scan.gallery')}
-            style={styles.sideButton}
-            disabled={busy}
-          >
-            <Icon name="image" size={rs(24)} color="onPrimary" outline />
-            <Text variant="small" color="onPrimary">
-              {t('scan.gallery')}
-            </Text>
-          </PressableScale>
-          <PressableScale
-            onPress={() => void capture()}
-            haptic="medium"
-            pressedScale={0.92}
-            accessibilityRole="button"
-            accessibilityLabel={t('scan.capture')}
-            style={styles.shutter}
-            disabled={busy}
-          >
-            <View style={styles.shutterInner} />
-          </PressableScale>
-          <PressableScale
-            onPress={() => router.push('/scan/manual' as Href)}
-            haptic="light"
-            accessibilityRole="button"
-            accessibilityLabel={t('scan.manual')}
-            style={styles.sideButton}
-            disabled={busy}
-          >
-            <Icon name="keyboard" size={rs(24)} color="onPrimary" outline />
-            <Text variant="small" color="onPrimary">
-              {t('scan.manual')}
-            </Text>
-          </PressableScale>
-        </View>
+        {!profile ? (
+          <View style={styles.noProfile}>
+            <Button
+              title={t('scan.noProfile')}
+              size="md"
+              onPress={() => router.push('/profiles')}
+            />
+          </View>
+        ) : null}
+        <ScannerHelpSheet ref={helpRef} />
       </View>
-      {!profile ? (
-        <View style={styles.noProfile}>
-          <Button
-            title={t('profile.addProfile')}
-            size="md"
-            onPress={() => router.push('/profiles' as Href)}
-          />
-        </View>
-      ) : null}
-    </View>
+    </BottomSheetModalProvider>
   );
 }
+
+const round = rs(sizes.backButton);
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: colors.primary },
   overlay: { flex: 1, justifyContent: 'space-between' },
+  handle: {
+    alignSelf: 'center',
+    width: sizes.sheetHandleWidth,
+    height: sizes.sheetHandleHeight,
+    borderRadius: radii.pill,
+    backgroundColor: 'rgba(255, 255, 255, 0.6)',
+  },
   topRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: rs(layout.screenPaddingH),
+    marginTop: rs(spacing.xs),
   },
-  hint: { flex: 1, textShadowColor: 'rgba(0,0,0,0.4)', textShadowRadius: 6 },
-  roundButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: 'rgba(15,13,20,0.45)',
-    alignItems: 'center',
-    justifyContent: 'center',
+  hint: {
+    paddingHorizontal: rs(layout.screenPaddingH),
+    marginTop: rs(spacing.sm),
+    textShadowColor: 'rgba(0, 0, 0, 0.45)',
+    textShadowRadius: 6,
   },
-  frameArea: { alignItems: 'center', justifyContent: 'center', flex: 1 },
-  frame: { width: '72%', aspectRatio: 0.9, maxWidth: 340 },
-  analyzing: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.sm,
-    backgroundColor: 'rgba(15,13,20,0.35)',
-    borderRadius: radii.lg,
-  },
+  frameArea: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+  frame: { width: '74%', aspectRatio: 1, maxWidth: 340 },
+  frameWide: { aspectRatio: 1.6 },
+  modes: { marginTop: rs(spacing.sm), marginBottom: rs(spacing.md) },
   controls: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: rs(spacing.huge),
+    paddingHorizontal: rs(spacing.giant),
   },
-  sideButton: {
+  roundButton: {
+    width: round,
+    height: round,
+    borderRadius: round / 2,
+    backgroundColor: 'rgba(15, 13, 20, 0.45)',
     alignItems: 'center',
-    gap: 4,
-    minWidth: 64,
-    minHeight: 56,
     justifyContent: 'center',
   },
   shutter: {
-    width: 76,
-    height: 76,
-    borderRadius: 38,
+    width: rs(76),
+    height: rs(76),
+    borderRadius: rs(38),
     borderWidth: 4,
     borderColor: colors.onPrimary,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  shutterInner: { width: 60, height: 60, borderRadius: 30, backgroundColor: colors.onPrimary },
-  permission: { flex: 1, justifyContent: 'center', backgroundColor: colors.background },
+  shutterOff: { opacity: 0.35 },
+  shutterInner: {
+    width: rs(60),
+    height: rs(60),
+    borderRadius: rs(30),
+    backgroundColor: colors.onPrimary,
+  },
   noProfile: {
     position: 'absolute',
     left: rs(layout.screenPaddingH),
     right: rs(layout.screenPaddingH),
-    bottom: 120,
+    bottom: rs(170),
   },
 });

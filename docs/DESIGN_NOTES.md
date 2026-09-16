@@ -117,3 +117,16 @@ Built with the same tokens: 20pt gutters, 16pt-radius bordered cards, 24pt-radiu
   `ConfirmDialog`. Page padding is always `layout.screenPaddingH` (20pt).
 - **Developer aids.** The hidden gallery (`/dev/components`) has a padding
   guide overlay and a mock data switch (new user / active user).
+- **Scanner as a sheet.** The scanner uses the native iOS modal presentation so
+  it gets the rounded sheet corners and swipe-down-to-close from the reference;
+  a grab handle is drawn on the camera view. Sheets inside it (help) need their
+  own bottom-sheet provider because the root portal renders behind native modals.
+- **Zoom pills.** ".5x" only appears when the device reports an ultra wide lens
+  (`getAvailableLensesAsync`); "1x" and "2x" always show. The simulator has no
+  lenses, so it shows two pills.
+- **Analyzing callouts.** In Food mode the callout labels come from the analysed
+  product's ingredient list (flagged ones first, coloured by verdict), placed on
+  fixed anchor points over the photo. Real ingredient positions need the backend.
+- **Unreadable photos.** The mock reports an unreadable photo when the hidden
+  gallery's "next photo is unreadable" switch is on, so the recovery screen can
+  be tested without a real blurry photo.

@@ -5,6 +5,7 @@ import type {
   HomeSummary,
   Ingredient,
   Product,
+  ScanMode,
   ScanResult,
   ScanSource,
   UserProfile,
@@ -37,6 +38,7 @@ export interface ProfileService {
 export interface AnalyzeInput {
   profile: UserProfile;
   source: ScanSource;
+  mode?: ScanMode;
   /** A product looked up by barcode / search. */
   product?: Product;
   /** Raw text captured from a label photo (OCR happens on the backend later). */
@@ -102,6 +104,7 @@ export class ServiceError extends Error {
       | 'too_many_attempts'
       | 'cancelled'
       | 'unavailable'
+      | 'unreadable'
       | 'unknown',
   ) {
     super(message);
