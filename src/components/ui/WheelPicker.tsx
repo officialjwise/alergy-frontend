@@ -1,6 +1,6 @@
 import { memo, useCallback, useEffect, useRef, useState } from 'react';
 import {
-  FlatList,
+  ScrollView,
   StyleSheet,
   View,
   type AccessibilityActionEvent,
@@ -41,7 +41,8 @@ const WheelColumn = memo(function WheelColumn({
   rowHeight,
   visibleRows,
 }: WheelColumnProps) {
-  const listRef = useRef<FlatList<WheelItem>>(null);
+  // A plain ScrollView (not a virtualized list) so the wheel can live inside a scrolling screen.
+  const listRef = useRef<ScrollView>(null);
   const selectedIndex = Math.max(
     0,
     items.findIndex((item) => item.value === value),
@@ -55,7 +56,7 @@ const WheelColumn = memo(function WheelColumn({
     if (value !== lastReported.current) {
       lastReported.current = value;
       setActiveIndex(selectedIndex);
-      listRef.current?.scrollToOffset({ offset: selectedIndex * rowHeight, animated: true });
+      listRef.current?.scrollTo({ y: selectedIndex * rowHeight, animated: true });
     }
   }, [rowHeight, selectedIndex, value]);
 
@@ -99,7 +100,7 @@ const WheelColumn = memo(function WheelColumn({
             : 0;
       if (!delta) return;
       const next = Math.max(0, Math.min(items.length - 1, selectedIndex + delta));
-      listRef.current?.scrollToOffset({ offset: next * rowHeight, animated: true });
+      listRef.current?.scrollTo({ y: next * rowHeight, animated: true });
       commit(next);
     },
     [commit, items.length, rowHeight, selectedIndex],
@@ -115,12 +116,27 @@ const WheelColumn = memo(function WheelColumn({
       accessibilityActions={[{ name: 'increment' }, { name: 'decrement' }]}
       onAccessibilityAction={onAccessibilityAction}
     >
-      <FlatList
+      <ScrollView
         ref={listRef}
-        data={items}
-        keyExtractor={(item) => String(item.value)}
-        renderItem={({ item, index }) => (
+        contentOffset={{ x: 0, y: selectedIndex * rowHeight }}
+        onLayout={() =>
+          listRef.current?.scrollTo({ y: selectedIndex * rowHeight, animated: false })
+        }
+        snapToInterval={rowHeight}
+        snapToAlignment="start"
+        decelerationRate="fast"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingVertical: padding }}
+        onMomentumScrollEnd={onScrollEnd}
+        onScrollEndDrag={onScrollEnd}
+        onScroll={onScroll}
+        scrollEventThrottle={32}
+        nestedScrollEnabled
+        importantForAccessibility="no-hide-descendants"
+      >
+        {items.map((item, index) => (
           <View
+            key={item.value}
             style={[
               styles.row,
               { height: rowHeight },
@@ -135,21 +151,8 @@ const WheelColumn = memo(function WheelColumn({
               {item.label}
             </Text>
           </View>
-        )}
-        getItemLayout={(_, index) => ({ length: rowHeight, offset: rowHeight * index, index })}
-        initialScrollIndex={selectedIndex}
-        snapToInterval={rowHeight}
-        snapToAlignment="start"
-        decelerationRate="fast"
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingVertical: padding }}
-        onMomentumScrollEnd={onScrollEnd}
-        onScrollEndDrag={onScrollEnd}
-        onScroll={onScroll}
-        scrollEventThrottle={32}
-        nestedScrollEnabled
-        importantForAccessibility="no-hide-descendants"
-      />
+        ))}
+      </ScrollView>
     </View>
   );
 });

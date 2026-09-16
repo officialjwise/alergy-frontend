@@ -1,6 +1,7 @@
 import { forwardRef, useCallback } from 'react';
 import {
   Pressable,
+  StyleSheet,
   type GestureResponderEvent,
   type PressableProps,
   type View,
@@ -39,10 +40,15 @@ export const PressableScale = forwardRef<View, PressableScaleProps>(function Pre
   ref,
 ) {
   const pressed = useSharedValue(0);
+  // Animated styles win over static ones on the UI thread, so a static `opacity`
+  // (for example the disabled look) has to be folded into the animated value.
+  const staticStyle = typeof style === 'function' ? undefined : style;
+  const rawOpacity = StyleSheet.flatten(staticStyle)?.opacity;
+  const baseOpacity = typeof rawOpacity === 'number' ? rawOpacity : 1;
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: 1 - pressed.value * (1 - pressedScale) }],
-    opacity: 1 - pressed.value * (1 - pressedOpacity),
+    opacity: baseOpacity * (1 - pressed.value * (1 - pressedOpacity)),
   }));
 
   const handlePressIn = useCallback(
