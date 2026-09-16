@@ -27,3 +27,17 @@ called out.
 | Network state | `@react-native-community/netinfo`                                                 | Offline banner.                                                                                                                                                                                |
 | Lint / format | ESLint (`eslint-config-expo`) + Prettier                                          | `npm run lint`, `npm run format`.                                                                                                                                                              |
 | Tests         | Jest (`jest-expo`) + React Native Testing Library                                 | Key UI components and stores.                                                                                                                                                                  |
+
+## Notes that saved time
+
+- **React Native Testing Library 14** is async by default: `await render()`, `await fireEvent.press()`,
+  `await rerender()`. The legacy `toHaveAccessibilityState` matcher is gone; use `toBeSelected()`,
+  `toBeChecked()`, `toBeDisabled()`, `toBeBusy()`.
+- **Reanimated 4 under Jest** needs `resolver: 'react-native-worklets/jest/resolver'` in
+  `jest.config.js` plus `setUpTests()` from `react-native-reanimated` in `jest.setup.ts`.
+- **TypeScript 6** no longer auto-includes `@types/*`; `tsconfig.json` lists `"types": ["jest"]`.
+- **react-dom** is pinned to the exact React version only to satisfy peer resolution; it is not used.
+- **i18next 26** renamed `initImmediate` to `initAsync`; keys are intentionally untyped because
+  screen copy is driven by config objects.
+- **expo-asset** must be a direct dependency for `expo-font` (and therefore `@expo/vector-icons`)
+  to load under Jest.
