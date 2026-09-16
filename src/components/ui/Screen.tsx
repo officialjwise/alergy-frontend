@@ -22,6 +22,8 @@ export interface ScreenProps {
   footer?: ReactNode;
   /** Disable the ScrollView when the content manages its own list (FlashList). */
   scroll?: boolean;
+  /** Leave room at the bottom for the floating tab bar (tab screens). */
+  tabBar?: boolean;
   contentStyle?: StyleProp<ViewStyle>;
   /** Removes the horizontal padding for full-bleed content. */
   bleed?: boolean;
@@ -41,6 +43,7 @@ export function Screen({
   header,
   footer,
   scroll = true,
+  tabBar = false,
   contentStyle,
   bleed = false,
   keyboardAvoiding = false,
@@ -50,6 +53,10 @@ export function Screen({
 }: ScreenProps) {
   const insets = useSafeAreaInsets();
   const horizontal = bleed ? 0 : rs(layout.screenPaddingH);
+  // Content on tab screens scrolls under the floating tab bar, so it needs extra room at the end.
+  const tabBarSpace = tabBar
+    ? insets.bottom + rs(layout.tabBarBottom) + rs(layout.tabBarHeight) + rs(spacing.md)
+    : 0;
 
   const body = scroll ? (
     <ScrollView
@@ -61,6 +68,7 @@ export function Screen({
       contentContainerStyle={[
         styles.scrollContent,
         { paddingHorizontal: horizontal },
+        tabBar ? { paddingBottom: tabBarSpace } : null,
         contentStyle,
         scrollProps?.contentContainerStyle,
       ]}
@@ -69,7 +77,16 @@ export function Screen({
       {children}
     </ScrollView>
   ) : (
-    <View style={[styles.flex, { paddingHorizontal: horizontal }, contentStyle]}>{children}</View>
+    <View
+      style={[
+        styles.flex,
+        { paddingHorizontal: horizontal },
+        tabBar ? { paddingBottom: tabBarSpace } : null,
+        contentStyle,
+      ]}
+    >
+      {children}
+    </View>
   );
 
   const content = (
@@ -95,7 +112,7 @@ export function Screen({
         >
           {footer}
         </View>
-      ) : (
+      ) : tabBar ? null : (
         <View style={{ height: insets.bottom }} />
       )}
     </View>

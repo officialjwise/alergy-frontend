@@ -15,7 +15,10 @@ export const fontFamily = {
 
 export type FontWeightToken = keyof typeof fontFamily;
 
-type TypeStyle = Pick<TextStyle, 'fontFamily' | 'fontSize' | 'lineHeight' | 'letterSpacing'>;
+type TypeStyle = Pick<
+  TextStyle,
+  'fontFamily' | 'fontSize' | 'lineHeight' | 'letterSpacing' | 'fontVariant'
+>;
 
 const style = (
   family: FontWeightToken,
@@ -23,6 +26,17 @@ const style = (
   lineHeight: number,
   letterSpacing = 0,
 ): TypeStyle => ({ fontFamily: fontFamily[family], fontSize, lineHeight, letterSpacing });
+
+/** Numbers that must not jump as digits change (stat cards, counters). */
+const numeric = (
+  family: FontWeightToken,
+  fontSize: number,
+  lineHeight: number,
+  letterSpacing = 0,
+): TypeStyle => ({
+  ...style(family, fontSize, lineHeight, letterSpacing),
+  fontVariant: ['tabular-nums'],
+});
 
 export const typography = {
   /** Welcome headline "Eating with restrictions made easy" (40.4pt fitted, 51.6pt pitch). */
@@ -67,6 +81,20 @@ export const typography = {
   badge: style('semibold', 16, 20),
   /** Small helper text (not in PDF: OTP hints, timestamps). */
   small: style('regular', 13, 18),
+
+  // Main app (Phase 2). Sizes follow the reference captures, re-drawn in Inter.
+  /** Large left-aligned tab titles ("Insights", "Groups", "Profile"). */
+  largeTitle: style('bold', 34, 40, -0.5),
+  /** Card titles ("Weekly overview", nav header titles). */
+  cardTitle: style('semibold', 18, 24, -0.1),
+  /** Hero figure on Home and Insights ("12", "395"). */
+  statLg: numeric('bold', 44, 48, -1),
+  /** Stat card figure. */
+  stat: numeric('bold', 28, 34, -0.5),
+  /** Small figure inside rings and week strips. */
+  statSm: numeric('semibold', 15, 18),
+  /** Tab bar labels. */
+  tabLabel: style('medium', 12, 14),
 } as const;
 
 export type TypographyToken = keyof typeof typography;

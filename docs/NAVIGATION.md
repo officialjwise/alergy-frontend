@@ -67,7 +67,7 @@ Groups
   /groups/[id]/members       app/groups/[id]/members.tsx       Member list
   /groups/new                app/groups/new.tsx                Create private group
   /groups/posts/new          app/groups/posts/new.tsx          Create post; ?groupId=
-  /groups/posts/[id]         app/groups/posts/[id].tsx         Post detail and comments
+  /groups/posts/[id]         app/groups/posts/[id]/index.tsx   Post detail and comments
   /groups/posts/[id]/report  app/groups/posts/[id]/report.tsx  Report post
   /members/[id]              app/members/[id].tsx              Member profile (community) or family member detail
   /profiles                  app/profiles/index.tsx            Family profiles (Phase 1)
