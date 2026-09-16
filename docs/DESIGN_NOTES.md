@@ -48,6 +48,30 @@ Every place where the build differs from the PDF, or where the PDF was ambiguous
   explainers, notifications, email + OTP, legal, splash, main app, settings, states) use the same
   tokens, cards, buttons and spacing so they read as part of the same design.
 
+## Flow decisions not visible in the PDF
+
+- **Language sheet trigger**: the PDF has no visible language button on the welcome screen. The
+  sheet opens over the blurred welcome screen on the first "Get Started" tap (matching the page
+  order Welcome -> Select Language -> Who); picking a language or closing the sheet continues to
+  the survey. Later the language is changed from Settings.
+- **Birth date wheel** starts on the PDF's sample date (June 15, 2001) and that date counts as the
+  answer, so Continue is enabled without scrolling. Days clamp when the month or year changes.
+- **Ingredient chips** show the exact PDF order of suggestions (Eggs, Sesame, Soy, Alcohol) first,
+  then Milk, Wheat, Shellfish, Peanuts, Tree nuts, Fish. Typing an unknown ingredient offers an
+  "Add" card that creates a custom ingredient.
+- **Severity per ingredient** is a card per ingredient with four filter chips and an
+  "Apply to all" shortcut. Continue needs every ingredient rated.
+- **Setup screen** counts to 100% in about 4 seconds, ticks the checklist at 30 / 55 / 78 / 100%,
+  then moves on by itself (the PDF only shows the 78% frame).
+- **Profile summary** hides rows without answers and shows "{name}'s profile" when the profile is
+  for someone else.
+- **Save your profile**: Sign in with Apple is only rendered on iOS (Apple's guidelines); Android
+  shows Google and email. The terms checkbox is on by default like the PDF, but tapping a sign-in
+  button with it off shows an inline error instead of continuing.
+- **Email flow** (not in the PDF): email entry -> 6-digit code with a 30s resend timer, wrong /
+  expired / too-many-attempts errors, and a mock hint showing the accepted code.
+- **Notification prompt** is the last onboarding step, after the account, and is skippable.
+
 ## Open questions for the designer
 
 - Whether the auth buttons are intentionally taller (76pt) than the primary button (62pt).
