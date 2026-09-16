@@ -15,6 +15,7 @@ import { StyleSheet } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
+import { AppErrorBoundary } from '@/components/app/AppErrorBoundary';
 import { detectDeviceLanguage, initI18n } from '@/i18n';
 import { queryClient } from '@/services/queryClient';
 import { useAppStore } from '@/store/appStore';
@@ -25,6 +26,8 @@ SplashScreen.setOptions({ duration: 250, fade: true });
 
 // i18n must be ready before the first render; resources are bundled so this is synchronous.
 initI18n(useAppStore.getState().language ?? detectDeviceLanguage());
+
+export { AppErrorBoundary as ErrorBoundary };
 
 export default function RootLayout() {
   const [fontsLoaded, fontError] = useFonts({
