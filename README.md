@@ -11,7 +11,10 @@ profiles, settings) follows the same visual language.
 ## Requirements
 
 - Node 20+ (tested with Node 26), npm 10+
-- Xcode 16+ with an iOS simulator (iOS builds)
+- **Xcode 26.3 or newer** with an iOS simulator. Expo SDK 57's native modules use Swift features
+  (`weak let`, newer C++ interop annotations) that Xcode 26.0.x rejects with
+  `'weak' must be a mutable variable` inside `expo-modules-jsi`. Update Xcode from the App Store
+  before running `npm run ios`.
 - Android Studio + SDK, a physical Android device with USB debugging (Android builds)
 - Watchman (optional, faster Metro)
 

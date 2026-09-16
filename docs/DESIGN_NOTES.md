@@ -72,6 +72,29 @@ Every place where the build differs from the PDF, or where the PDF was ambiguous
   expired / too-many-attempts errors, and a mock hint showing the accepted code.
 - **Notification prompt** is the last onboarding step, after the account, and is skippable.
 
+## Main app (not in the PDF)
+
+Built with the same tokens: 20pt gutters, 16pt-radius bordered cards, 24pt-radius lavender cards,
+52pt icon chips, 62pt pill buttons, Inter type scale.
+
+- **Tabs**: Home, Scan, History, Profile. Outline icons when inactive, filled when active,
+  near-black active tint, muted inactive tint, 1pt divider on top.
+- **Home**: greeting, active-profile card (tap to switch profile via a sheet), near-black
+  "Scan food" card, "Recent scans" and "Saved safe foods" lists with skeleton / empty / error states.
+- **Scanner**: full-bleed camera, white scan-frame corners (same geometry as the welcome hero),
+  torch, gallery import, "Type instead" manual search, barcode detection. Recognition is mocked:
+  captures rotate through the mock catalogue so every verdict can be demoed.
+- **Verdicts**: Works for you (green), Caution (amber), Not safe (red), Not sure (gray). Each has
+  an icon and a label; colour is never the only signal. The result screen lists every triggering
+  ingredient with the matched label text and why (contains / may contain / cross-contact / unclear),
+  the ingredients that were checked and cleared, the label text, and the safety notice.
+- **History**: search, verdict and saved filters as chips, grouped by Today / Yesterday / date.
+- **Profiles**: multiple profiles, switch from Home, manage (add = re-run the survey, delete with
+  confirmation, cannot delete the last one). Editing restrictions, caution level, diet and goal
+  reuses the survey cards.
+- **Settings**: account (sign in / out), language sheet, notifications toggle, privacy / terms,
+  redo onboarding, delete account (double confirmation), version (5 taps opens the component gallery).
+
 ## Open questions for the designer
 
 - Whether the auth buttons are intentionally taller (76pt) than the primary button (62pt).
