@@ -1,5 +1,5 @@
 import { useRouter, type Href } from 'expo-router';
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, type ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -188,7 +188,7 @@ function Section({
   showSeeAll,
 }: {
   title: string;
-  children: React.ReactNode;
+  children: ReactNode;
   onSeeAll: () => void;
   seeAllLabel: string;
   showSeeAll: boolean;

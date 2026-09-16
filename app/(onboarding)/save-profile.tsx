@@ -28,6 +28,7 @@ export default function SaveProfileScreen() {
   const [error, setError] = useState<string | null>(null);
   const { signIn, pending } = useSocialSignIn();
 
+  const session = useAppStore((state) => state.session);
   const answers = useOnboardingStore((state) => state.answers);
   const profiles = useProfileStore((state) => state.profiles);
   const addProfile = useProfileStore((state) => state.addProfile);
@@ -100,6 +101,30 @@ export default function SaveProfileScreen() {
     </Text>
   );
 
+  if (session) {
+    // Already signed in (adding another profile): no need to authenticate again.
+    return (
+      <OnboardingScreen
+        route="save-profile"
+        title={t('saveProfile.title')}
+        footer={
+          <Button
+            title={t('common.save')}
+            onPress={() => {
+              createProfile();
+              router.push('/(onboarding)/notifications');
+            }}
+            haptic="medium"
+          />
+        }
+      >
+        <Text variant="subtitle" color="textMuted" style={styles.signedIn}>
+          {t('settings.signedInAs', { email: session.user.email ?? session.user.provider })}
+        </Text>
+      </OnboardingScreen>
+    );
+  }
+
   return (
     <OnboardingScreen route="save-profile" title={t('saveProfile.title')}>
       <View style={styles.buttons}>
@@ -166,4 +191,5 @@ const styles = StyleSheet.create({
   checks: { marginTop: rv(spacing.xxxl), gap: rv(spacing.xxxl) },
   link: { textDecorationLine: 'underline' },
   hidden: { height: 0 },
+  signedIn: { marginTop: rv(spacing.xl) },
 });
