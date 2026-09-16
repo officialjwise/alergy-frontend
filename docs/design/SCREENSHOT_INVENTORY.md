@@ -1,0 +1,70 @@
+# Screenshot inventory (Cal AI references)
+
+Reference screenshots used for the layout, structure and interactions of the
+main app (Phase 2). Visual style always comes from our own tokens; see the
+"Strict rules" in the Phase 2 brief. Each image was opened and matched **by
+content**, not by filename.
+
+Files live in `docs/design/reference/cal-ai/set-a/` (marketing screenshots)
+and `docs/design/reference/cal-ai/set-b/` (real app captures). Original
+filenames were kept.
+
+## Set A: marketing screenshots
+
+| File | What it shows | Section | Implemented by | Notes |
+| --- | --- | --- | --- | --- |
+| `set-a/3.jpeg` | "See the calories": phone mockup with hero photo, bookmark/time card, floating calories card, macro tiles, Ingredients list with "+ Add more", "Fix Results" and "Done" buttons | 7. Scan result | pending | Photo of the App Store carousel (499x1080). Neighbouring slides are only partially visible at the edges and are not usable. |
+| (not provided) | Home dashboard with week strip, calories card, macro cards, recently uploaded list | 2. Home | pending | **Missing.** Home is built from the written spec plus `set-b/01.jpeg` (empty state). |
+| (not provided) | Camera with food and labels pointing at ingredients, mode switcher | 5. Scanner | pending | **Missing.** Scanner is built from `set-b/011.jpeg`; the ingredient callout animation follows the written spec. |
+| (not provided) | Progress with weight card, streak card, weight chart, range selector | 13. Insights | pending | **Missing.** Covered well enough by `set-b/03.jpeg` (same cards in the real app). |
+| (not provided) | Group feed with group switcher, member avatars, meal posts, reactions | 14. Groups | pending | **Missing.** The group detail feed is built from the written spec only. |
+| (not provided) | Compare screen with two photos side by side, toggle, thumbnails, Share | 11. Compare products | pending | **Missing.** Compare is built from the written spec only. |
+
+Only 1 of the 6 Set A images is in the repository. The other five are flagged
+above; the affected screens are built from the written spec and will be
+re-checked when the images are added.
+
+## Set B: real app screenshots
+
+| File | What it shows | Section | Implemented by | Notes |
+| --- | --- | --- | --- | --- |
+| `set-b/0.jpeg` | Bottom sheet over Home: running icon, "Add workouts to your daily budget", workout rows with green values, highlighted total row, budget line, "Connect Apple Health", "Not now" | 4. Feature intro sheet | pending | Matches the guess. |
+| `set-b/01.jpeg` | Home empty state: logo + name, streak pill, week strip with dashed rings and one red ring, today in a white tile, hero card with ring, three zero stat cards with page dots, "Recently uploaded" placeholder card, floating tab bar and + button | 2. Home (empty state) | pending | Matches the guess. Also the only reference for the tab bar and + button (Section 1). |
+| `set-b/03.jpeg` | Progress top: Day Streak card, Badges Earned card, Current Weight card with "Log weight" pill, start/goal bar, "At your goal by", Weight Progress chart with "0% of goal" badge | 13. Insights (top) | pending | Matches the guess. |
+| `set-b/04.jpeg` | Progress Photos card with illustration and "Upload a Photo" outline button, Daily Average Calories stacked bar chart with legend and week selector, top of Weekly Energy | 13. Insights (middle) | pending | Matches the guess. |
+| `set-b/05.jpeg` | Groups: title, bell button, "Discover Groups" with "+ Private Group", group cards with round image, member count, description, "+ Join" pill | 14. Groups (discover) | pending | Matches the guess. |
+| `set-b/06.jpeg` | Notifications empty state: back button, centred title, more button, grey bell circle, "No notifications yet!" | 16. Notifications | pending | Matches the guess. |
+| `set-b/07.jpeg` | Profile top: header card with crown "Premium" and "Tap to set name / and username", Invite Friends referral card, Account section, start of Goals & Tracking | 15. Profile | pending | Matches the guess. |
+| `set-b/08.jpeg` | Profile: Account section and full Goals & Tracking section (Manage Apple Health, Edit Nutrition Goals, Goals & current weight, Tracking Reminders, Weight History, Ring Colors Explained) | 15. Profile | pending | Matches the guess. |
+| `set-b/09.jpeg` | Native iOS camera permission alert over the Profile screen | 5. Scanner (permissions) | pending | Matches the guess. |
+| `set-b/010.jpeg` | Plus menu open: dimmed screen, 2x2 white tiles (Log exercise, Saved foods, Food Database, Scan food), + turned into X | 3. Plus menu | pending | Matches the guess. |
+| `set-b/011.jpeg` | Live scanner sheet: grab handle, close and help buttons, corner frame, ".5x / 1x" zoom pills, three mode tiles (Scan Food selected), flash, shutter, gallery | 5. Scanner | pending | Matches the guess. |
+| `set-b/012.jpeg` | Profile: end of Goals & Tracking, Widgets section with "How to add?" and horizontal widget previews, Support & Legal section | 15. Profile | pending | Matches the guess. |
+| `set-b/013.jpeg` | Profile bottom: Export PDF Summary Report, Sync Data with "Last Synced" time, Terms, Privacy, Follow Us (Instagram, TikTok, X), Account Actions (Logout, Delete Account) | 15. Profile | pending | Matches the guess. |
+| `set-b/015.jpeg` | Progress top (same content as `03.jpeg`) | 13. Insights (top) | pending | **Duplicate** of `03.jpeg` (captured 14 minutes later, identical content). Not byte-identical. |
+| `set-b/016.jpeg` | Weight Changes table (3 day to All Time rows with mini chart, value, trend arrow), Progress Photos card, top of Daily Average Calories | 13. Insights (middle) | pending | Matches the guess. |
+| `set-b/017.jpeg` | Bottom of Daily Average Calories, Weekly Energy card (Burned, Consumed, Energy with bar chart, legend, week selector), Expenditure Changes in faded "Not ready / Pending" state | 13. Insights (lower) | pending | Matches the guess. |
+| `set-b/018.jpeg` | Expenditure Changes pending state and "Your BMI" card with number, status pill, 4-colour scale bar with marker, legend, help icon | 13. Insights (bottom) | pending | Matches the guess. |
+
+### Gaps and oddities
+
+- **Missing numbers:** `02.jpeg` and `014.jpeg` do not exist. Nothing in the
+  brief depends on them; every Set B description above is covered.
+- **Duplicate:** `015.jpeg` repeats `03.jpeg`.
+- **No image is unmatched.** Every file maps to exactly one section.
+- **Set A** is missing five of six images (see the Set A table).
+
+## Concepts in the references that do not fit an allergy app
+
+| Reference concept | What we build instead |
+| --- | --- |
+| Calories, macros, budgets | Foods checked, safe rate, verdict counts |
+| Weight, goal weight, BMI | Days since last reaction, caution level scale |
+| Workouts and Apple Health | Product alert notifications (feature intro sheet) |
+| Progress photos of the body | Allergy action plan document photos |
+| Flame streak of logged days | Shield streak of safe scanning days |
+| Fitness community groups | Allergy and diet community groups plus private family groups |
+| "Refer a friend and earn $10" | Invite friends with a reward string that comes from config |
+
+The "Implemented by" column is filled in as each milestone lands, so every
+reference points to exactly one route.
