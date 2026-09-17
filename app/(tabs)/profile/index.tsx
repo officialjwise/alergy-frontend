@@ -22,7 +22,7 @@ import {
   useSheetRef,
 } from '@/components/ui';
 import { appConfig } from '@/config/app';
-import { useInsightsOverview } from '@/features/insights/useInsights';
+import { useTrackingOverview } from '@/features/tracking/useTracking';
 import { WidgetsHowToSheet } from '@/features/profile/components/WidgetsHowToSheet';
 import { LANGUAGES } from '@/i18n/languages';
 import { getServices } from '@/services';
@@ -42,7 +42,7 @@ export default function ProfileScreen() {
   const session = useAppStore((state) => state.session);
   const setSession = useAppStore((state) => state.setSession);
   const language = useAppStore((state) => state.language) ?? i18n.language;
-  const overview = useInsightsOverview(profile?.id ?? null);
+  const overview = useTrackingOverview(profile?.id ?? null);
   const widgetsRef = useSheetRef();
   const [syncing, setSyncing] = useState(false);
   const versionTaps = useRef(0);

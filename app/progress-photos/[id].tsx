@@ -11,8 +11,8 @@ import { colors, layout, spacing } from '@/theme/tokens';
 import { rs } from '@/theme/responsive';
 import { formatLongDate } from '@/utils/date';
 
-/** Full screen viewer for one action plan document with delete. */
-export default function ActionPlanPhotoScreen() {
+/** Full screen viewer for one progress photo with delete. */
+export default function ProgressPhotoScreen() {
   const { t, i18n } = useTranslation();
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -25,9 +25,9 @@ export default function ActionPlanPhotoScreen() {
   const deletePhoto = async () => {
     if (!photo) return;
     const ok = await confirm({
-      title: t('actionPlan.deleteTitle'),
-      message: t('actionPlan.deleteBody'),
-      confirmLabel: t('actionPlan.delete'),
+      title: t('progressPhotos.deleteTitle'),
+      message: t('progressPhotos.deleteBody'),
+      confirmLabel: t('progressPhotos.delete'),
       cancelLabel: t('common.cancel'),
       destructive: true,
       icon: 'trash',
@@ -35,20 +35,20 @@ export default function ActionPlanPhotoScreen() {
     if (!ok) return;
     remove.mutate(photo.id, {
       onSuccess: () => {
-        showToast({ message: t('actionPlan.deleted'), icon: 'trash' });
+        showToast({ message: t('progressPhotos.deleted'), icon: 'trash' });
         router.back();
       },
     });
   };
 
   return (
-    <View style={styles.root} testID="action-plan-viewer">
+    <View style={styles.root} testID="progress-photos-viewer">
       {photo ? (
         <Image
           source={{ uri: photo.uri }}
           style={StyleSheet.absoluteFill}
           contentFit="contain"
-          accessibilityLabel={t('actionPlan.viewerTitle')}
+          accessibilityLabel={t('progressPhotos.viewerTitle')}
         />
       ) : photos.data ? (
         <View style={styles.center}>
@@ -70,7 +70,7 @@ export default function ActionPlanPhotoScreen() {
         {photo ? (
           <HeaderButton
             icon="trash"
-            label={t('actionPlan.delete')}
+            label={t('progressPhotos.delete')}
             onDark
             onPress={() => void deletePhoto()}
             testID="viewer-delete"
@@ -82,7 +82,7 @@ export default function ActionPlanPhotoScreen() {
           style={[styles.caption, { bottom: Math.max(insets.bottom, spacing.md) + rs(spacing.sm) }]}
         >
           <Text variant="small" color="textOnDark" align="center">
-            {t('actionPlan.addedOn', { date: formatLongDate(photo.addedAt, i18n.language) })}
+            {t('progressPhotos.addedOn', { date: formatLongDate(photo.addedAt, i18n.language) })}
           </Text>
         </View>
       ) : null}

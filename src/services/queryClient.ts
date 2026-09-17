@@ -30,15 +30,6 @@ export const queryKeys = {
   },
   insights: {
     all: ['insights'] as const,
-    home: (profileId: string, date: string) => ['insights', 'home', profileId, date] as const,
-    days: (profileId: string, from: string, to: string) =>
-      ['insights', 'days', profileId, from, to] as const,
-    overview: (profileId: string) => ['insights', 'overview', profileId] as const,
-    series: (profileId: string, range: string) => ['insights', 'series', profileId, range] as const,
-    changes: (profileId: string) => ['insights', 'changes', profileId] as const,
-    daily: (profileId: string, week: number) => ['insights', 'daily', profileId, week] as const,
-    weekly: (profileId: string, week: number) => ['insights', 'weekly', profileId, week] as const,
-    topFlagged: (profileId: string) => ['insights', 'topFlagged', profileId] as const,
     dashboard: (profileId: string, date: string) =>
       ['insights', 'dashboard', profileId, date] as const,
     nutritionDays: (profileId: string, from: string, to: string) =>

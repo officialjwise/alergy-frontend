@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { Share, StyleSheet, View } from 'react-native';
 
 import { Button, Card, Icon, NavHeader, Screen, Skeleton, Text } from '@/components/ui';
-import { useInsightsOverview } from '@/features/insights/useInsights';
+import { useTrackingOverview } from '@/features/tracking/useTracking';
 import { useReactions } from '@/features/reactions/useReactions';
 import { selectActiveProfile, useProfileStore } from '@/store/profileStore';
 import { radii, spacing } from '@/theme/tokens';
@@ -13,7 +13,7 @@ import { formatLongDate } from '@/utils/date';
 export default function ExportReportScreen() {
   const { t, i18n } = useTranslation();
   const profile = useProfileStore(selectActiveProfile);
-  const overview = useInsightsOverview(profile?.id ?? null);
+  const overview = useTrackingOverview(profile?.id ?? null);
   const reactions = useReactions(profile?.id ?? null);
 
   const restrictions =
@@ -24,7 +24,7 @@ export default function ExportReportScreen() {
     `${t('settingsScreens.export.title')} · ${formatLongDate(new Date().toISOString(), i18n.language)}`,
     `${t('settingsScreens.export.profile')}: ${profile?.name ?? ''} · ${t(`diet.${profile?.diet ?? 'none'}`)} · ${t(`caution.${profile?.cautionLevel ?? 'ingredient'}`)}`,
     `${t('settingsScreens.export.restrictions')}: ${restrictions}`,
-    `${t('settingsScreens.export.activity')} (${t('settingsScreens.export.period')}): ${t('settingsScreens.export.scans', { count: overview.data?.totalScans ?? 0 })}, ${t('settingsScreens.export.flagged', { count: overview.data?.flaggedScans ?? 0 })}, ${t('settingsScreens.export.reactions', { count: reactions.data?.length ?? 0 })}`,
+    `${t('settingsScreens.export.activity')} (${t('settingsScreens.export.period')}): ${t('settingsScreens.export.scans', { count: overview.data?.mealsLogged ?? 0 })}, ${t('settingsScreens.export.flagged', { count: overview.data?.flaggedMeals ?? 0 })}, ${t('settingsScreens.export.reactions', { count: reactions.data?.length ?? 0 })}`,
   ];
 
   return (
@@ -54,8 +54,8 @@ export default function ExportReportScreen() {
           <Section
             label={`${t('settingsScreens.export.activity')} · ${t('settingsScreens.export.period')}`}
             value={[
-              t('settingsScreens.export.scans', { count: overview.data.totalScans }),
-              t('settingsScreens.export.flagged', { count: overview.data.flaggedScans }),
+              t('settingsScreens.export.scans', { count: overview.data.mealsLogged }),
+              t('settingsScreens.export.flagged', { count: overview.data.flaggedMeals }),
               t('settingsScreens.export.reactions', { count: reactions.data?.length ?? 0 }),
             ].join('\n')}
           />

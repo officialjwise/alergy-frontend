@@ -14,10 +14,22 @@ export interface LinePoint {
   tooltip: string;
 }
 
+export interface LineAxis {
+  min: number;
+  max: number;
+  /** Number of labelled grid lines, 5 by default. */
+  ticks?: number;
+  format?: (value: number) => string;
+}
+
 export interface LineChartProps {
   points: LinePoint[];
   height?: number;
   color?: ColorToken;
+  /** Labelled y axis with fixed bounds (weight chart). Without it the scale starts at zero. */
+  axis?: LineAxis;
+  /** Soft fill under the line, on by default. */
+  area?: boolean;
   /** Accessible summary of the whole chart. */
   accessibilityLabel: string;
   emptyLabel?: string;
@@ -26,31 +38,47 @@ export interface LineChartProps {
 const PAD_TOP = 12;
 const PAD_BOTTOM = 22;
 const PAD_X = 6;
+const AXIS_WIDTH = 34;
 
-/** Smooth line with a soft area fill; press or drag to read a point. */
+/**
+ * Smooth line with an optional soft area fill; press or drag to read a point.
+ * A single point draws as a flat line across the chart.
+ */
 export function LineChart({
   points,
   height = 160,
   color = 'success',
+  axis,
+  area = true,
   accessibilityLabel,
   emptyLabel,
 }: LineChartProps) {
   const [width, setWidth] = useState(0);
   const [selected, setSelected] = useState<number | null>(null);
-  const max = Math.max(1, ...points.map((point) => point.value));
+  const left = PAD_X + (axis ? AXIS_WIDTH : 0);
+  const min = axis ? axis.min : 0;
+  const max = axis ? axis.max : Math.max(1, ...points.map((point) => point.value));
+  const span = Math.max(1e-6, max - min);
+  const plotHeight = height - PAD_TOP - PAD_BOTTOM;
+  const ticks = axis?.ticks ?? 5;
 
   const coords = useMemo(() => {
     if (!width || points.length === 0) return [];
-    const step = points.length > 1 ? (width - PAD_X * 2) / (points.length - 1) : 0;
-    return points.map((point, index) => ({
-      x: PAD_X + index * step,
-      y: PAD_TOP + (1 - point.value / max) * (height - PAD_TOP - PAD_BOTTOM),
-    }));
-  }, [height, max, points, width]);
+    const plotWidth = width - left - PAD_X;
+    const yFor = (value: number) => PAD_TOP + (1 - (value - min) / span) * plotHeight;
+    if (points.length === 1) {
+      const y = yFor(points[0]!.value);
+      return [
+        { x: left, y },
+        { x: left + plotWidth, y },
+      ];
+    }
+    const step = plotWidth / (points.length - 1);
+    return points.map((point, index) => ({ x: left + index * step, y: yFor(point.value) }));
+  }, [left, min, plotHeight, points, span, width]);
 
   const path = useMemo(() => {
     if (coords.length === 0) return '';
-    if (coords.length === 1) return `M${coords[0]!.x} ${coords[0]!.y}`;
     return coords
       .map((point, index) => {
         if (index === 0) return `M${point.x} ${point.y}`;
@@ -61,13 +89,13 @@ export function LineChart({
       .join(' ');
   }, [coords]);
 
-  const area =
-    coords.length > 1
+  const areaPath =
+    area && coords.length > 1
       ? `${path} L${coords[coords.length - 1]!.x} ${height - PAD_BOTTOM} L${coords[0]!.x} ${height - PAD_BOTTOM} Z`
       : '';
 
   const pick = (x: number) => {
-    if (!coords.length) return;
+    if (!coords.length || points.length < 2) return;
     let best = 0;
     coords.forEach((point, index) => {
       if (Math.abs(point.x - x) < Math.abs(coords[best]!.x - x)) best = index;
@@ -75,9 +103,13 @@ export function LineChart({
     setSelected(best);
   };
 
-  const labelIndexes = [0, Math.floor((points.length - 1) / 2), points.length - 1];
-  const hasData = points.some((point) => point.value > 0);
+  const labelIndexes =
+    points.length === 1 ? [0] : [0, Math.floor((points.length - 1) / 2), points.length - 1];
+  const hasData = points.length > 0 && points.some((point) => point.value > 0);
   const stroke = colors[color];
+  const gridFractions = axis
+    ? Array.from({ length: ticks }, (_, index) => index / (ticks - 1))
+    : [0.25, 0.5, 0.75];
 
   return (
     <View
@@ -95,12 +127,12 @@ export function LineChart({
               <Stop offset="1" stopColor={stroke} stopOpacity={0} />
             </LinearGradient>
           </Defs>
-          {[0.25, 0.5, 0.75].map((fraction) => {
-            const y = PAD_TOP + fraction * (height - PAD_TOP - PAD_BOTTOM);
+          {gridFractions.map((fraction) => {
+            const y = PAD_TOP + fraction * plotHeight;
             return (
               <Line
                 key={fraction}
-                x1={PAD_X}
+                x1={left}
                 x2={width - PAD_X}
                 y1={y}
                 y2={y}
@@ -110,7 +142,7 @@ export function LineChart({
               />
             );
           })}
-          {area ? <Path d={area} fill="url(#lineArea)" /> : null}
+          {areaPath ? <Path d={areaPath} fill="url(#lineArea)" /> : null}
           {path ? (
             <Path d={path} stroke={stroke} strokeWidth={2.5} fill="none" strokeLinecap="round" />
           ) : null}
@@ -136,7 +168,25 @@ export function LineChart({
           ) : null}
         </Svg>
       ) : null}
-      <View style={styles.axis} pointerEvents="none">
+      {axis ? (
+        <View style={[styles.yAxis, { top: PAD_TOP, height: plotHeight }]} pointerEvents="none">
+          {Array.from({ length: ticks }, (_, index) => {
+            const value = max - (index / (ticks - 1)) * span;
+            return (
+              <Text key={index} variant="small" color="textMuted" style={styles.tick}>
+                {axis.format ? axis.format(value) : String(Math.round(value))}
+              </Text>
+            );
+          })}
+        </View>
+      ) : null}
+      <View
+        style={[
+          styles.axis,
+          { left, justifyContent: points.length === 1 ? 'center' : 'space-between' },
+        ]}
+        pointerEvents="none"
+      >
         {labelIndexes.map((index, position) => (
           <Text key={`${index}-${position}`} variant="small" color="textMuted">
             {points[index]?.label ?? ''}
@@ -176,12 +226,12 @@ export function LineChart({
 const styles = StyleSheet.create({
   axis: {
     position: 'absolute',
-    left: PAD_X,
     right: PAD_X,
     bottom: 0,
     flexDirection: 'row',
-    justifyContent: 'space-between',
   },
+  yAxis: { position: 'absolute', left: 0, width: AXIS_WIDTH, justifyContent: 'space-between' },
+  tick: { marginTop: -8 },
   empty: {
     position: 'absolute',
     top: 0,

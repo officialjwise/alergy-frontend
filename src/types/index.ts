@@ -173,34 +173,6 @@ export interface ScanResult {
   saved: boolean;
 }
 
-/** Scan counts for one local calendar day (`date` is YYYY-MM-DD). */
-export interface DaySummary {
-  date: string;
-  total: number;
-  safe: number;
-  caution: number;
-  unsafe: number;
-  unknown: number;
-}
-
-export interface FlaggedIngredientCount {
-  ingredientId: string;
-  name: string;
-  count: number;
-}
-
-/** Everything the Home dashboard shows for one selected day. */
-export interface HomeSummary {
-  day: DaySummary;
-  /** Consecutive days with scans and nothing unsafe, ending today or yesterday. */
-  streak: number;
-  /** Share of safe scans on the day, 0..1, or null when nothing was scanned. */
-  safeRate: number | null;
-  topFlagged: FlaggedIngredientCount | null;
-  savedCount: number;
-  totalScans: number;
-}
-
 export type ReportReason = 'ingredients' | 'verdict' | 'product' | 'other';
 
 export interface ReportProblemInput {
@@ -301,64 +273,9 @@ export interface ActionPlanPhoto {
   addedAt: string;
 }
 
-// Insights
-export interface InsightsOverview {
-  streak: number;
-  longestStreak: number;
-  totalScans: number;
-  flaggedScans: number;
-  /** Safe share of all scans, or null with no scans. */
-  safeRate: number | null;
-  daysWithScans: number;
-  firstScanAt: string | null;
-  badgesEarned: number;
-  daysSinceLastReaction: number | null;
-  longestReactionFreeRun: number;
-  lastReactionAt: string | null;
-}
-
 export type InsightsRange = '90d' | '6m' | '1y' | 'all';
 
-export interface SeriesPoint {
-  /** Bucket start day, YYYY-MM-DD. */
-  date: string;
-  flagged: number;
-  total: number;
-}
-
 export type ScanWindow = '3d' | '7d' | '14d' | '30d' | '90d' | 'all';
-
-export interface ScanChangeRow {
-  window: ScanWindow;
-  flagged: number;
-  /** Flagged count in the previous window of the same length (null for "all"). */
-  previous: number | null;
-  trend: 'fewer' | 'same' | 'more' | 'pending';
-  /** Flagged per bucket inside the window, oldest first, for the mini chart. */
-  series: number[];
-  ready: boolean;
-}
-
-export interface DailyScans {
-  weekStart: string;
-  days: DaySummary[];
-  averagePerDay: number;
-}
-
-export interface WeeklyOverview {
-  weekStart: string;
-  checked: number;
-  flagged: number;
-  safeRate: number | null;
-  days: { date: string; checked: number; flagged: number }[];
-}
-
-export interface TopFlagged {
-  unlocked: boolean;
-  daysWithScans: number;
-  requiredDays: number;
-  items: FlaggedIngredientCount[];
-}
 
 // Groups (private family groups and community groups)
 export type GroupKind = 'community' | 'private';
@@ -631,6 +548,8 @@ export interface TrackingOverview {
   badgesEarned: number;
   badgesTotal: number;
   mealsLogged: number;
+  /** Logged foods that came back not safe or caution (the allergy report). */
+  flaggedMeals: number;
   daysWithLogs: number;
   weight: WeightGoalProgress | null;
   bmi: BmiResult;
