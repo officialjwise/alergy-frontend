@@ -1,4 +1,4 @@
-import { useRouter, type Href } from 'expo-router';
+import { useLocalSearchParams, useRouter, type Href } from 'expo-router';
 import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
@@ -11,6 +11,7 @@ import { isValidEmail } from '@/utils/email';
 
 /** Email entry for the passwordless sign in (not in the PDF). */
 export default function EmailScreen() {
+  const { next } = useLocalSearchParams<{ next?: string }>();
   const { t } = useTranslation();
   const router = useRouter();
   const [email, setEmail] = useState('');
@@ -26,12 +27,15 @@ export default function EmailScreen() {
     setError(null);
     try {
       await request.mutateAsync(email.trim());
-      router.push({ pathname: '/(auth)/verify', params: { email: email.trim() } } as Href);
+      router.push({
+        pathname: '/(auth)/verify',
+        params: { email: email.trim(), ...(next ? { next } : {}) },
+      } as Href);
     } catch (caught) {
       const key = authErrorKey(caught);
       if (key) setError(t(key));
     }
-  }, [email, request, router, t, valid]);
+  }, [email, request, router, t, valid, next]);
 
   return (
     <Screen

@@ -27,6 +27,7 @@ import {
   type ZoomLevel,
 } from '@/features/scan/modes';
 import { haptic } from '@/hooks/useHaptics';
+import { useAppStore } from '@/store/appStore';
 import { selectActiveProfile, useProfileStore } from '@/store/profileStore';
 import { colors, layout, radii, sizes, spacing } from '@/theme/tokens';
 import { rs } from '@/theme/responsive';
@@ -45,7 +46,8 @@ export default function ScannerScreen() {
   const insets = useSafeAreaInsets();
   const params = useLocalSearchParams<{ mode?: string; from?: string }>();
   const [permission, requestPermission] = useCameraPermissions();
-  const [mode, setMode] = useState<ScanMode>(isScanMode(params.mode) ? params.mode : 'food');
+  const defaultMode = useAppStore((state) => state.preferences.defaultScanMode);
+  const [mode, setMode] = useState<ScanMode>(isScanMode(params.mode) ? params.mode : defaultMode);
   const [torch, setTorch] = useState(false);
   const [zoom, setZoom] = useState<ZoomLevel>('1');
   const [lenses, setLenses] = useState<string[]>([]);

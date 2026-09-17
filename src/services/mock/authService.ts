@@ -12,6 +12,7 @@ function makeSession(provider: AuthProvider, email?: string, name?: string): Aut
     user: { id: createId('user'), provider, email, name },
     token: createId('token'),
     createdAt: new Date().toISOString(),
+    expiresAt: new Date(Date.now() + 30 * 86_400_000).toISOString(),
   };
 }
 

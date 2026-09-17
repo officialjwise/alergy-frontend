@@ -1362,5 +1362,24 @@
     "kind_reaction": "Reaction",
     "kind_group": "Group",
     "kind_reminder": "Reminder"
+  },
+  "sessionExpired": {
+    "title": "Your session has expired",
+    "body": "Sign in again to keep your profiles synced. Everything on this device is still here.",
+    "signIn": "Sign in",
+    "later": "Use without an account"
+  },
+  "offline": {
+    "title": "No internet connection",
+    "body": "Scanning and groups need a connection. Your saved foods and history still work.",
+    "retry": "Try again",
+    "saved": "Open saved foods",
+    "stillOffline": "Still offline"
+  },
+  "updateRequired": {
+    "title": "Update required",
+    "body": "This version of Allergy App is no longer supported. Update to keep checking foods safely.",
+    "update": "Update now",
+    "version": "You have version {{version}}"
   }
 }
