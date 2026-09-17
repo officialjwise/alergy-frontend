@@ -56,3 +56,5 @@ export type { ConfirmOptions } from './ConfirmDialog';
 export { PaddingGuideOverlay } from './PaddingGuideOverlay';
 export { TextField } from './TextField';
 export type { TextFieldProps } from './TextField';
+export { SwipeRow } from './SwipeRow';
+export type { SwipeRowProps } from './SwipeRow';

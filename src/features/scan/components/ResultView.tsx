@@ -56,6 +56,10 @@ export interface ResultViewProps {
   /** Bottom buttons: the result screen passes Fix results + Done, product detail its own. */
   footer: ReactNode;
   onBack: () => void;
+  /** Overrides the default save toggle (product detail creates a scan record first). */
+  onToggleSave?: () => void;
+  /** Replaces the "Scanned at" line (product detail for an unscanned product). */
+  timeLabel?: string;
   testID?: string;
 }
 
@@ -73,7 +77,16 @@ const STATUS_ICON: Record<IngredientStatus, { icon: IconName; color: ColorToken 
  * verdict card, three tiles, diet row, ingredient list, family members, the
  * scanned text (label variant) and the safety notice.
  */
-export function ResultView({ scan, profile, variant, footer, onBack, testID }: ResultViewProps) {
+export function ResultView({
+  scan,
+  profile,
+  variant,
+  footer,
+  onBack,
+  onToggleSave,
+  timeLabel,
+  testID,
+}: ResultViewProps) {
   const { t, i18n } = useTranslation();
   const router = useRouter();
   const insets = useSafeAreaInsets();
@@ -117,7 +130,7 @@ export function ResultView({ scan, profile, variant, footer, onBack, testID }: R
     scrollRef.current?.scrollTo({ y: Math.max(0, ingredientsY - rs(spacing.md)), animated: true });
   }, [ingredientsY]);
 
-  const save = useCallback(() => {
+  const defaultSave = useCallback(() => {
     const next = !scan.saved;
     toggleSaved.mutate(
       { id: scan.id, saved: next },
@@ -130,6 +143,7 @@ export function ResultView({ scan, profile, variant, footer, onBack, testID }: R
       },
     );
   }, [scan.id, scan.saved, t, toggleSaved]);
+  const save = onToggleSave ?? defaultSave;
 
   const share = useCallback(() => {
     void Share.share({
@@ -213,7 +227,8 @@ export function ResultView({ scan, profile, variant, footer, onBack, testID }: R
             <Icon name="bookmark" size={rs(22)} color="text" outline={!scan.saved} />
           </PressableScale>
           <Text variant="small" color="textMuted">
-            {t('result.scannedAt', { time: formatTime(scan.scannedAt, i18n.language) })}
+            {timeLabel ??
+              t('result.scannedAt', { time: formatTime(scan.scannedAt, i18n.language) })}
           </Text>
         </View>
         <Text variant="sectionTitle" color="text" accessibilityRole="header">
