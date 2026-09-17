@@ -53,6 +53,8 @@ export const httpServices: Services = {
     lookupBarcode: (barcode) => http<Product | null>(`/products/barcode/${barcode}`),
     searchProducts: (query) => http<Product[]>(`/products?q=${encodeURIComponent(query)}`),
     verdictFor: async (product, profile) => evaluateProduct(product, profile),
+    report: (input) =>
+      http<void>(`/scans/${input.scanId}/reports`, { method: 'POST', body: JSON.stringify(input) }),
   },
   history: {
     list: (profileId, filter) =>
@@ -61,6 +63,8 @@ export const httpServices: Services = {
       ),
     get: (id) => http<ScanResult | null>(`/scans/${id}`),
     add: (result) => http<ScanResult>('/scans', { method: 'POST', body: JSON.stringify(result) }),
+    update: (id, patch) =>
+      http<ScanResult>(`/scans/${id}`, { method: 'PATCH', body: JSON.stringify(patch) }),
     setSaved: (id, saved) =>
       http<ScanResult>(`/scans/${id}`, { method: 'PATCH', body: JSON.stringify({ saved }) }),
     remove: (id) => http<void>(`/scans/${id}`, { method: 'DELETE' }),

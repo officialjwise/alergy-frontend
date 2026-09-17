@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { getServices } from '@/services';
 import { queryKeys } from '@/services/queryClient';
+import type { ScanPatch } from '@/services/types';
 import type { HistoryFilter, ScanResult } from '@/types';
 
 const filterKey = (filter?: HistoryFilter): string =>
@@ -36,6 +37,20 @@ export function useToggleSaved() {
     onSuccess: (result: ScanResult) => {
       client.setQueryData(queryKeys.history.detail(result.id), result);
       void client.invalidateQueries({ queryKey: queryKeys.history.all });
+    },
+  });
+}
+
+/** Applies "Fix results" edits (product and re-evaluated verdict) to a scan. */
+export function useUpdateScan() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: ({ id, patch }: { id: string; patch: ScanPatch }) =>
+      getServices().history.update(id, patch),
+    onSuccess: (result: ScanResult) => {
+      client.setQueryData(queryKeys.history.detail(result.id), result);
+      void client.invalidateQueries({ queryKey: queryKeys.history.all });
+      void client.invalidateQueries({ queryKey: queryKeys.insights.all });
     },
   });
 }

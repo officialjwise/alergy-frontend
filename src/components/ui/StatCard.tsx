@@ -22,7 +22,8 @@ export interface StatCardProps {
   ring?: { progress: number; color: ColorToken; icon?: IconName; dashed?: boolean };
   /** Illustration or icon block above the figure (square cards). */
   art?: ReactNode;
-  layout?: 'stack' | 'hero' | 'square';
+  /** `tile` is the compact icon + value + label tile (result screen). */
+  layout?: 'stack' | 'hero' | 'square' | 'tile';
   onPress?: () => void;
   accessibilityLabel?: string;
   style?: StyleProp<ViewStyle>;
@@ -89,6 +90,16 @@ export function StatCard({
         </View>
         {ringNode}
       </View>
+    ) : layout === 'tile' ? (
+      <View style={styles.tile}>
+        {ring?.icon ? <Icon name={ring.icon} size={rs(18)} color={ring.color} /> : null}
+        <Text variant="cardTitle" color="text" numberOfLines={1}>
+          {String(value)}
+        </Text>
+        <Text variant="small" color="textMuted" numberOfLines={2} align="center">
+          {label}
+        </Text>
+      </View>
     ) : layout === 'square' ? (
       <View style={styles.square}>
         {art ? <View style={styles.art}>{art}</View> : null}
@@ -121,7 +132,7 @@ export function StatCard({
         pressedScale={0.98}
         accessibilityRole="button"
         accessibilityLabel={a11y}
-        style={[styles.card, style]}
+        style={[styles.card, layout === 'tile' ? styles.cardTile : null, style]}
         testID={testID}
       >
         {content}
@@ -129,7 +140,12 @@ export function StatCard({
     );
   }
   return (
-    <View style={[styles.card, style]} accessible accessibilityLabel={a11y} testID={testID}>
+    <View
+      style={[styles.card, layout === 'tile' ? styles.cardTile : null, style]}
+      accessible
+      accessibilityLabel={a11y}
+      testID={testID}
+    >
       {content}
     </View>
   );
@@ -143,6 +159,8 @@ const styles = StyleSheet.create({
     borderColor: colors.border,
     padding: rs(spacing.lg),
   },
+  cardTile: { padding: rs(spacing.sm), backgroundColor: colors.surface, borderWidth: 0 },
+  tile: { alignItems: 'center', gap: rs(2) },
   figureRow: { flexDirection: 'row', alignItems: 'baseline', gap: rs(4) },
   unit: { marginBottom: 2 },
   heroRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },

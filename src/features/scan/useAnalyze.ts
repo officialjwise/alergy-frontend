@@ -3,7 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getServices, type AnalyzeInput } from '@/services';
 import { queryKeys } from '@/services/queryClient';
 import { useProfileStore, selectActiveProfile } from '@/store/profileStore';
-import type { ScanResult } from '@/types';
+import type { ReportProblemInput, ScanResult } from '@/types';
 
 /** Runs a scan against the active profile and stores it in the history (when "remember foods" is on). */
 export function useAnalyze() {
@@ -35,5 +35,11 @@ export function useProductSearch(query: string) {
 export function useBarcodeLookup() {
   return useMutation({
     mutationFn: (barcode: string) => getServices().scan.lookupBarcode(barcode),
+  });
+}
+
+export function useReportProblem() {
+  return useMutation({
+    mutationFn: (input: ReportProblemInput) => getServices().scan.report(input),
   });
 }

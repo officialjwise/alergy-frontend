@@ -77,13 +77,14 @@ export default function RootLayout() {
               <Stack.Screen
                 name="scan/analyzing"
                 options={{
-                  presentation: 'fullScreenModal',
+                  // Regular screen so the sheet dismisses onto it instead of flashing Home.
                   animation: 'fade',
                   gestureEnabled: false,
                   contentStyle: { backgroundColor: colors.primary },
                 }}
               />
               <Stack.Screen name="scan/result/[id]" />
+              <Stack.Screen name="scan/fix/[id]" options={{ gestureEnabled: false }} />
               <Stack.Screen name="scan/manual" />
               <Stack.Screen name="history/index" />
               <Stack.Screen name="product/[id]" />

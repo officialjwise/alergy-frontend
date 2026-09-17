@@ -85,6 +85,17 @@ export const mockHistoryService: HistoryService = {
     save([result, ...items]);
     return result;
   },
+  async update(id, patch) {
+    await simulate(0.4);
+    const items = load();
+    const index = items.findIndex((r) => r.id === id);
+    const current = items[index];
+    if (!current) throw new ServiceError('Scan not found', 'not_found');
+    const updated: ScanResult = { ...current, ...patch };
+    items[index] = updated;
+    save(items);
+    return updated;
+  },
   async setSaved(id, saved) {
     await simulate(0.3);
     const items = load();
