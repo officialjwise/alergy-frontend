@@ -2,8 +2,17 @@ import { http } from './client';
 import type { Services } from '../types';
 import { evaluateProduct } from '../verdictEngine';
 import type {
+  ActionPlanPhoto,
   AuthSession,
+  Badge,
+  DailyScans,
   DaySummary,
+  InsightsOverview,
+  Reaction,
+  ScanChangeRow,
+  SeriesPoint,
+  TopFlagged,
+  WeeklyOverview,
   HomeSummary,
   Ingredient,
   Product,
@@ -94,5 +103,34 @@ export const httpServices: Services = {
       http<HomeSummary>(`/profiles/${profileId}/insights/home?date=${date}`),
     daySummaries: (profileId, fromDate, toDate) =>
       http<DaySummary[]>(`/profiles/${profileId}/insights/days?from=${fromDate}&to=${toDate}`),
+    overview: (profileId) => http<InsightsOverview>(`/profiles/${profileId}/insights/overview`),
+    flaggedSeries: (profileId, range) =>
+      http<SeriesPoint[]>(`/profiles/${profileId}/insights/flagged?range=${range}`),
+    scanChanges: (profileId) => http<ScanChangeRow[]>(`/profiles/${profileId}/insights/changes`),
+    dailyScans: (profileId, week) =>
+      http<DailyScans>(`/profiles/${profileId}/insights/daily?week=${week}`),
+    weeklyOverview: (profileId, week) =>
+      http<WeeklyOverview>(`/profiles/${profileId}/insights/weekly?week=${week}`),
+    topFlagged: (profileId) => http<TopFlagged>(`/profiles/${profileId}/insights/top-flagged`),
+  },
+  reactions: {
+    list: (profileId) => http<Reaction[]>(`/profiles/${profileId}/reactions`),
+    get: (id) => http<Reaction | null>(`/reactions/${id}`),
+    add: (input) => http<Reaction>('/reactions', { method: 'POST', body: JSON.stringify(input) }),
+    update: (id, patch) =>
+      http<Reaction>(`/reactions/${id}`, { method: 'PATCH', body: JSON.stringify(patch) }),
+    remove: (id) => http<void>(`/reactions/${id}`, { method: 'DELETE' }),
+  },
+  badges: {
+    list: (profileId) => http<Badge[]>(`/profiles/${profileId}/badges`),
+  },
+  actionPlan: {
+    list: (profileId) => http<ActionPlanPhoto[]>(`/profiles/${profileId}/action-plan`),
+    add: (profileId, uri) =>
+      http<ActionPlanPhoto>(`/profiles/${profileId}/action-plan`, {
+        method: 'POST',
+        body: JSON.stringify({ uri }),
+      }),
+    remove: (id) => http<void>(`/action-plan/${id}`, { method: 'DELETE' }),
   },
 };

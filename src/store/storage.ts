@@ -23,6 +23,8 @@ export const storageKeys = {
   profiles: 'profiles-v1',
   app: 'app-v1',
   history: 'history-v1',
+  reactions: 'reactions-v1',
+  actionPlan: 'action-plan-v1',
 } as const;
 
 export function clearAllStorage(): void {

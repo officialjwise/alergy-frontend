@@ -25,7 +25,7 @@ export function dayStatus(day: DaySummary | undefined): DayStatus {
   return 'safe';
 }
 
-const STATUS_COLOR: Record<DayStatus, ColorToken> = {
+export const STATUS_COLOR: Record<DayStatus, ColorToken> = {
   none: 'ring',
   safe: 'success',
   caution: 'warning',

@@ -1,6 +1,17 @@
 import type {
+  ActionPlanPhoto,
   AuthSession,
+  Badge,
+  DailyScans,
   DaySummary,
+  InsightsOverview,
+  InsightsRange,
+  Reaction,
+  ReactionInput,
+  ScanChangeRow,
+  SeriesPoint,
+  TopFlagged,
+  WeeklyOverview,
   HistoryFilter,
   HomeSummary,
   Ingredient,
@@ -91,6 +102,32 @@ export interface InsightsService {
   homeSummary(profileId: string, date: string): Promise<HomeSummary>;
   /** One summary per day from `fromDate` to `toDate` inclusive (YYYY-MM-DD), oldest first. */
   daySummaries(profileId: string, fromDate: string, toDate: string): Promise<DaySummary[]>;
+  overview(profileId: string): Promise<InsightsOverview>;
+  /** Flagged scans over time, bucketed by day (90d) or week (longer ranges). */
+  flaggedSeries(profileId: string, range: InsightsRange): Promise<SeriesPoint[]>;
+  scanChanges(profileId: string): Promise<ScanChangeRow[]>;
+  /** Sunday-to-Saturday week; `weekOffset` 0 is this week, 1 last week. */
+  dailyScans(profileId: string, weekOffset: number): Promise<DailyScans>;
+  weeklyOverview(profileId: string, weekOffset: number): Promise<WeeklyOverview>;
+  topFlagged(profileId: string): Promise<TopFlagged>;
+}
+
+export interface ReactionService {
+  list(profileId: string): Promise<Reaction[]>;
+  get(id: string): Promise<Reaction | null>;
+  add(input: ReactionInput): Promise<Reaction>;
+  update(id: string, patch: Partial<ReactionInput>): Promise<Reaction>;
+  remove(id: string): Promise<void>;
+}
+
+export interface BadgeService {
+  list(profileId: string): Promise<Badge[]>;
+}
+
+export interface ActionPlanService {
+  list(profileId: string): Promise<ActionPlanPhoto[]>;
+  add(profileId: string, uri: string): Promise<ActionPlanPhoto>;
+  remove(id: string): Promise<void>;
 }
 
 export interface Services {
@@ -100,6 +137,9 @@ export interface Services {
   history: HistoryService;
   auth: AuthService;
   insights: InsightsService;
+  reactions: ReactionService;
+  badges: BadgeService;
+  actionPlan: ActionPlanService;
 }
 
 export class ServiceError extends Error {

@@ -8,7 +8,7 @@ import { colors, radii, sizes, spacing, borders } from '@/theme/tokens';
 import { rs } from '@/theme/responsive';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'apple' | 'text' | 'danger';
-export type ButtonSize = 'lg' | 'md' | 'auth';
+export type ButtonSize = 'sm' | 'lg' | 'md' | 'auth';
 
 export interface ButtonProps {
   title: string;
@@ -27,6 +27,7 @@ export interface ButtonProps {
 }
 
 const HEIGHTS: Record<ButtonSize, number> = {
+  sm: 36,
   lg: sizes.button,
   md: 52,
   auth: sizes.authButton,
@@ -83,7 +84,11 @@ export function Button({
       ) : (
         <View style={styles.content}>
           {leading ? <View style={styles.leading}>{leading}</View> : null}
-          <Text variant={isText ? 'textButton' : 'button'} color={labelColor} numberOfLines={1}>
+          <Text
+            variant={isText ? 'textButton' : size === 'sm' ? 'badge' : 'button'}
+            color={labelColor}
+            numberOfLines={1}
+          >
             {title}
           </Text>
         </View>

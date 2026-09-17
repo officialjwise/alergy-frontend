@@ -139,3 +139,19 @@ Built with the same tokens: 20pt gutters, 16pt-radius bordered cards, 24pt-radiu
 - **Fix results.** Edits rebuild the product's ingredient text (unsure entries
   move to "may contain") and re-run the verdict engine before saving, so the
   result, Home and history all update from one place.
+- **Insights charts.** All charts are drawn with react-native-svg (line with
+  area fill and press tooltip, stacked bars, sparklines, the caution scale) so
+  no chart library or native module was added. Every figure comes from the
+  scan history and reaction log through `InsightsService`.
+- **Caution scale colours.** The four-colour bar mirrors the reference's BMI
+  scale purely as a scale (blue to red = one rule to four rules applied). The
+  active segment is also named in the status pill, so colour is never the only
+  signal.
+- **Date and time.** Log reaction uses the onboarding wheel picker (day, hour,
+  minute) instead of a native date picker so no extra native dependency is
+  needed; it covers the last 30 days.
+- **Badge artwork.** Badges are drawn from the app's own icon set inside a
+  gold ring (earned) or a progress ring (locked), replacing the reference's
+  flame and shield artwork.
+- **Reactions.** The log is personal, never medical advice; the form and the
+  Insights card repeat the emergency notice from the brief.

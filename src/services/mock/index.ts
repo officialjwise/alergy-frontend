@@ -1,8 +1,11 @@
+import { mockActionPlanService } from './actionPlanService';
 import { mockAuthService } from './authService';
+import { mockBadgeService } from './badgeService';
 import { mockHistoryService } from './historyService';
 import { mockIngredientService } from './ingredientService';
 import { mockInsightsService } from './insightsService';
 import { mockProfileService } from './profileService';
+import { mockReactionService } from './reactionService';
 import { mockScanService } from './scanService';
 import type { Services } from '../types';
 
@@ -13,4 +16,7 @@ export const mockServices: Services = {
   history: mockHistoryService,
   auth: mockAuthService,
   insights: mockInsightsService,
+  reactions: mockReactionService,
+  badges: mockBadgeService,
+  actionPlan: mockActionPlanService,
 };
