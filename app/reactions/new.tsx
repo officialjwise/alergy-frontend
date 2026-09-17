@@ -113,7 +113,7 @@ export default function LogReactionScreen() {
   const addPhoto = async () => {
     const uri = await pickDocumentPhoto();
     if (uri === 'denied') {
-      showToast({ message: t('actionPlan.permissionDenied'), icon: 'alert' });
+      showToast({ message: t('progressPhotos.permissionDenied'), icon: 'alert' });
       return;
     }
     if (uri) setPhotoUri(uri);

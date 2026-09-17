@@ -11,15 +11,26 @@ export interface ScaleSegment {
 
 export interface ScaleBarProps {
   segments: ScaleSegment[];
-  /** Index of the active segment; the marker sits in its middle. */
+  /** Index of the active segment; the marker sits in its middle unless `markerPosition` is given. */
   markerIndex: number;
+  /** Exact marker position along the bar, 0..1 (BMI value on its scale). */
+  markerPosition?: number;
   accessibilityLabel: string;
 }
 
 /** Four-colour scale with a marker and a legend underneath (caution level card). */
-export function ScaleBar({ segments, markerIndex, accessibilityLabel }: ScaleBarProps) {
+export function ScaleBar({
+  segments,
+  markerIndex,
+  markerPosition,
+  accessibilityLabel,
+}: ScaleBarProps) {
   const count = Math.max(1, segments.length);
-  const markerLeft = `${((markerIndex + 0.5) / count) * 100}%` as const;
+  const fraction =
+    markerPosition === undefined
+      ? (markerIndex + 0.5) / count
+      : Math.min(1, Math.max(0, markerPosition));
+  const markerLeft = `${fraction * 100}%` as const;
   return (
     <View accessible accessibilityRole="image" accessibilityLabel={accessibilityLabel}>
       <View style={styles.bar}>

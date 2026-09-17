@@ -18,11 +18,8 @@ import type {
   WorkoutInput,
   AuthSession,
   Badge,
-  DailyScans,
-  DaySummary,
   Group,
   GroupMember,
-  InsightsOverview,
   NewPostInput,
   Post,
   PostComment,
@@ -31,12 +28,7 @@ import type {
   InsightsRange,
   Reaction,
   ReactionInput,
-  ScanChangeRow,
-  SeriesPoint,
-  TopFlagged,
-  WeeklyOverview,
   HistoryFilter,
-  HomeSummary,
   Ingredient,
   Product,
   ReportProblemInput,
@@ -121,18 +113,6 @@ export interface AuthService {
 }
 
 export interface InsightsService {
-  /** Dashboard numbers for one local day (YYYY-MM-DD). */
-  homeSummary(profileId: string, date: string): Promise<HomeSummary>;
-  /** One summary per day from `fromDate` to `toDate` inclusive (YYYY-MM-DD), oldest first. */
-  daySummaries(profileId: string, fromDate: string, toDate: string): Promise<DaySummary[]>;
-  overview(profileId: string): Promise<InsightsOverview>;
-  /** Flagged scans over time, bucketed by day (90d) or week (longer ranges). */
-  flaggedSeries(profileId: string, range: InsightsRange): Promise<SeriesPoint[]>;
-  scanChanges(profileId: string): Promise<ScanChangeRow[]>;
-  /** Sunday-to-Saturday week; `weekOffset` 0 is this week, 1 last week. */
-  dailyScans(profileId: string, weekOffset: number): Promise<DailyScans>;
-  weeklyOverview(profileId: string, weekOffset: number): Promise<WeeklyOverview>;
-  topFlagged(profileId: string): Promise<TopFlagged>;
   // Nutrition tracking (Phase 3)
   /** Calories, macros, burn and ring colour for one day, plus streaks, water and activity. */
   homeDashboard(profileId: string, date: string): Promise<HomeDashboard>;

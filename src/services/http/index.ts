@@ -8,9 +8,7 @@ import type {
   Badge,
   DailyActivity,
   DailyCalories,
-  DailyScans,
   DayNutrition,
-  DaySummary,
   ExpenditureRow,
   HealthConnection,
   HomeDashboard,
@@ -23,15 +21,9 @@ import type {
   Workout,
   Group,
   GroupMember,
-  InsightsOverview,
   Post,
   PostComment,
   Reaction,
-  ScanChangeRow,
-  SeriesPoint,
-  TopFlagged,
-  WeeklyOverview,
-  HomeSummary,
   Ingredient,
   Product,
   ScanResult,
@@ -117,19 +109,6 @@ export const httpServices: Services = {
     restoreSession: () => http<AuthSession | null>('/auth/session'),
   },
   insights: {
-    homeSummary: (profileId, date) =>
-      http<HomeSummary>(`/profiles/${profileId}/insights/home?date=${date}`),
-    daySummaries: (profileId, fromDate, toDate) =>
-      http<DaySummary[]>(`/profiles/${profileId}/insights/days?from=${fromDate}&to=${toDate}`),
-    overview: (profileId) => http<InsightsOverview>(`/profiles/${profileId}/insights/overview`),
-    flaggedSeries: (profileId, range) =>
-      http<SeriesPoint[]>(`/profiles/${profileId}/insights/flagged?range=${range}`),
-    scanChanges: (profileId) => http<ScanChangeRow[]>(`/profiles/${profileId}/insights/changes`),
-    dailyScans: (profileId, week) =>
-      http<DailyScans>(`/profiles/${profileId}/insights/daily?week=${week}`),
-    weeklyOverview: (profileId, week) =>
-      http<WeeklyOverview>(`/profiles/${profileId}/insights/weekly?week=${week}`),
-    topFlagged: (profileId) => http<TopFlagged>(`/profiles/${profileId}/insights/top-flagged`),
     homeDashboard: (profileId, date) =>
       http<HomeDashboard>(`/profiles/${profileId}/tracking/dashboard?date=${date}`),
     dayNutrition: (profileId, fromDate, toDate) =>

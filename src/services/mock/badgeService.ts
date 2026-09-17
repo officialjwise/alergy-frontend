@@ -1,11 +1,11 @@
 import { allWorkouts, waterDays } from './activityService';
 import { mockHistoryService } from './historyService';
-import { longestLogStreak } from './insightsService';
 import { simulate } from './support';
 import { listWeights } from './weightService';
 import type { BadgeService } from '../types';
 import { dayHealthScore, ringStatus, sumNutrition } from '@/features/tracking/nutrition';
 import { goalsOf } from '@/features/tracking/profile';
+import { longestLogStreak } from '@/features/tracking/streaks';
 import { useProfileStore } from '@/store/profileStore';
 import type { Badge, BadgeGroup, ScanResult } from '@/types';
 import { addDays, dayKey, daysBetween, fromDayKey } from '@/utils/date';

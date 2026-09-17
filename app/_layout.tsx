@@ -92,6 +92,15 @@ export default function RootLayout() {
               <Stack.Screen name="profiles/edit/[section]" />
               <Stack.Screen name="milestones/index" />
               <Stack.Screen name="exercise/new" />
+              <Stack.Screen name="weight/index" />
+              <Stack.Screen
+                name="progress-photos/privacy"
+                options={{
+                  presentation: 'modal',
+                  animation: 'fade',
+                  contentStyle: { backgroundColor: colors.appleBlack },
+                }}
+              />
               <Stack.Screen name="legal/[doc]" options={{ presentation: 'modal' }} />
               <Stack.Screen name="dev/components" options={{ presentation: 'modal' }} />
             </Stack>

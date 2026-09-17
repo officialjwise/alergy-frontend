@@ -26,8 +26,8 @@ import { colors, radii, spacing } from '@/theme/tokens';
 import { rs } from '@/theme/responsive';
 import { formatShortDate } from '@/utils/date';
 
-/** Photos of the allergy action plan and related documents; add, view and delete. */
-export default function ActionPlanScreen() {
+/** Progress photos: add, view and delete. */
+export default function ProgressPhotosScreen() {
   const { t, i18n } = useTranslation();
   const router = useRouter();
   const profile = useProfileStore(selectActiveProfile);
@@ -37,38 +37,38 @@ export default function ActionPlanScreen() {
   const addPhoto = useCallback(async () => {
     const uri = await pickDocumentPhoto();
     if (uri === 'denied') {
-      showToast({ message: t('actionPlan.permissionDenied'), icon: 'alert' });
+      showToast({ message: t('progressPhotos.permissionDenied'), icon: 'alert' });
       return;
     }
     if (!uri) return;
     await add.mutateAsync(uri);
-    showToast({ message: t('actionPlan.added'), icon: 'checkCircle' });
+    showToast({ message: t('progressPhotos.added'), icon: 'checkCircle' });
   }, [add, t]);
 
   return (
     <Screen
       header={
         <NavHeader
-          title={t('actionPlan.title')}
+          title={t('progressPhotos.title')}
           rightIcon="plus"
-          rightLabel={t('actionPlan.add')}
+          rightLabel={t('progressPhotos.add')}
           onRightPress={() => void addPhoto()}
         />
       }
       footer={
         <Button
-          title={t('actionPlan.add')}
+          title={t('progressPhotos.add')}
           leading={<Icon name="plus" size={rs(20)} color="onPrimary" />}
           onPress={() => void addPhoto()}
           loading={add.isPending}
           haptic="medium"
-          testID="action-plan-add"
+          testID="progress-photos-add"
         />
       }
-      testID="action-plan"
+      testID="progress-photos"
     >
       <Text variant="body" color="textMuted" style={styles.subtitle}>
-        {t('actionPlan.subtitle')}
+        {t('progressPhotos.subtitle')}
       </Text>
       {photos.isLoading && !photos.data ? (
         <View style={styles.grid}>
@@ -88,29 +88,29 @@ export default function ActionPlanScreen() {
             <PressableScale
               key={photo.id}
               onPress={() =>
-                router.push({ pathname: '/action-plan/[id]', params: { id: photo.id } })
+                router.push({ pathname: '/progress-photos/[id]', params: { id: photo.id } })
               }
               haptic="light"
               pressedScale={0.97}
               accessibilityRole="button"
-              accessibilityLabel={t('actionPlan.addedOn', {
+              accessibilityLabel={t('progressPhotos.addedOn', {
                 date: formatShortDate(photo.addedAt, i18n.language),
               })}
               style={styles.tile}
-              testID={`action-plan-${photo.id}`}
+              testID={`progress-photos-${photo.id}`}
             >
               <Image source={{ uri: photo.uri }} style={styles.image} contentFit="cover" />
               <Text variant="small" color="textMuted" style={styles.caption}>
-                {t('actionPlan.addedOn', { date: formatShortDate(photo.addedAt, i18n.language) })}
+                {t('progressPhotos.addedOn', { date: formatShortDate(photo.addedAt, i18n.language) })}
               </Text>
             </PressableScale>
           ))}
         </View>
       ) : (
         <EmptyState
-          icon="document"
-          title={t('actionPlan.emptyTitle')}
-          body={t('actionPlan.emptyBody')}
+          icon="image"
+          title={t('progressPhotos.emptyTitle')}
+          body={t('progressPhotos.emptyBody')}
         />
       )}
     </Screen>

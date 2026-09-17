@@ -255,7 +255,7 @@ async function familyMembers(): Promise<GroupMember[]> {
   const me = meMember();
   return Promise.all(
     profiles.map(async (profile) => {
-      const summary = await mockInsightsService.homeSummary(profile.id, today);
+      const summary = await mockInsightsService.homeDashboard(profile.id, today);
       const isMe = profile.id === me.profileId;
       return {
         id: isMe ? ME_ID : `m-family-${profile.id}`,
