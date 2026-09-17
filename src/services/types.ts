@@ -4,7 +4,14 @@ import type {
   Badge,
   DailyScans,
   DaySummary,
+  Group,
+  GroupMember,
   InsightsOverview,
+  NewPostInput,
+  Post,
+  PostComment,
+  PostFilter,
+  PostReportReason,
   InsightsRange,
   Reaction,
   ReactionInput,
@@ -124,6 +131,26 @@ export interface BadgeService {
   list(profileId: string): Promise<Badge[]>;
 }
 
+export interface GroupService {
+  /** Community groups to discover plus the private groups the user belongs to. */
+  list(): Promise<Group[]>;
+  get(id: string): Promise<Group | null>;
+  join(id: string): Promise<Group>;
+  leave(id: string): Promise<void>;
+  create(input: { name: string; description?: string; imageUri?: string }): Promise<Group>;
+  members(groupId: string): Promise<GroupMember[]>;
+  member(id: string): Promise<GroupMember | null>;
+  posts(groupId: string, filter?: PostFilter): Promise<Post[]>;
+  post(id: string): Promise<Post | null>;
+  createPost(input: NewPostInput): Promise<Post>;
+  react(postId: string, emoji: string): Promise<Post>;
+  comments(postId: string): Promise<PostComment[]>;
+  addComment(postId: string, text: string): Promise<PostComment>;
+  reportPost(postId: string, reason: PostReportReason, notes?: string): Promise<void>;
+  blockMember(memberId: string): Promise<void>;
+  invite(groupId: string): Promise<{ link: string; code: string }>;
+}
+
 export interface ActionPlanService {
   list(profileId: string): Promise<ActionPlanPhoto[]>;
   add(profileId: string, uri: string): Promise<ActionPlanPhoto>;
@@ -140,6 +167,7 @@ export interface Services {
   reactions: ReactionService;
   badges: BadgeService;
   actionPlan: ActionPlanService;
+  groups: GroupService;
 }
 
 export class ServiceError extends Error {

@@ -7,7 +7,11 @@ import type {
   Badge,
   DailyScans,
   DaySummary,
+  Group,
+  GroupMember,
   InsightsOverview,
+  Post,
+  PostComment,
   Reaction,
   ScanChangeRow,
   SeriesPoint,
@@ -132,5 +136,32 @@ export const httpServices: Services = {
         body: JSON.stringify({ uri }),
       }),
     remove: (id) => http<void>(`/action-plan/${id}`, { method: 'DELETE' }),
+  },
+  groups: {
+    list: () => http<Group[]>('/groups'),
+    get: (id) => http<Group | null>(`/groups/${id}`),
+    join: (id) => http<Group>(`/groups/${id}/join`, { method: 'POST' }),
+    leave: (id) => http<void>(`/groups/${id}/leave`, { method: 'POST' }),
+    create: (input) => http<Group>('/groups', { method: 'POST', body: JSON.stringify(input) }),
+    members: (groupId) => http<GroupMember[]>(`/groups/${groupId}/members`),
+    member: (id) => http<GroupMember | null>(`/members/${id}`),
+    posts: (groupId, filter = 'all') => http<Post[]>(`/groups/${groupId}/posts?filter=${filter}`),
+    post: (id) => http<Post | null>(`/posts/${id}`),
+    createPost: (input) => http<Post>('/posts', { method: 'POST', body: JSON.stringify(input) }),
+    react: (postId, emoji) =>
+      http<Post>(`/posts/${postId}/reactions`, { method: 'POST', body: JSON.stringify({ emoji }) }),
+    comments: (postId) => http<PostComment[]>(`/posts/${postId}/comments`),
+    addComment: (postId, text) =>
+      http<PostComment>(`/posts/${postId}/comments`, {
+        method: 'POST',
+        body: JSON.stringify({ text }),
+      }),
+    reportPost: (postId, reason, notes) =>
+      http<void>(`/posts/${postId}/reports`, {
+        method: 'POST',
+        body: JSON.stringify({ reason, notes }),
+      }),
+    blockMember: (memberId) => http<void>(`/members/${memberId}/block`, { method: 'POST' }),
+    invite: (groupId) => http<{ link: string; code: string }>(`/groups/${groupId}/invite`),
   },
 };
