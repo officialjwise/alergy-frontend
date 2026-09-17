@@ -90,7 +90,6 @@ export default function RootLayout() {
               <Stack.Screen name="product/[id]" />
               <Stack.Screen name="profiles/index" />
               <Stack.Screen name="profiles/edit/[section]" />
-              <Stack.Screen name="settings/index" />
               <Stack.Screen name="legal/[doc]" options={{ presentation: 'modal' }} />
               <Stack.Screen name="dev/components" options={{ presentation: 'modal' }} />
             </Stack>

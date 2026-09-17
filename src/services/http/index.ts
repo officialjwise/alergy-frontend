@@ -3,6 +3,7 @@ import type { Services } from '../types';
 import { evaluateProduct } from '../verdictEngine';
 import type {
   ActionPlanPhoto,
+  AppNotification,
   AuthSession,
   Badge,
   DailyScans,
@@ -163,5 +164,10 @@ export const httpServices: Services = {
       }),
     blockMember: (memberId) => http<void>(`/members/${memberId}/block`, { method: 'POST' }),
     invite: (groupId) => http<{ link: string; code: string }>(`/groups/${groupId}/invite`),
+  },
+  notifications: {
+    list: () => http<AppNotification[]>('/notifications'),
+    markRead: (id) => http<void>(`/notifications/${id}/read`, { method: 'POST' }),
+    markAllRead: () => http<void>('/notifications/read-all', { method: 'POST' }),
   },
 };

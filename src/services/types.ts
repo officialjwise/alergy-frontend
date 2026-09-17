@@ -1,5 +1,6 @@
 import type {
   ActionPlanPhoto,
+  AppNotification,
   AuthSession,
   Badge,
   DailyScans,
@@ -151,6 +152,12 @@ export interface GroupService {
   invite(groupId: string): Promise<{ link: string; code: string }>;
 }
 
+export interface NotificationService {
+  list(): Promise<AppNotification[]>;
+  markRead(id: string): Promise<void>;
+  markAllRead(): Promise<void>;
+}
+
 export interface ActionPlanService {
   list(profileId: string): Promise<ActionPlanPhoto[]>;
   add(profileId: string, uri: string): Promise<ActionPlanPhoto>;
@@ -168,6 +175,7 @@ export interface Services {
   badges: BadgeService;
   actionPlan: ActionPlanService;
   groups: GroupService;
+  notifications: NotificationService;
 }
 
 export class ServiceError extends Error {

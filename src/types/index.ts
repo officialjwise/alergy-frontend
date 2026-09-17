@@ -417,3 +417,17 @@ export interface NewPostInput {
 export type PostFilter = 'all' | VerdictKind;
 
 export type PostReportReason = 'spam' | 'harmful' | 'offensive' | 'other';
+
+// Notifications
+export type NotificationKind = 'product' | 'reply' | 'reaction' | 'group' | 'reminder';
+
+export interface AppNotification {
+  id: string;
+  kind: NotificationKind;
+  title: string;
+  body: string;
+  createdAt: string;
+  read: boolean;
+  /** Route to open (deep link ready), e.g. "/product/p-rice-cakes". */
+  target?: string;
+}

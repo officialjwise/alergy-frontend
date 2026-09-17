@@ -1,9 +1,6 @@
-import { useTranslation } from 'react-i18next';
+import { Redirect } from 'expo-router';
 
-import { NavHeader, Screen } from '@/components/ui';
-
-/** Diet. Route skeleton; the full screen lands in milestone 9. */
+/** "Diet" reuses the onboarding diet editor. */
 export default function DietSettingsScreen() {
-  const { t } = useTranslation();
-  return <Screen header={<NavHeader title={t('routes.settingsDiet')} />}>{null}</Screen>;
+  return <Redirect href={{ pathname: '/profiles/edit/[section]', params: { section: 'diet' } }} />;
 }

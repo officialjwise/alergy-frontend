@@ -60,6 +60,9 @@ export const queryKeys = {
     comments: (id: string) => ['groups', 'comments', id] as const,
     invite: (id: string) => ['groups', 'invite', id] as const,
   },
+  notifications: {
+    all: ['notifications'] as const,
+  },
   actionPlan: {
     all: ['actionPlan'] as const,
     list: (profileId: string) => ['actionPlan', profileId] as const,
