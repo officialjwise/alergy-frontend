@@ -155,6 +155,35 @@ flowchart TD
   Final -->|Delete my account| Welcome
 ```
 
+## 11. Log food, water and exercise (Phase 3)
+
+```mermaid
+flowchart TD
+  Home["/(tabs)/home"] -->|"+ > Scan food"| Scan["/scan"] --> Result["/scan/result/[id]"] --> Home2["Home: calories, macros and ring colour update"]
+  Home -->|"page 3 > Log Water"| Water[LogWaterSheet] --> Home
+  Home -->|"+ > Log exercise"| Ex["/exercise/new"] -->|Log| Home3["budget grows by the burned calories"]
+```
+
+## 12. Connect Apple Health
+
+```mermaid
+flowchart TD
+  P3["Home page 3"] -->|first visit or Connect| Sheet["Add workouts to your daily budget"]
+  Sheet -->|Connect Apple Health| Connected["steps, workouts and burn fill in"]
+  Sheet -->|Not now| P3
+  Profile["/(tabs)/profile > Manage Apple Health"] --> AH["/settings/apple-health"] -->|Connect / Disconnect| Profile
+```
+
+## 13. Weight, goals and milestones
+
+```mermaid
+flowchart TD
+  Ins["/(tabs)/insights"] -->|Log weight| LW[LogWeightSheet] --> Ins2["weight card, chart, changes and BMI update"]
+  Ins -->|Day Streak or Badges tile| M["/milestones"] -->|badge| B["/badges/[id]"]
+  Ins -->|Set a goal weight| PD["/settings/personal"] -->|Change Goal| Ins
+  Profile["/(tabs)/profile"] -->|Edit Nutrition Goals| NG["/settings/nutrition-goals"] -->|Auto Generate| Home["Home budget updates"]
+```
+
 ## Rules for every flow
 
 - Every screen has a clear way in and out; there are no dead ends.

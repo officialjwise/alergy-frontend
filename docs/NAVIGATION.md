@@ -17,17 +17,20 @@ Main tabs   app/(tabs)/_layout.tsx   floating pill tab bar + round dark + button
   2. Insights    /(tabs)/insights     app/(tabs)/insights/index.tsx
   3. Groups      /(tabs)/groups       app/(tabs)/groups/index.tsx
   4. Profile     /(tabs)/profile      app/(tabs)/profile/index.tsx
-  + button       PlusMenu overlay (component, no URL): Log reaction, Saved foods, Food search, Scan food
+  + button       PlusMenu overlay (component, no URL): Log exercise, Saved foods, Food search, Scan food
 
 Sheets rendered inside a screen (components, no URL)
-  FeatureIntroSheet          over Home, once after the first saved food
+  FeatureIntroSheet          over Home as "Add workouts to your daily budget" (first visit to page 3, and Connect)
+  LogWaterSheet              Home page 3 > Log Water
+  LogWeightSheet             Insights > Log weight, Weight History > Log Weight
+  BmiSheet                   Insights > Your BMI help icon
+  LanguageSheet              Profile > Language
   ProfileSwitcherSheet       Home header (family setups)
   ScannerHelpSheet           Scanner help button
   GroupSwitcherSheet         Group detail title
   FeedFilterSheet            Group detail filter button
   WidgetsHowToSheet          Profile > Widgets > "How to add?"
   FoodPickerSheet            Log reaction > choose a food from history
-  StreakSheet                Insights > Day streak card
   ConfirmDialog              logout, delete account, delete scan, leave group,
                              remove family member, discard changes, block user
   Toast                      save, delete, undo, join, share, send
@@ -55,11 +58,15 @@ Reactions
   /reactions/new             app/reactions/new.tsx             Log reaction; ?scanId=
   /reactions/[id]            app/reactions/[id].tsx            Reaction detail
 
-Insights extras
-  /badges                    app/badges/index.tsx              Badges
+Tracking (Phase 3)
+  /milestones                app/milestones/index.tsx          Day streak, badges earned, the 30-badge grid (streak pill, Insights tiles)
+  /badges                    app/badges/index.tsx              redirects to /milestones
   /badges/[id]               app/badges/[id].tsx               Badge detail
-  /action-plan               app/action-plan/index.tsx         Allergy action plan photos
-  /action-plan/[id]          app/action-plan/[id].tsx          Full screen photo viewer
+  /exercise/new              app/exercise/new.tsx              Log exercise (plus menu)
+  /weight                    app/weight/index.tsx              Weight History with Log Weight
+  /progress-photos           app/progress-photos/index.tsx     Progress photos grid
+  /progress-photos/[id]      app/progress-photos/[id].tsx      Full screen photo viewer
+  /progress-photos/privacy   app/progress-photos/privacy.tsx   "Your Photos, Your Privacy" notice (modal), then the picker
 
 Groups
   /groups/[id]               app/groups/[id]/index.tsx         Group detail feed
@@ -79,17 +86,20 @@ Notifications
   /notifications/settings    app/notifications/settings.tsx
 
 Profile and settings
-  /settings/name             app/settings/name.tsx             Edit name and username
-  /settings/personal         app/settings/personal.tsx         Personal details
-  /settings/preferences      app/settings/preferences.tsx
-  /settings/language         app/settings/language.tsx
-  /settings/family-plan      app/settings/family-plan.tsx      upgrade placeholder (approved by the brief)
-  /settings/invite           app/settings/invite.tsx           Invite friends
+  /settings/name             app/settings/name.tsx             Confirm your name (first and last)
+  /settings/personal         app/settings/personal.tsx         Personal Details: goal weight, current weight, height, birth date, gender, step goal
+  /settings/preferences      app/settings/preferences.tsx      Appearance tiles and tracking toggles
+  /settings/language         app/settings/language.tsx         (Profile opens the LanguageSheet instead; route kept for links)
+  /settings/family-plan      app/settings/family-plan.tsx      Family Plan page (upgrade placeholder approved by the brief)
+  /settings/invite           app/settings/invite.tsx           Refer your friend
+  /settings/apple-health     app/settings/apple-health.tsx     Sync to Apple Health (Connect / Disconnect)
+  /settings/nutrition-goals  app/settings/nutrition-goals.tsx  Edit nutrition goals, Auto Generate Goals
+  /settings/ring-colors      app/settings/ring-colors.tsx      Ring Colors Explained
   /settings/restrictions     app/settings/restrictions.tsx     My allergens and ingredients
   /settings/caution          app/settings/caution.tsx          Caution level
   /settings/diet             app/settings/diet.tsx             Diet
   /settings/survey           app/settings/survey.tsx           Other onboarding answers (frequency, watch for, reasons, challenges, goal)
-  /settings/reminders        app/settings/reminders.tsx        Scan reminders
+  /settings/reminders        app/settings/reminders.tsx        Tracking Reminders (breakfast, lunch, snack, dinner, end of day)
   /settings/verdict-colors   app/settings/verdict-colors.tsx   Verdict colors explained
   /settings/allergy-card     app/settings/allergy-card.tsx     Allergy card (share, language, full screen)
   /settings/request-feature  app/settings/request-feature.tsx
@@ -100,6 +110,7 @@ Profile and settings
   /legal/privacy             app/legal/[doc].tsx               Privacy policy (Phase 1)
 
 Auth (Phase 1 plus additions)
+  /(auth)/sign-in            app/(auth)/sign-in.tsx            Sign in for returning users (Welcome > "Already have an account?")
   /(auth)/email              app/(auth)/email.tsx
   /(auth)/verify             app/(auth)/verify.tsx
   /(auth)/session-expired    app/(auth)/session-expired.tsx    returns the user to sign in

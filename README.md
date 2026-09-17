@@ -142,3 +142,27 @@ tokens. Start with these documents:
 
 Connect the phone with USB debugging on and run `npx expo run:android --device`.
 Phase 2 has not yet been run on Android (deferred); the flows are the same.
+
+## Phase 3: calories, weight, Apple Health and milestones
+
+On 2026-09-17 the product owner asked for an exact copy of the reference
+screens, including the calorie budget, weight goals, BMI, Apple Health and the
+milestone badges that Phase 2 had translated away. The walkthrough video is
+in `docs/design/reference/cal-ai/walkthrough.mp4` and is indexed frame by
+frame in `docs/design/SCREENSHOT_INVENTORY.md`.
+
+- Home is the three-page dashboard (calories and macros; fiber, sugar,
+  sodium and health score; Apple Health, burn, steps and water) over the
+  streak calendar and the recently uploaded foods.
+- The streak pill opens Milestones with the 30 badges.
+- Insights holds weight, BMI, daily calories and weekly energy.
+- Profile follows the reference sections and every settings sub-screen from
+  the video; the allergy rows live in their own "Allergies & diet" section.
+- The tracking maths lives in `src/features/tracking/nutrition.ts` (tested);
+  Apple Health, workouts, water and weights sit behind `ActivityService` and
+  `WeightService` (`src/services/types.ts`), mocked until the backend and the
+  HealthKit module arrive.
+
+Useful deep links: `allergyapp://milestones`, `allergyapp://weight`,
+`allergyapp://exercise/new`, `allergyapp://settings/nutrition-goals`,
+`allergyapp://settings/apple-health`, `allergyapp://sign-in`.

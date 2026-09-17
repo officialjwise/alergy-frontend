@@ -108,3 +108,37 @@ without Metro and opens Insights, Groups and a scan result through deep links.
 - Widgets are previews only.
 - Sync, reports, feature requests, notifications and groups are mocked and
   kept on the device.
+
+# Phase 3 pass (milestones 12 to 15, 2026-09-17)
+
+Same set-up as above: iPhone 14 Pro Max simulator driven with deep links and
+synthetic taps, iPhone SE (3rd generation) with the Pro Max state copied over.
+
+## What was checked
+
+| Area | Result |
+| --- | --- |
+| Home (`set-b/01.jpeg`, video 0:03-0:12) | Streak pill, ring calendar, "140 /2773 Calories eaten" card with the eaten/left toggle, macro cards, page dots and the Recently uploaded rows with calories and macro grams. Swiping the macro cards moves the whole block; page 2 shows fiber, sugar, sodium and Health Score 7/10; page 3 shows Connect Apple Health, calories burned, steps and Water. |
+| Workouts sheet (`set-b/0.jpeg`) | Opens on the first visit to page 3 and from Connect: Morning Run +320, Yoga +90, Steps +80, "Added to today's budget +490 cal", "Daily Calorie Budget 2,773 → 3,263", Connect Apple Health, Not now. Connecting fills in 490 cal burned and 12,430 steps and the budget becomes 3263. |
+| Log Water, Log exercise | Cup stepper saves the day's total; the exercise form estimates calories from the workout, minutes, intensity and weight and adds them to the budget. |
+| Milestones (video 0:12-0:16) | Flame with the streak, badge hexagon with the count, longest streak and x/30 pills, 30 badges in three columns; earned ones coloured, locked ones grey. |
+| Insights (`set-b/03`, `016`, `017`, `018`, `04`) | Day Streak and Badges Earned tiles, Current Weight 120 lbs with Log weight and "At your goal by June 24, 2027", Weight Progress axis 116-124 with the flat line, range chips, Weight Changes rows, Progress Photos, Daily Average Calories with macro-coloured bars and week chips, Weekly Energy with grouped bars, Expenditure Changes pending rows, Your BMI 19.4 Healthy on the four-band scale. |
+| Weight History, photo privacy | Last weigh-in, history rows, Log Weight sheet; the dark "Your Photos, Your Privacy" notice with Continue. |
+| Profile (`set-b/07`, `08`, `012`, `013`, video 0:52-2:00) | Header card, Refer a friend row, Account, Goals & Tracking (six rows), Allergies & diet, widget previews, Support & Legal, Follow Us, Account Actions. |
+| Settings sub-screens | Confirm your name, Refer your friend (avatars, code, Share, How to earn), Personal Details (Goal Weight with Change Goal, five editable rows), Preferences (appearance tiles and six toggles), Family Plan, Edit nutrition goals (rings, fields, micronutrients fold, Auto Generate Goals), Tracking Reminders (four meals plus End of Day with time pills), Sync to Apple Health, Ring Colors Explained. |
+| Sign in | New Sign in screen from Welcome ("Already have an account? Sign in") with Apple, Google and email; Save your profile restyled to match. |
+| iPhone SE | Home, Insights, Milestones and Profile fit at 375pt; three cards per row still readable. |
+| Checks | `npx tsc --noEmit` clean, `npm run lint` clean, 50 Jest tests pass (14 new for the nutrition maths). |
+
+## Known limitations added in Phase 3
+
+- Apple Health is a mock: "Connect" flips a stored flag and returns sample
+  workouts and steps. The HealthKit module and entitlement are a native
+  follow-up.
+- Appearance stores System / Light / Dark but the palette is light-only.
+- The referral code, reward copy and Family Plan price are configuration
+  values; sharing the code uses the system share sheet (no clipboard module).
+- "Time Traveler" and the invite badges cannot progress until logging for a
+  past day and referrals are tracked by a backend.
+- The Release simulator build was not repeated for Phase 3; the Debug build
+  was verified on both simulators.
