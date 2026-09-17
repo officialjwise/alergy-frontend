@@ -1,7 +1,9 @@
 # Missing screens, taps and states
 
 Built from every screen in the onboarding PDF, both screenshot sets and the
-Phase 2 brief. Part 1 lists where every tap goes. Part 2 lists the screens
+Phase 2 brief. **Status (milestone 10):** every screen and state listed below is
+built. The only placeholders are the two the brief approved: the Family plan
+upgrade screen and the app update required screen. Part 1 lists where every tap goes. Part 2 lists the screens
 that none of the sources show but the taps need. Part 3 lists the states each
 screen must handle. Everything here is built; nothing stays a placeholder
 without approval (the two placeholders the brief itself allows are marked).

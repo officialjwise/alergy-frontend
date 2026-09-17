@@ -219,6 +219,8 @@ export interface AuthSession {
   user: AuthUser;
   token: string;
   createdAt: string;
+  /** ISO time after which the session must be renewed. */
+  expiresAt?: string;
 }
 
 export type LanguageCode = 'en' | 'zh' | 'hi' | 'es' | 'fr' | 'de' | 'ru' | 'pt';

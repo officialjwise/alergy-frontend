@@ -20,7 +20,7 @@ const RESEND_SECONDS = 30;
 export default function VerifyScreen() {
   const { t } = useTranslation();
   const router = useRouter();
-  const { email } = useLocalSearchParams<{ email: string }>();
+  const { email, next } = useLocalSearchParams<{ email: string; next?: string }>();
   const [code, setCode] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [seconds, setSeconds] = useState(RESEND_SECONDS);
@@ -44,14 +44,14 @@ export default function VerifyScreen() {
         await verify.mutateAsync({ email, code: value });
         if (profiles.length === 0)
           addProfile(buildProfileFromAnswers(answers, 0, t('profile.for_myself')), true);
-        router.replace('/(onboarding)/notifications' as Href);
+        router.replace((next === 'home' ? '/(tabs)/home' : '/(onboarding)/notifications') as Href);
       } catch (caught) {
         const key = authErrorKey(caught);
         setError(key ? t(key) : null);
         setCode('');
       }
     },
-    [addProfile, answers, email, profiles.length, router, t, verify],
+    [addProfile, answers, email, profiles.length, router, t, verify, next],
   );
 
   const onChange = (value: string) => {

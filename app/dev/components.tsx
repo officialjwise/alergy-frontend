@@ -47,6 +47,7 @@ import { VerdictCard } from '@/components/app/VerdictCard';
 import { queryClient } from '@/services/queryClient';
 import { INGREDIENTS } from '@/mocks/ingredients';
 import { getServices, mockConfig } from '@/services';
+import { useAppStore } from '@/store/appStore';
 import { useDevStore } from '@/store/devStore';
 import { useProfileStore } from '@/store/profileStore';
 import { colors, spacing, type ColorToken } from '@/theme/tokens';
@@ -94,6 +95,8 @@ export default function ComponentsGallery() {
   const showGuides = useDevStore((state) => state.showGuides);
   const setShowGuides = useDevStore((state) => state.setShowGuides);
   const mockDataset = useDevStore((state) => state.mockDataset);
+  const forceUpdateRequired = useDevStore((state) => state.forceUpdateRequired);
+  const setForceUpdateRequired = useDevStore((state) => state.setForceUpdateRequired);
   const [unreadableNext, setUnreadableNext] = useState(mockConfig.unreadableNext);
   const setMockDataset = useDevStore((state) => state.setMockDataset);
 
@@ -151,6 +154,26 @@ export default function ComponentsGallery() {
               }}
             />
           </SettingsSection>
+          <SettingsRow
+            label="Update required on next launch"
+            description="Preview the forced update screen (relaunch the app)"
+            icon="download"
+            toggle={{ value: forceUpdateRequired, onChange: setForceUpdateRequired }}
+          />
+          <Button
+            title="Expire the session"
+            size="md"
+            variant="secondary"
+            onPress={() => {
+              const { session, setSession } = useAppStore.getState();
+              if (!session) {
+                showToast({ message: 'No session to expire (sign in first)' });
+                return;
+              }
+              setSession({ ...session, expiresAt: new Date(Date.now() - 1000).toISOString() });
+              showToast({ message: 'Session expired: relaunch the app' });
+            }}
+          />
           <Button
             title="Sample restrictions: peanuts + milk"
             size="md"

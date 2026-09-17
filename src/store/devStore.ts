@@ -10,6 +10,9 @@ export interface DevState {
   /** Draws the page padding guides over every screen. */
   showGuides: boolean;
   mockDataset: MockDataset;
+  /** Sends the app to the update-required screen on next launch (preview only). */
+  forceUpdateRequired: boolean;
+  setForceUpdateRequired: (value: boolean) => void;
   setShowGuides: (value: boolean) => void;
   setMockDataset: (dataset: MockDataset) => void;
 }
@@ -23,6 +26,8 @@ export const useDevStore = create<DevState>()(
     (set) => ({
       showGuides: false,
       mockDataset: 'active',
+      forceUpdateRequired: false,
+      setForceUpdateRequired: (value) => set({ forceUpdateRequired: value }),
       setShowGuides: (value) => set({ showGuides: value }),
       setMockDataset: (dataset) => set({ mockDataset: dataset }),
     }),
