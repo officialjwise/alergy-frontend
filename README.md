@@ -111,3 +111,34 @@ No component imports a mock or an API URL directly.
 
 Open `allergyapp://dev/components` (or tap the app version in Settings five times) to see every UI
 component in every state.
+
+## Phase 2: main app
+
+The main app (Home, Insights, Groups, Profile, scanner, results, foods,
+reactions, badges, groups, settings, notifications) follows the Cal AI
+reference captures in `docs/design/reference/cal-ai`, re-drawn with our own
+tokens. Start with these documents:
+
+- `docs/design/SCREENSHOT_INVENTORY.md` maps every reference image to a route.
+- `docs/NAVIGATION.md` lists every route and how it is presented.
+- `docs/USER_FLOWS.md` has a Mermaid diagram per journey.
+- `docs/MISSING_SCREENS.md` lists every tap, screen and state.
+- `docs/QA.md` records the milestone 11 pass and known limitations.
+
+### Testing on the iOS simulator
+
+1. `npx expo start --dev-client` and open the app on the simulator.
+2. Open any screen directly with its deep link, for example
+   `xcrun simctl openurl booted "allergyapp://(tabs)/insights"` or
+   `allergyapp://scan?mode=label`, `allergyapp://saved`, `allergyapp://compare`.
+3. Hidden gallery: `allergyapp://dev/components` (or tap the version line on
+   Profile five times). Switches there: padding guides, new-user versus
+   active-user mock data, next photo unreadable, sample restrictions (peanuts
+   and milk), session expiry and forced update.
+4. Verdict states: with the sample restrictions applied, Home shows red and
+   amber days; open a flagged scan for the Not safe and Caution results.
+
+### Testing on an Android phone
+
+Connect the phone with USB debugging on and run `npx expo run:android --device`.
+Phase 2 has not yet been run on Android (deferred); the flows are the same.
