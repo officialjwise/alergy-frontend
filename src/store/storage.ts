@@ -27,6 +27,10 @@ export const storageKeys = {
   actionPlan: 'action-plan-v1',
   groups: 'groups-v1',
   notifications: 'notifications-v1',
+  weights: 'weights-v1',
+  workouts: 'workouts-v1',
+  water: 'water-v1',
+  health: 'health-v1',
 } as const;
 
 export function clearAllStorage(): void {

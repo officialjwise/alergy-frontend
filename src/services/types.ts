@@ -1,6 +1,21 @@
 import type {
   ActionPlanPhoto,
   AppNotification,
+  DailyActivity,
+  DailyCalories,
+  DayNutrition,
+  ExpenditureRow,
+  HealthConnection,
+  HomeDashboard,
+  TrackingOverview,
+  WaterDay,
+  WeeklyEnergy,
+  WeightChangeRow,
+  WeightEntry,
+  WeightEntryInput,
+  WeightPoint,
+  Workout,
+  WorkoutInput,
   AuthSession,
   Badge,
   DailyScans,
@@ -118,6 +133,39 @@ export interface InsightsService {
   dailyScans(profileId: string, weekOffset: number): Promise<DailyScans>;
   weeklyOverview(profileId: string, weekOffset: number): Promise<WeeklyOverview>;
   topFlagged(profileId: string): Promise<TopFlagged>;
+  // Nutrition tracking (Phase 3)
+  /** Calories, macros, burn and ring colour for one day, plus streaks, water and activity. */
+  homeDashboard(profileId: string, date: string): Promise<HomeDashboard>;
+  /** One entry per day from `fromDate` to `toDate` inclusive (YYYY-MM-DD), oldest first. */
+  dayNutrition(profileId: string, fromDate: string, toDate: string): Promise<DayNutrition[]>;
+  trackingOverview(profileId: string): Promise<TrackingOverview>;
+  /** Logged weights over the range, oldest first (the chart). */
+  weightSeries(profileId: string, range: InsightsRange): Promise<WeightPoint[]>;
+  weightChanges(profileId: string): Promise<WeightChangeRow[]>;
+  /** Sunday-to-Saturday week; `weekOffset` 0 is this week, 1 last week. */
+  dailyCalories(profileId: string, weekOffset: number): Promise<DailyCalories>;
+  weeklyEnergy(profileId: string, weekOffset: number): Promise<WeeklyEnergy>;
+  expenditureChanges(profileId: string): Promise<ExpenditureRow[]>;
+}
+
+export interface WeightService {
+  list(profileId: string): Promise<WeightEntry[]>;
+  add(input: WeightEntryInput): Promise<WeightEntry>;
+  remove(id: string): Promise<void>;
+}
+
+/** Steps, workouts and water. Apple Health is the source once connected; workouts can also be logged by hand. */
+export interface ActivityService {
+  health(): Promise<HealthConnection>;
+  connectHealth(): Promise<HealthConnection>;
+  disconnectHealth(): Promise<HealthConnection>;
+  activity(profileId: string, date: string): Promise<DailyActivity>;
+  workouts(profileId: string): Promise<Workout[]>;
+  logWorkout(input: WorkoutInput): Promise<Workout>;
+  removeWorkout(id: string): Promise<void>;
+  water(profileId: string, date: string): Promise<WaterDay>;
+  /** Sets the total for the day (not an increment). */
+  logWater(profileId: string, date: string, ounces: number): Promise<WaterDay>;
 }
 
 export interface ReactionService {
@@ -176,6 +224,8 @@ export interface Services {
   actionPlan: ActionPlanService;
   groups: GroupService;
   notifications: NotificationService;
+  weight: WeightService;
+  activity: ActivityService;
 }
 
 export class ServiceError extends Error {

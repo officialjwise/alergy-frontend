@@ -106,6 +106,10 @@ export interface UserProfile {
   rememberFoods: boolean;
   /** Colour token used for the avatar initial. */
   color: string;
+  /** Height, weights and step goal (Personal Details). Missing on profiles created before Phase 3. */
+  body?: BodyMetrics;
+  /** Daily nutrition goals (Edit Nutrition Goals). Defaults apply until set. */
+  nutritionGoals?: NutritionGoals;
   createdAt: string;
   updatedAt: string;
 }
@@ -144,6 +148,11 @@ export interface Product {
   ingredientsText: string;
   allergenStatement?: string;
   mayContain: string[];
+  /** Per serving; missing for products the catalogue has no facts for. */
+  nutrition?: Nutrition;
+  /** 1 (heavily processed) to 10 (whole food); feeds the daily health score. */
+  healthScore?: number;
+  servingLabel?: string;
 }
 
 export type ScanSource = 'camera' | 'barcode' | 'gallery' | 'manual';
@@ -432,4 +441,186 @@ export interface AppNotification {
   read: boolean;
   /** Route to open (deep link ready), e.g. "/product/p-rice-cakes". */
   target?: string;
+}
+
+// Nutrition tracking (Phase 3: calories, macros, weight, activity)
+export interface Nutrition {
+  calories: number;
+  /** grams */
+  protein: number;
+  carbs: number;
+  fat: number;
+  fiber: number;
+  sugar: number;
+  /** milligrams */
+  sodium: number;
+}
+
+/** Daily targets, same shape as what was eaten. */
+export type NutritionGoals = Nutrition;
+
+export type Gender = 'male' | 'female' | 'other';
+
+export interface BodyMetrics {
+  currentWeightLbs: number | null;
+  goalWeightLbs: number | null;
+  heightInches: number | null;
+  gender: Gender | null;
+  dailyStepGoal: number;
+}
+
+/** Ring colour on the home calendar ("Ring Colors Explained"). */
+export type RingStatus = 'none' | 'green' | 'yellow' | 'red';
+
+/** Everything logged and burned on one local day (YYYY-MM-DD). */
+export interface DayNutrition {
+  date: string;
+  eaten: Nutrition;
+  goals: NutritionGoals;
+  /** Calorie goal plus burned calories when "add burned calories" is on. */
+  budget: number;
+  /** Calories burned by workouts and steps (only when Apple Health is connected or logged by hand). */
+  burned: number;
+  steps: number;
+  mealsLogged: number;
+  status: RingStatus;
+  healthScore: number | null;
+}
+
+export type WorkoutKind = 'run' | 'walk' | 'cycle' | 'strength' | 'yoga' | 'swim' | 'hiit' | 'other';
+
+export type WorkoutSource = 'apple_health' | 'manual';
+
+export interface Workout {
+  id: string;
+  profileId: string;
+  kind: WorkoutKind;
+  name: string;
+  minutes: number;
+  calories: number;
+  source: WorkoutSource;
+  loggedAt: string;
+}
+
+export type WorkoutInput = Omit<Workout, 'id' | 'source' | 'loggedAt'> & { loggedAt?: string };
+
+export interface DailyActivity {
+  date: string;
+  steps: number;
+  stepCalories: number;
+  workouts: Workout[];
+  /** Workout calories plus step calories. */
+  caloriesBurned: number;
+}
+
+export interface HealthConnection {
+  connected: boolean;
+  connectedAt: string | null;
+}
+
+export interface WaterDay {
+  date: string;
+  ounces: number;
+}
+
+/** Everything the Home dashboard shows for one selected day. */
+export interface HomeDashboard {
+  day: DayNutrition;
+  /** Consecutive days with at least one logged food, ending today or yesterday. */
+  streak: number;
+  longestStreak: number;
+  water: WaterDay;
+  activity: DailyActivity;
+  health: HealthConnection;
+}
+
+export interface WeightEntry {
+  id: string;
+  profileId: string;
+  weightLbs: number;
+  loggedAt: string;
+  photoUri?: string;
+}
+
+export interface WeightEntryInput {
+  profileId: string;
+  weightLbs: number;
+  loggedAt?: string;
+  photoUri?: string;
+}
+
+export interface WeightGoalProgress {
+  startLbs: number;
+  currentLbs: number;
+  goalLbs: number | null;
+  /** 0..1 of the way from start to goal (0 without a goal). */
+  percent: number;
+  /** YYYY-MM-DD the goal is reached at about a pound a week, null without a goal. */
+  goalDate: string | null;
+}
+
+export interface WeightPoint {
+  date: string;
+  weightLbs: number;
+}
+
+export interface WeightChangeRow {
+  window: ScanWindow;
+  /** Pounds gained (positive) or lost since the start of the window; null until ready. */
+  changeLbs: number | null;
+  trend: 'up' | 'down' | 'same' | 'pending';
+  /** Weights inside the window, oldest first, for the mini chart. */
+  series: number[];
+  ready: boolean;
+}
+
+export interface DailyCaloriesDay {
+  date: string;
+  calories: number;
+  /** Calories from each macro, for the stacked bars. */
+  protein: number;
+  carbs: number;
+  fat: number;
+}
+
+export interface DailyCalories {
+  weekStart: string;
+  days: DailyCaloriesDay[];
+  /** Average over the days that have logs. */
+  average: number;
+  hasData: boolean;
+}
+
+export interface WeeklyEnergy {
+  weekStart: string;
+  burned: number;
+  consumed: number;
+  days: { date: string; burned: number; consumed: number }[];
+}
+
+export interface ExpenditureRow {
+  window: ScanWindow;
+  /** Average daily burn over the window; null until enough activity data exists. */
+  burned: number | null;
+  trend: 'up' | 'down' | 'same' | 'pending';
+  ready: boolean;
+}
+
+export type BmiCategory = 'underweight' | 'healthy' | 'overweight' | 'obese';
+
+export interface BmiResult {
+  value: number | null;
+  category: BmiCategory | null;
+}
+
+/** Top of Insights: streak, badges, weight goal and BMI. */
+export interface TrackingOverview {
+  streak: number;
+  longestStreak: number;
+  badgesEarned: number;
+  badgesTotal: number;
+  mealsLogged: number;
+  daysWithLogs: number;
+  weight: WeightGoalProgress | null;
+  bmi: BmiResult;
 }

@@ -1,4 +1,5 @@
 import { mockActionPlanService } from './actionPlanService';
+import { mockActivityService } from './activityService';
 import { mockAuthService } from './authService';
 import { mockBadgeService } from './badgeService';
 import { mockGroupService } from './groupService';
@@ -9,6 +10,7 @@ import { mockNotificationService } from './notificationService';
 import { mockProfileService } from './profileService';
 import { mockReactionService } from './reactionService';
 import { mockScanService } from './scanService';
+import { mockWeightService } from './weightService';
 import type { Services } from '../types';
 
 export const mockServices: Services = {
@@ -23,4 +25,6 @@ export const mockServices: Services = {
   actionPlan: mockActionPlanService,
   groups: mockGroupService,
   notifications: mockNotificationService,
+  weight: mockWeightService,
+  activity: mockActivityService,
 };

@@ -13,6 +13,9 @@ export const PRODUCTS: readonly Product[] = [
       'Whole grain oats, peanuts, honey, brown rice syrup, sunflower oil, peanut butter (peanuts, salt), sea salt, natural flavor.',
     allergenStatement: 'Contains peanuts. May contain tree nuts and milk.',
     mayContain: ['tree nuts', 'milk'],
+    servingLabel: '(1 bar, 40 g)',
+    nutrition: { calories: 190, protein: 5, carbs: 26, fat: 8, fiber: 3, sugar: 11, sodium: 105 },
+    healthScore: 5,
   },
   {
     id: 'p-oat-milk',
@@ -25,6 +28,9 @@ export const PRODUCTS: readonly Product[] = [
       'Water, oats (10%), rapeseed oil, calcium carbonate, dipotassium phosphate, sea salt, vitamins D2 and B12.',
     allergenStatement: 'Contains oats. Produced in a facility that also handles milk.',
     mayContain: [],
+    servingLabel: '(1 cup, 240 ml)',
+    nutrition: { calories: 120, protein: 3, carbs: 16, fat: 5, fiber: 2, sugar: 7, sodium: 100 },
+    healthScore: 7,
   },
   {
     id: 'p-gummy-bears',
@@ -36,6 +42,9 @@ export const PRODUCTS: readonly Product[] = [
     ingredientsText:
       'Glucose syrup, sugar, gelatin, dextrose, citric acid, fruit juice concentrates (apple, strawberry), colors (E100, E120, E160a), carnauba wax.',
     mayContain: [],
+    servingLabel: '(15 pieces)',
+    nutrition: { calories: 140, protein: 3, carbs: 32, fat: 0, fiber: 0, sugar: 21, sodium: 15 },
+    healthScore: 2,
   },
   {
     id: 'p-dark-chocolate',
@@ -47,6 +56,9 @@ export const PRODUCTS: readonly Product[] = [
     ingredientsText: 'Cocoa mass, sugar, cocoa butter, emulsifier (soy lecithin), natural vanilla.',
     allergenStatement: 'Contains soy. May contain milk, peanuts and tree nuts.',
     mayContain: ['milk', 'peanuts', 'tree nuts'],
+    servingLabel: '(3 squares, 30 g)',
+    nutrition: { calories: 170, protein: 2, carbs: 13, fat: 12, fiber: 3, sugar: 9, sodium: 5 },
+    healthScore: 6,
   },
   {
     id: 'p-hummus',
@@ -59,6 +71,9 @@ export const PRODUCTS: readonly Product[] = [
       'Cooked chickpeas, water, tahini (sesame), rapeseed oil, lemon juice, garlic, salt, cumin.',
     allergenStatement: 'Contains sesame.',
     mayContain: [],
+    servingLabel: '(2 tbsp, 30 g)',
+    nutrition: { calories: 70, protein: 2, carbs: 4, fat: 5, fiber: 1, sugar: 0, sodium: 130 },
+    healthScore: 8,
   },
   {
     id: 'p-soy-sauce',
@@ -70,6 +85,9 @@ export const PRODUCTS: readonly Product[] = [
     ingredientsText: 'Water, soybeans, wheat, salt, alcohol (from fermentation).',
     allergenStatement: 'Contains soy and wheat.',
     mayContain: [],
+    servingLabel: '(1 tbsp, 15 ml)',
+    nutrition: { calories: 10, protein: 1, carbs: 1, fat: 0, fiber: 0, sugar: 0, sodium: 920 },
+    healthScore: 5,
   },
   {
     id: 'p-rice-cakes',
@@ -80,6 +98,9 @@ export const PRODUCTS: readonly Product[] = [
     blurhash: 'LKP%O.WB~qxu%MRjRjof?bof9Ft7',
     ingredientsText: 'Wholegrain brown rice, sea salt.',
     mayContain: [],
+    servingLabel: '(2 cakes, 18 g)',
+    nutrition: { calories: 70, protein: 1, carbs: 15, fat: 0, fiber: 1, sugar: 0, sodium: 45 },
+    healthScore: 6,
   },
   {
     id: 'p-almond-butter',
@@ -92,6 +113,9 @@ export const PRODUCTS: readonly Product[] = [
     allergenStatement:
       'Contains almonds (tree nuts). Packed on equipment that also handles peanuts.',
     mayContain: ['peanuts'],
+    servingLabel: '(2 tbsp, 32 g)',
+    nutrition: { calories: 190, protein: 7, carbs: 6, fat: 17, fiber: 3, sugar: 1, sodium: 0 },
+    healthScore: 8,
   },
   {
     id: 'p-veggie-burger',
@@ -104,6 +128,9 @@ export const PRODUCTS: readonly Product[] = [
       'Water, textured soy protein, wheat gluten, sunflower oil, onion, carrot, methylcellulose, salt, yeast extract, spices, garlic powder.',
     allergenStatement: 'Contains soy and wheat. May contain celery and mustard.',
     mayContain: ['celery', 'mustard'],
+    servingLabel: '(1 patty, 85 g)',
+    nutrition: { calories: 150, protein: 14, carbs: 9, fat: 6, fiber: 4, sugar: 1, sodium: 400 },
+    healthScore: 6,
   },
   {
     id: 'p-greek-yogurt',
@@ -115,6 +142,9 @@ export const PRODUCTS: readonly Product[] = [
     ingredientsText: 'Pasteurized milk, live cultures (L. bulgaricus, S. thermophilus).',
     allergenStatement: 'Contains milk.',
     mayContain: [],
+    servingLabel: '(3/4 cup, 170 g)',
+    nutrition: { calories: 100, protein: 17, carbs: 6, fat: 0, fiber: 0, sugar: 5, sodium: 60 },
+    healthScore: 8,
   },
   {
     id: 'p-sourdough',
@@ -127,6 +157,9 @@ export const PRODUCTS: readonly Product[] = [
     allergenStatement:
       'Contains wheat and rye (gluten). Baked in a bakery that uses sesame and nuts.',
     mayContain: ['sesame', 'tree nuts'],
+    servingLabel: '(1 slice, 50 g)',
+    nutrition: { calories: 130, protein: 4, carbs: 26, fat: 1, fiber: 1, sugar: 1, sodium: 260 },
+    healthScore: 7,
   },
   {
     id: 'p-chicken-broth',
@@ -139,6 +172,9 @@ export const PRODUCTS: readonly Product[] = [
       'Chicken stock (water, chicken bones), carrots, onions, celery, sea salt, black pepper, bay leaf, natural flavor.',
     allergenStatement: 'Contains celery.',
     mayContain: [],
+    servingLabel: '(1 cup, 240 ml)',
+    nutrition: { calories: 15, protein: 2, carbs: 1, fat: 0, fiber: 0, sugar: 0, sodium: 570 },
+    healthScore: 7,
   },
   {
     id: 'p-coconut-curry',
@@ -151,6 +187,9 @@ export const PRODUCTS: readonly Product[] = [
       'Coconut milk, water, red curry paste (chili, garlic, lemongrass, shrimp paste, galangal), fish sauce (anchovy, salt), sugar, lime leaves.',
     allergenStatement: 'Contains crustaceans (shrimp) and fish.',
     mayContain: [],
+    servingLabel: '(1/4 cup, 60 g)',
+    nutrition: { calories: 90, protein: 1, carbs: 5, fat: 8, fiber: 1, sugar: 3, sodium: 480 },
+    healthScore: 5,
   },
   {
     id: 'p-protein-bar',
@@ -163,6 +202,9 @@ export const PRODUCTS: readonly Product[] = [
       'Protein blend (milk protein isolate, whey protein concentrate), soluble corn fiber, almonds, cocoa, natural flavors, sucralose, sea salt.',
     allergenStatement: 'Contains milk, almonds and soy.',
     mayContain: ['peanuts'],
+    servingLabel: '(1 bar, 60 g)',
+    nutrition: { calories: 210, protein: 20, carbs: 22, fat: 7, fiber: 8, sugar: 2, sodium: 180 },
+    healthScore: 4,
   },
   {
     id: 'p-mystery-label',
@@ -173,6 +215,9 @@ export const PRODUCTS: readonly Product[] = [
     blurhash: 'LKO2?U%2Tw=w]~RBVZRi};RPxuwH',
     ingredientsText: 'Flour, sugar, vegetable fat, ...',
     mayContain: [],
+    servingLabel: '(2 biscuits)',
+    nutrition: { calories: 120, protein: 1, carbs: 16, fat: 6, fiber: 0, sugar: 8, sodium: 90 },
+    healthScore: 3,
   },
 ] as const;
 
