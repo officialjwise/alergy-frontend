@@ -2,11 +2,11 @@ import { memo, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, StyleSheet, View, useWindowDimensions } from 'react-native';
 
-import { useDaySummaries } from '../useHome';
 import { PressableScale, Ring, Text } from '@/components/ui';
+import { useDayNutrition } from '@/features/tracking/useTracking';
 import { colors, layout, radii, shadows, type ColorToken } from '@/theme/tokens';
 import { rs } from '@/theme/responsive';
-import type { DaySummary } from '@/types';
+import type { DayNutrition, RingStatus } from '@/types';
 import { addDays, dayKey, fromDayKey } from '@/utils/date';
 
 const DAYS = 7;
@@ -15,21 +15,12 @@ const FUTURE_DAYS = 1;
 /** How many past weeks can be scrolled to. */
 const WEEKS_BACK = 12;
 
-export type DayStatus = 'none' | 'safe' | 'caution' | 'unsafe';
-
-/** Ring colour rule: red if anything unsafe, amber if anything caution or unsure, green otherwise. */
-export function dayStatus(day: DaySummary | undefined): DayStatus {
-  if (!day || day.total === 0) return 'none';
-  if (day.unsafe > 0) return 'unsafe';
-  if (day.caution > 0 || day.unknown > 0) return 'caution';
-  return 'safe';
-}
-
-export const STATUS_COLOR: Record<DayStatus, ColorToken> = {
+/** Ring colours from "Ring Colors Explained": green, yellow, red, and a dotted ring for no logs. */
+export const STATUS_COLOR: Record<RingStatus, ColorToken> = {
   none: 'ring',
-  safe: 'success',
-  caution: 'warning',
-  unsafe: 'danger',
+  green: 'success',
+  yellow: 'warning',
+  red: 'danger',
 };
 
 export interface WeekStripProps {
@@ -39,8 +30,9 @@ export interface WeekStripProps {
 }
 
 /**
- * Seven-day strip with a ring per day; swipe right to left to see past weeks.
- * Today sits in a white tile, future days are faded and not tappable.
+ * Seven-day streak calendar with a ring per day coloured by how close the day
+ * came to its calorie goal; swipe right to left to see past weeks. Today sits
+ * in a white tile, future days are faded and not tappable.
  */
 export function WeekStrip({ profileId, selectedDate, onSelectDate }: WeekStripProps) {
   const { width } = useWindowDimensions();
@@ -99,7 +91,7 @@ const WeekPage = memo(function WeekPage({
   }, [page, today]);
   const first = days[0]?.key ?? today;
   const last = days[DAYS - 1]?.key ?? today;
-  const summaries = useDaySummaries(profileId, first, last);
+  const summaries = useDayNutrition(profileId, first, last);
 
   return (
     <View style={[styles.page, { width }]}>
@@ -124,7 +116,7 @@ interface DayTileProps {
   dayKey: string;
   date: Date;
   locale: string;
-  summary: DaySummary | undefined;
+  summary: DayNutrition | undefined;
   isToday: boolean;
   isFuture: boolean;
   selected: boolean;
@@ -133,11 +125,11 @@ interface DayTileProps {
 
 function DayTile({ date, locale, summary, isToday, isFuture, selected, onPress }: DayTileProps) {
   const { t } = useTranslation();
-  const status = dayStatus(summary);
+  const status: RingStatus = summary?.status ?? 'none';
   const weekday = date.toLocaleDateString(locale, { weekday: 'short' });
   const label = t('home.dayA11y', {
     weekday: date.toLocaleDateString(locale, { weekday: 'long', month: 'long', day: 'numeric' }),
-    status: t(`home.dayStatus_${status}`, { count: summary?.total ?? 0 }),
+    status: t(`home.dayStatus_${status}`, { count: summary?.mealsLogged ?? 0 }),
   });
   return (
     <PressableScale

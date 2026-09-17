@@ -1,59 +1,80 @@
 import { useQueryClient } from '@tanstack/react-query';
-import * as Notifications from 'expo-notifications';
 import { useRouter } from 'expo-router';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RefreshControl, StyleSheet, View } from 'react-native';
 
 import { FeatureIntroSheet, type FeatureIntroRow } from '@/components/app/FeatureIntroSheet';
 import { ProfileSwitcherSheet } from '@/components/app/ProfileSwitcherSheet';
-import { ScanRow } from '@/components/app/ScanRow';
 import {
   ErrorState,
-  Icon,
   Screen,
   SectionHeader,
   showToast,
   Skeleton,
-  StatCard,
   useSheetRef,
+  type IconName,
 } from '@/components/ui';
+import { ActivityPage } from '@/features/home/components/ActivityPage';
+import { CaloriesCard, type NutrientMetric } from '@/features/home/components/CaloriesCard';
 import { EmptyRecentCard } from '@/features/home/components/EmptyRecentCard';
+import { FoodRow } from '@/features/home/components/FoodRow';
+import { HealthScoreCard } from '@/features/home/components/HealthScoreCard';
 import { HomeHeader } from '@/features/home/components/HomeHeader';
-import { StatPager, type StatPagerProps } from '@/features/home/components/StatPager';
+import { HomePager } from '@/features/home/components/HomePager';
+import { LogWaterSheet } from '@/features/home/components/LogWaterSheet';
+import { NutrientCard } from '@/features/home/components/NutrientCard';
 import { WeekStrip } from '@/features/home/components/WeekStrip';
-import { useHomeSummary, useRecentScans } from '@/features/home/useHome';
+import { useRecentScans } from '@/features/home/useHome';
+import { useConnectHealth, useHomeDashboard, useLogWater } from '@/features/tracking/useTracking';
 import { queryKeys } from '@/services/queryClient';
 import { useAppStore } from '@/store/appStore';
 import { selectActiveProfile, useProfileStore } from '@/store/profileStore';
-import { colors, radii, spacing } from '@/theme/tokens';
+import { colors, radii, spacing, type ColorToken } from '@/theme/tokens';
 import { rs } from '@/theme/responsive';
-import type { ScanResult } from '@/types';
+import type { Nutrition, ScanResult } from '@/types';
 import { dayKey, formatShortDate, fromDayKey } from '@/utils/date';
 
-type HeroMetric = 'count' | 'rate';
+type NutrientKey = keyof Nutrition;
 
-/** Home dashboard: week strip, hero metric, swipeable stat cards and the recently scanned list. */
+const MACROS: { key: NutrientKey; unit: string; color: ColorToken; icon: IconName }[] = [
+  { key: 'protein', unit: 'g', color: 'protein', icon: 'drumstick' },
+  { key: 'carbs', unit: 'g', color: 'carbs', icon: 'grain' },
+  { key: 'fat', unit: 'g', color: 'fat', icon: 'drop' },
+];
+
+const MICROS: { key: NutrientKey; unit: string; color: ColorToken; icon: IconName }[] = [
+  { key: 'fiber', unit: 'g', color: 'fiber', icon: 'fiberLeaf' },
+  { key: 'sugar', unit: 'g', color: 'sugar', icon: 'candy' },
+  { key: 'sodium', unit: 'mg', color: 'sodium', icon: 'salt' },
+];
+
+/**
+ * Home: streak calendar, the three-page dashboard (calories and macros;
+ * micronutrients and health score; Apple Health, burn, steps and water) and
+ * the recently uploaded foods.
+ */
 export default function HomeScreen() {
   const { t, i18n } = useTranslation();
   const router = useRouter();
   const queryClient = useQueryClient();
   const profile = useProfileStore(selectActiveProfile);
   const profileCount = useProfileStore((state) => state.profiles.length);
-  const featureIntroShown = useAppStore((state) => state.featureIntroShown);
-  const setFeatureIntroShown = useAppStore((state) => state.setFeatureIntroShown);
-  const setNotificationsEnabled = useAppStore((state) => state.setNotificationsEnabled);
+  const workoutsIntroShown = useAppStore((state) => state.workoutsIntroShown);
+  const setWorkoutsIntroShown = useAppStore((state) => state.setWorkoutsIntroShown);
 
   const today = dayKey(new Date());
   const [selectedDate, setSelectedDate] = useState(today);
-  const [metric, setMetric] = useState<HeroMetric>('count');
+  const [metric, setMetric] = useState<NutrientMetric>('eaten');
   const [refreshing, setRefreshing] = useState(false);
-  const [enablingAlerts, setEnablingAlerts] = useState(false);
   const switcherRef = useSheetRef();
   const introRef = useSheetRef();
+  const waterRef = useSheetRef();
 
-  const summary = useHomeSummary(profile?.id ?? null, selectedDate);
+  const dashboard = useHomeDashboard(profile?.id ?? null, selectedDate);
   const recent = useRecentScans(profile?.id ?? null, selectedDate);
+  const connect = useConnectHealth();
+  const logWater = useLogWater();
   const isToday = selectedDate === today;
 
   const refresh = useCallback(async () => {
@@ -62,6 +83,7 @@ export default function HomeScreen() {
       await Promise.all([
         queryClient.invalidateQueries({ queryKey: queryKeys.history.all }),
         queryClient.invalidateQueries({ queryKey: queryKeys.insights.all }),
+        queryClient.invalidateQueries({ queryKey: queryKeys.activity.all }),
       ]);
     } finally {
       setRefreshing(false);
@@ -75,160 +97,166 @@ export default function HomeScreen() {
   );
   const openScanner = useCallback(() => router.push('/scan'), [router]);
 
-  // Product alerts intro: once, the first time the dashboard sees a saved food.
-  const savedCount = summary.data?.savedCount ?? 0;
-  useEffect(() => {
-    if (featureIntroShown || savedCount === 0) return;
-    const timeout = setTimeout(() => introRef.current?.present(), 700);
-    return () => clearTimeout(timeout);
-  }, [featureIntroShown, introRef, savedCount]);
-
-  const introRows = useMemo<FeatureIntroRow[]>(() => {
-    const saved = (recent.data ?? []).filter((scan) => scan.saved).slice(0, 3);
-    const statuses: { key: string; color: FeatureIntroRow['statusColor'] }[] = [
-      { key: 'home.intro.statusChanged', color: 'warning' },
-      { key: 'home.intro.statusSafe', color: 'success' },
-      { key: 'home.intro.statusSafe', color: 'success' },
-    ];
-    return saved.map((scan, index) => {
-      const status = statuses[index] ?? statuses[1]!;
-      return {
-        icon: 'bookmark',
-        title: scan.product.name,
-        detail: scan.product.brand ?? t('home.intro.sampleDetail'),
-        status: t(status.key),
-        statusColor: status.color,
-      };
-    });
-  }, [recent.data, t]);
-
   const dismissIntro = useCallback(() => {
-    setFeatureIntroShown();
+    setWorkoutsIntroShown();
     introRef.current?.dismiss();
-  }, [introRef, setFeatureIntroShown]);
+  }, [introRef, setWorkoutsIntroShown]);
 
-  const enableAlerts = useCallback(async () => {
-    setEnablingAlerts(true);
+  const connectHealth = useCallback(async () => {
     try {
-      const result = await Notifications.requestPermissionsAsync();
-      setNotificationsEnabled(result.granted);
-      showToast({
-        message: result.granted ? t('home.intro.alertsOn') : t('home.intro.alertsDenied'),
-        icon: result.granted ? 'bell' : 'alert',
-      });
+      await connect.mutateAsync(true);
+      showToast({ message: t('appleHealth.connected'), icon: 'heart' });
     } catch {
-      setNotificationsEnabled(false);
-      showToast({ message: t('home.intro.alertsDenied'), icon: 'alert' });
+      showToast({ message: t('appleHealth.failed'), icon: 'alert' });
     } finally {
-      setEnablingAlerts(false);
       dismissIntro();
     }
-  }, [dismissIntro, setNotificationsEnabled, t]);
+  }, [connect, dismissIntro, t]);
 
-  const day = summary.data?.day;
-  const total = day?.total ?? 0;
-  const safeRate = summary.data?.safeRate ?? null;
-  const heroValue =
-    metric === 'count' ? total : safeRate === null ? '–' : `${Math.round(safeRate * 100)}%`;
-  const heroLabel =
-    metric === 'count'
-      ? isToday
-        ? t('home.foodsChecked')
-        : t('home.foodsCheckedDay')
-      : isToday
-        ? t('home.safeRate')
-        : t('home.safeRateDay');
+  const onPageChange = useCallback(
+    (index: number) => {
+      if (index === 2 && !workoutsIntroShown && !dashboard.data?.health.connected) {
+        setTimeout(() => introRef.current?.present(), 250);
+      }
+    },
+    [dashboard.data?.health.connected, introRef, workoutsIntroShown],
+  );
 
-  const share = (count: number) => (total ? count / total : 0);
-  const topFlagged = summary.data?.topFlagged ?? null;
-  const pages: StatPagerProps['pages'] = summary.data
+  const saveWater = useCallback(
+    async (ounces: number) => {
+      if (!profile) return;
+      try {
+        await logWater.mutateAsync({ profileId: profile.id, date: selectedDate, ounces });
+        waterRef.current?.dismiss();
+        showToast({ message: t('water.saved'), icon: 'cup' });
+      } catch {
+        showToast({ message: t('states.errorTitle'), icon: 'alert' });
+      }
+    },
+    [logWater, profile, selectedDate, t, waterRef],
+  );
+
+  const introRows = useMemo<FeatureIntroRow[]>(
+    () => [
+      {
+        icon: 'run',
+        title: t('workoutsIntro.run'),
+        detail: t('workoutsIntro.fromHealth', { minutes: 32 }),
+        status: '+320 cal',
+        statusColor: 'success',
+      },
+      {
+        icon: 'yoga',
+        title: t('workoutsIntro.yoga'),
+        detail: t('workoutsIntro.fromHealth', { minutes: 20 }),
+        status: '+90 cal',
+        statusColor: 'success',
+      },
+      {
+        icon: 'steps',
+        title: t('workoutsIntro.steps'),
+        detail: t('workoutsIntro.stepsToday', { count: 12430 }),
+        status: '+80 cal',
+        statusColor: 'success',
+      },
+    ],
+    [t],
+  );
+
+  const day = dashboard.data?.day;
+  const budget = day?.budget ?? 0;
+  const nutrientValue = (key: NutrientKey) => {
+    if (!day) return 0;
+    const eaten = day.eaten[key];
+    return metric === 'eaten' ? eaten : Math.max(0, day.goals[key] - eaten);
+  };
+  const nutrientLabel = (key: NutrientKey) =>
+    t(metric === 'eaten' ? 'home.nutrientEaten' : 'home.nutrientLeft', {
+      name: t(`home.nutrient_${key}`),
+    });
+  const progress = (key: NutrientKey) =>
+    day && day.goals[key] > 0 ? Math.min(1, day.eaten[key] / day.goals[key]) : 0;
+
+  const pages = dashboard.data
     ? [
-        [
-          {
-            key: 'safe',
-            value: day?.safe ?? 0,
-            label: t('home.statSafe'),
-            ring: { progress: share(day?.safe ?? 0), color: 'success', icon: 'checkCircle' },
-            onPress: () => router.push({ pathname: '/history', params: { verdict: 'safe' } }),
-          },
-          {
-            key: 'caution',
-            value: day?.caution ?? 0,
-            label: t('home.statCaution'),
-            ring: { progress: share(day?.caution ?? 0), color: 'warning', icon: 'warning' },
-            onPress: () => router.push({ pathname: '/history', params: { verdict: 'caution' } }),
-          },
-          {
-            key: 'unsafe',
-            value: day?.unsafe ?? 0,
-            label: t('home.statUnsafe'),
-            ring: { progress: share(day?.unsafe ?? 0), color: 'danger', icon: 'closeCircle' },
-            onPress: () => router.push({ pathname: '/history', params: { verdict: 'unsafe' } }),
-          },
-        ],
-        [
-          {
-            key: 'unknown',
-            value: day?.unknown ?? 0,
-            label: t('home.statUnknown'),
-            ring: { progress: share(day?.unknown ?? 0), color: 'neutral', icon: 'helpCircle' },
-            onPress: () => router.push({ pathname: '/history', params: { verdict: 'unknown' } }),
-          },
-          {
-            key: 'saved',
-            value: summary.data.savedCount,
-            label: t('home.statSavedFoods'),
-            ring: { progress: summary.data.savedCount ? 1 : 0, color: 'primary', icon: 'bookmark' },
-            onPress: () => router.push('/saved'),
-          },
-          {
-            key: 'flagged',
-            value: topFlagged?.name ?? '–',
-            label: t('home.statTopFlagged'),
-            caption: topFlagged
-              ? t('home.statTopFlaggedCount', { count: topFlagged.count })
-              : t('home.statTopFlaggedNone'),
-            ring: { progress: topFlagged ? 1 : 0, color: 'warning', icon: 'flag' },
-            onPress: topFlagged
-              ? () =>
-                  router.push({
-                    pathname: '/ingredients/[id]',
-                    params: { id: topFlagged.ingredientId },
-                  })
-              : undefined,
-          },
-        ],
-        [
-          {
-            key: 'streak',
-            value: summary.data.streak,
-            label: t('home.statStreak'),
-            ring: {
-              progress: Math.min(1, summary.data.streak / 7),
-              color: 'success',
-              icon: 'shieldCheck',
-            },
-            onPress: () => router.push('/(tabs)/insights'),
-          },
-          {
-            key: 'total',
-            value: summary.data.totalScans,
-            label: t('home.statChecked'),
-            ring: { progress: summary.data.totalScans ? 1 : 0, color: 'info', icon: 'scan' },
-            onPress: () => router.push('/history'),
-          },
-          {
-            key: 'watching',
-            value: profile?.restrictions.length ?? 0,
-            label: t('home.statWatching'),
-            ring: {
-              progress: profile?.restrictions.length ? 1 : 0,
-              color: 'primary',
-              icon: 'eyeOff',
-            },
-            onPress: () => router.push('/settings/restrictions'),
-          },
-        ],
+        <View key="calories" style={styles.page}>
+          <CaloriesCard
+            eaten={day?.eaten.calories ?? 0}
+            budget={budget}
+            metric={metric}
+            label={t(metric === 'eaten' ? 'home.caloriesEaten' : 'home.caloriesLeft')}
+            toggleHint={t('home.toggleMetric')}
+            onToggle={() => setMetric((current) => (current === 'eaten' ? 'left' : 'eaten'))}
+            testID="home-calories"
+          />
+          <View style={styles.cardRow}>
+            {MACROS.map((macro) => (
+              <NutrientCard
+                key={macro.key}
+                value={nutrientValue(macro.key)}
+                goal={day?.goals[macro.key] ?? 0}
+                unit={macro.unit}
+                label={nutrientLabel(macro.key)}
+                progress={progress(macro.key)}
+                color={macro.color}
+                icon={macro.icon}
+                testID={`home-${macro.key}`}
+              />
+            ))}
+          </View>
+        </View>,
+        <View key="micros" style={styles.page}>
+          <View style={styles.cardRow}>
+            {MICROS.map((micro) => (
+              <NutrientCard
+                key={micro.key}
+                value={nutrientValue(micro.key)}
+                goal={day?.goals[micro.key] ?? 0}
+                unit={micro.unit}
+                label={nutrientLabel(micro.key)}
+                progress={progress(micro.key)}
+                color={micro.color}
+                icon={micro.icon}
+                testID={`home-${micro.key}`}
+              />
+            ))}
+          </View>
+          <HealthScoreCard
+            title={t('home.healthScore')}
+            score={day?.healthScore ?? null}
+            notAvailableLabel={t('home.notAvailable')}
+            body={
+              day?.healthScore === null || day?.healthScore === undefined
+                ? t('home.healthScoreEmpty')
+                : t('home.healthScoreBody')
+            }
+            testID="home-health-score"
+          />
+        </View>,
+        <ActivityPage
+          key="activity"
+          health={dashboard.data.health}
+          activity={dashboard.data.activity}
+          water={dashboard.data.water}
+          connecting={connect.isPending}
+          onConnect={() => introRef.current?.present()}
+          onManage={() => router.push('/settings/apple-health')}
+          onLogWater={() => waterRef.current?.present()}
+          labels={{
+            connectTitle: t('home.connectHealth'),
+            connectBody: t('home.trackSteps'),
+            connect: t('home.connect'),
+            connectedTitle: t('home.healthConnected'),
+            connectedBody: t('home.healthSyncing'),
+            manage: t('home.manage'),
+            caloriesBurned: t('home.caloriesBurned'),
+            steps: t('home.steps'),
+            cal: t('home.cal'),
+            water: t('home.water'),
+            waterValue: (ounces, cups) => t('home.waterValue', { ounces, cups }),
+            logWater: t('home.logWater'),
+          }}
+        />,
       ]
     : [];
 
@@ -243,8 +271,8 @@ export default function HomeScreen() {
       tabBar
       header={
         <HomeHeader
-          streak={summary.data?.streak ?? 0}
-          onStreakPress={() => router.push('/(tabs)/insights')}
+          streak={dashboard.data?.streak ?? 0}
+          onStreakPress={() => router.push('/milestones')}
           profile={profile}
           showSwitcher={profileCount > 1}
           onSwitchPress={() => switcherRef.current?.present()}
@@ -270,38 +298,30 @@ export default function HomeScreen() {
         />
       </View>
 
-      {summary.isError ? (
+      {dashboard.isError ? (
         <ErrorState
           title={t('states.errorTitle')}
           body={t('states.errorBody')}
           actionLabel={t('common.retry')}
-          onAction={() => void summary.refetch()}
+          onAction={() => void dashboard.refetch()}
           compact
         />
-      ) : !summary.data ? (
-        <View style={styles.block}>
-          <Skeleton height={rs(148)} radius={radii.lg} />
-          <View style={styles.skeletonRow}>
-            <Skeleton height={rs(150)} radius={radii.lg} style={styles.flex} />
-            <Skeleton height={rs(150)} radius={radii.lg} style={styles.flex} />
-            <Skeleton height={rs(150)} radius={radii.lg} style={styles.flex} />
+      ) : !dashboard.data ? (
+        <View style={styles.page}>
+          <Skeleton height={rs(152)} radius={radii.lg} />
+          <View style={styles.cardRow}>
+            <Skeleton height={rs(156)} radius={radii.lg} style={styles.flex} />
+            <Skeleton height={rs(156)} radius={radii.lg} style={styles.flex} />
+            <Skeleton height={rs(156)} radius={radii.lg} style={styles.flex} />
           </View>
         </View>
       ) : (
-        <View style={styles.block}>
-          <StatCard
-            layout="hero"
-            value={heroValue}
-            label={heroLabel}
-            caption={total === 0 ? t('home.noScansYet') : undefined}
-            labelTrailing={<Icon name="chevronDown" size={rs(16)} color="textMuted" />}
-            ring={{ progress: safeRate ?? 0, color: 'success', icon: 'shieldCheck' }}
-            onPress={() => setMetric((current) => (current === 'count' ? 'rate' : 'count'))}
-            accessibilityLabel={`${heroLabel}: ${heroValue}. ${t('home.toggleMetric')}`}
-            testID="home-hero"
-          />
-          <StatPager pages={pages} testID="home-stats" />
-        </View>
+        <HomePager
+          pages={pages}
+          a11yLabel={(current, total) => t('home.statsA11y', { current, total })}
+          onPageChange={onPageChange}
+          testID="home-pager"
+        />
       )}
 
       <View style={styles.section}>
@@ -312,8 +332,8 @@ export default function HomeScreen() {
         />
         {recent.isLoading && !recent.data ? (
           <View style={styles.list}>
-            <Skeleton height={rs(92)} radius={radii.card} />
-            <Skeleton height={rs(92)} radius={radii.card} />
+            <Skeleton height={rs(96)} radius={radii.lg} />
+            <Skeleton height={rs(96)} radius={radii.lg} />
           </View>
         ) : recent.isError ? (
           <ErrorState
@@ -331,7 +351,7 @@ export default function HomeScreen() {
         ) : (
           <View style={styles.list}>
             {recent.items.map((scan) => (
-              <ScanRow key={scan.id} scan={scan} onPress={openScan} showTriggers />
+              <FoodRow key={scan.id} scan={scan} onPress={openScan} />
             ))}
           </View>
         )}
@@ -340,23 +360,29 @@ export default function HomeScreen() {
       <ProfileSwitcherSheet ref={switcherRef} />
       <FeatureIntroSheet
         ref={introRef}
-        icon="bell"
-        title={t('home.intro.title')}
-        subtitle={t('home.intro.subtitle')}
+        icon="run"
+        title={t('workoutsIntro.title')}
+        subtitle={t('workoutsIntro.subtitle', { app: t('home.appName') })}
         rows={introRows}
-        summary={{
-          label: t('home.intro.summaryLabel'),
-          value: t('home.intro.summaryValue', { count: Math.max(1, introRows.length - 1) }),
-        }}
-        footnote={t('home.intro.watched', { count: savedCount })}
-        primaryLabel={t('home.intro.turnOn')}
-        onPrimary={() => void enableAlerts()}
-        primaryLoading={enablingAlerts}
+        summary={{ label: t('workoutsIntro.summaryLabel'), value: '+490 cal' }}
+        footnote={t('workoutsIntro.budget', {
+          from: (day?.goals.calories ?? 0).toLocaleString(),
+          to: ((day?.goals.calories ?? 0) + 490).toLocaleString(),
+        })}
+        primaryLabel={t('workoutsIntro.connect')}
+        onPrimary={() => void connectHealth()}
+        primaryLoading={connect.isPending}
         secondaryLabel={t('common.notNow')}
         onSecondary={dismissIntro}
         closeLabel={t('common.close')}
-        onDismiss={setFeatureIntroShown}
-        testID="feature-intro"
+        onDismiss={setWorkoutsIntroShown}
+        testID="workouts-intro"
+      />
+      <LogWaterSheet
+        ref={waterRef}
+        ounces={dashboard.data?.water.ounces ?? 0}
+        saving={logWater.isPending}
+        onSave={(ounces) => void saveWater(ounces)}
       />
     </Screen>
   );
@@ -364,8 +390,8 @@ export default function HomeScreen() {
 
 const styles = StyleSheet.create({
   strip: { marginTop: rs(spacing.md), marginBottom: rs(spacing.lg) },
-  block: { gap: rs(spacing.sm) },
-  skeletonRow: { flexDirection: 'row', gap: rs(spacing.sm) },
+  page: { gap: rs(spacing.sm) },
+  cardRow: { flexDirection: 'row', gap: rs(spacing.sm) },
   flex: { flex: 1 },
   section: { marginTop: rs(spacing.xl) },
   list: { gap: rs(spacing.sm) },

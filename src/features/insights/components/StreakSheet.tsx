@@ -3,10 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
 import { Ring, Sheet, Text, type SheetRef } from '@/components/ui';
-import { dayStatus, STATUS_COLOR } from '@/features/home/components/WeekStrip';
-import { useDaySummaries } from '@/features/home/useHome';
+import { STATUS_COLOR } from '@/features/home/components/WeekStrip';
+import { useDayNutrition } from '@/features/tracking/useTracking';
 import { spacing } from '@/theme/tokens';
 import { rs } from '@/theme/responsive';
+import type { RingStatus } from '@/types';
 import { addDays, dayKey, fromDayKey } from '@/utils/date';
 
 export interface StreakSheetProps {
@@ -25,12 +26,13 @@ export const StreakSheet = forwardRef<SheetRef, StreakSheetProps>(function Strea
   const { t } = useTranslation();
   const today = dayKey(new Date());
   const from = dayKey(addDays(fromDayKey(today), -(DAYS - 1)));
-  const days = useDaySummaries(profileId, from, today);
+  const days = useDayNutrition(profileId, from, today);
   const rings = useMemo(
     () =>
       Array.from({ length: DAYS }, (_, index) => {
         const key = dayKey(addDays(fromDayKey(from), index));
-        return { key, status: dayStatus(days.data?.find((day) => day.date === key)) };
+        const status: RingStatus = days.data?.find((day) => day.date === key)?.status ?? 'none';
+        return { key, status };
       }),
     [days.data, from],
   );

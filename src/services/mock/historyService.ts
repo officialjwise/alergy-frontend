@@ -1,5 +1,6 @@
 import { simulate } from './support';
 import { ServiceError, type HistoryService } from '../types';
+import { productById } from '@/mocks/products';
 import { seedHistory } from '@/mocks/scans';
 import { useDevStore } from '@/store/devStore';
 import { storage, storageKeys } from '@/store/storage';
@@ -11,11 +12,27 @@ import { normalize } from '@/utils/text';
  * History lives in MMKV under one key so it survives relaunches. Seeded once
  * per profile so the home / history screens are not empty on first run.
  */
+/** Scans stored before the catalogue had nutrition facts get them from the catalogue on read. */
+function hydrate(scan: ScanResult): ScanResult {
+  if (scan.product.nutrition) return scan;
+  const catalogue = productById(scan.product.id);
+  if (!catalogue?.nutrition) return scan;
+  return {
+    ...scan,
+    product: {
+      ...scan.product,
+      nutrition: catalogue.nutrition,
+      healthScore: catalogue.healthScore,
+      servingLabel: catalogue.servingLabel,
+    },
+  };
+}
+
 function load(): ScanResult[] {
   const raw = storage.getString(storageKeys.history);
   if (!raw) return [];
   try {
-    return JSON.parse(raw) as ScanResult[];
+    return (JSON.parse(raw) as ScanResult[]).map(hydrate);
   } catch {
     return [];
   }

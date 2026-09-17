@@ -19,7 +19,7 @@ interface Tile {
 }
 
 const TILES: Tile[] = [
-  { key: 'reaction', labelKey: 'plus.logReaction', icon: 'reaction', href: '/reactions/new' },
+  { key: 'exercise', labelKey: 'plus.logExercise', icon: 'dumbbell', href: '/exercise/new' },
   { key: 'saved', labelKey: 'plus.savedFoods', icon: 'bookmark', href: '/saved' },
   { key: 'search', labelKey: 'plus.foodSearch', icon: 'search', href: '/search' },
   { key: 'scan', labelKey: 'plus.scanFood', icon: 'scan', href: '/scan' },

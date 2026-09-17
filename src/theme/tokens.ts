@@ -67,6 +67,8 @@ export const colors = {
   bmiHealthy: '#3DBB6B',
   bmiOver: '#E8B04D',
   bmiObese: '#E45B5B',
+  badgeDark: '#3B2F55', // "Badges earned" emblem
+  badgeLocked: '#D9D9DE',
 } as const;
 
 export type ColorToken = keyof typeof colors;
@@ -175,6 +177,14 @@ export const borders = {
 
 /** The PDF cards are flat (no shadows). Only the floating "Works for you" badge casts one. */
 export const shadows = {
+  /** Dashboard cards on Home and Insights: white on white needs a soft lift instead of a border. */
+  card: {
+    shadowColor: '#0F0D14',
+    shadowOpacity: 0.06,
+    shadowRadius: 14,
+    shadowOffset: { width: 0, height: 5 },
+    elevation: 3,
+  },
   badge: {
     shadowColor: '#0F0D14',
     shadowOpacity: 0.08,
