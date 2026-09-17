@@ -13,8 +13,16 @@ export const appConfig = {
   minimumVersion: '1.0.0',
   storeUrl: 'https://apps.apple.com/app/id0000000000',
   referral: {
-    rewardText: 'You both get a month of the Family plan when they join.',
-    code: 'ALLERGY-7F3K',
-    link: 'https://allergyapp.example/invite/ALLERGY-7F3K',
+    /** Row title on Profile ("Refer a friend and earn $10"). */
+    title: 'Refer a friend and earn $10',
+    /** Row description and the "How to earn" line. */
+    body: 'Earn $10 per friend that signs up with your promo code.',
+    earnLine: 'Earn $10 per friend that signs up with your code',
+    code: 'YLFGYH',
+    link: 'https://allergyapp.example/invite/YLFGYH',
+  },
+  familyPlan: {
+    priceLine: 'Only $2.50/mo more! ($59.99/yr)',
+    maxMembers: 6,
   },
 } as const;

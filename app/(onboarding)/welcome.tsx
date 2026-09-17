@@ -8,6 +8,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   Button,
   IconChip,
+  PressableScale,
   Screen,
   ScanFrame,
   Text,
@@ -70,7 +71,26 @@ export default function WelcomeScreen() {
   return (
     <Screen
       scrollProps={{ bounces: false }}
-      footer={<Button title={t('common.getStarted')} onPress={onGetStarted} haptic="medium" />}
+      footer={
+        <View style={styles.footer}>
+          <Button title={t('common.getStarted')} onPress={onGetStarted} haptic="medium" />
+          <PressableScale
+            onPress={() => router.push('/(auth)/sign-in')}
+            haptic="light"
+            accessibilityRole="button"
+            accessibilityLabel={t('welcome.signIn')}
+            style={styles.signIn}
+            testID="welcome-sign-in"
+          >
+            <Text variant="body" color="textMuted">
+              {t('welcome.haveAccount')}{' '}
+              <Text variant="bodyStrong" color="text">
+                {t('welcome.signIn')}
+              </Text>
+            </Text>
+          </PressableScale>
+        </View>
+      }
     >
       <View style={{ height: rv(40) }} />
       <Text variant="display" color="text" accessibilityRole="header">
@@ -126,6 +146,8 @@ export default function WelcomeScreen() {
 }
 
 const styles = StyleSheet.create({
+  footer: { gap: rs(spacing.xs) },
+  signIn: { alignItems: 'center', justifyContent: 'center', minHeight: 44 },
   subtitle: { marginTop: rs(spacing.sm) },
   hero: {
     alignSelf: 'center',
