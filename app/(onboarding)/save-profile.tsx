@@ -11,7 +11,7 @@ import { buildProfileFromAnswers } from '@/features/onboarding/buildProfile';
 import { useAppStore } from '@/store/appStore';
 import { useOnboardingStore } from '@/store/onboardingStore';
 import { useProfileStore } from '@/store/profileStore';
-import { layout, spacing } from '@/theme/tokens';
+import { spacing } from '@/theme/tokens';
 import { rs, rv } from '@/theme/responsive';
 
 /**
@@ -126,14 +126,14 @@ export default function SaveProfileScreen() {
   }
 
   return (
-    <OnboardingScreen route="save-profile" title={t('saveProfile.title')}>
+    <OnboardingScreen route="save-profile" title={t('saveProfile.title')} subtitle={t('saveProfile.subtitle')}>
       <View style={styles.buttons}>
         {Platform.OS === 'ios' ? (
           <Button
             title={t('saveProfile.apple')}
             variant="apple"
-            size="auth"
-            leading={<Icon name="apple" size={rs(26)} color="onPrimary" />}
+            size="lg"
+            leading={<Icon name="apple" size={rs(24)} color="onPrimary" />}
             onPress={() => void social('apple')}
             loading={pending === 'apple'}
             disabled={pending !== null}
@@ -143,8 +143,8 @@ export default function SaveProfileScreen() {
         <Button
           title={t('saveProfile.google')}
           variant="secondary"
-          size="auth"
-          leading={<GoogleMark size={rs(24)} />}
+          size="lg"
+          leading={<GoogleMark size={rs(22)} />}
           onPress={() => void social('google')}
           loading={pending === 'google'}
           disabled={pending !== null}
@@ -152,9 +152,7 @@ export default function SaveProfileScreen() {
         />
         <Button
           title={t('saveProfile.email')}
-          variant="secondary"
-          size="auth"
-          leading={<Icon name="mail" size={rs(26)} color="text" outline />}
+          variant="text"
           onPress={email}
           disabled={pending !== null}
           haptic="medium"
@@ -186,9 +184,9 @@ export default function SaveProfileScreen() {
 }
 
 const styles = StyleSheet.create({
-  buttons: { marginTop: rv(spacing.huge), gap: rs(layout.authButtonGap) },
+  buttons: { marginTop: rv(spacing.xl), gap: rs(spacing.sm) },
   error: { marginTop: rs(spacing.md) },
-  checks: { marginTop: rv(spacing.xxxl), gap: rv(spacing.xxxl) },
+  checks: { marginTop: rv(spacing.xl), gap: rv(spacing.lg) },
   link: { textDecorationLine: 'underline' },
   hidden: { height: 0 },
   signedIn: { marginTop: rv(spacing.xl) },
