@@ -13,6 +13,9 @@ import {
   Screen,
   Text,
 } from '@/components/ui';
+import { stepHref } from '@/features/onboarding/navigation';
+import { canAddPerson, peopleAllowed } from '@/features/questionnaire/plans';
+import { useAppStore } from '@/store/appStore';
 import { useOnboardingStore } from '@/store/onboardingStore';
 import { useProfileStore } from '@/store/profileStore';
 import { colors, layout, radii, spacing } from '@/theme/tokens';
@@ -27,12 +30,18 @@ export default function ProfilesScreen() {
   const activeId = useProfileStore((state) => state.activeProfileId);
   const setActive = useProfileStore((state) => state.setActiveProfile);
   const removeProfile = useProfileStore((state) => state.removeProfile);
-  const resetOnboarding = useOnboardingStore((state) => state.reset);
+  const startFor = useOnboardingStore((state) => state.startFor);
+  const plan = useAppStore((state) => state.account.plan);
+  const room = canAddPerson(plan, profiles.length);
 
   const addProfile = useCallback(() => {
-    resetOnboarding();
-    router.push('/(onboarding)/who');
-  }, [resetOnboarding, router]);
+    if (!room) {
+      router.push('/settings/family-plan');
+      return;
+    }
+    startFor('other');
+    router.push(stepHref('person-name'));
+  }, [room, router, startFor]);
 
   const confirmDelete = useCallback(
     (id: string, name: string) => {
@@ -53,9 +62,9 @@ export default function ProfilesScreen() {
       header={<BackButton onPress={() => router.back()} label={t('a11y.backButton')} />}
       footer={
         <Button
-          title={t('profile.addProfile')}
+          title={room ? t('profile.addProfile') : t('profileTab.familyPlan')}
           onPress={addProfile}
-          leading={<Icon name="plus" size={rs(22)} color="onPrimary" />}
+          leading={<Icon name={room ? 'plus' : 'people'} size={rs(22)} color="onPrimary" />}
           haptic="medium"
         />
       }
@@ -64,7 +73,7 @@ export default function ProfilesScreen() {
         {t('profile.profiles')}
       </Text>
       <Text variant="subtitle" color="textMuted" style={styles.subtitle}>
-        {t('profile.addProfileHint')}
+        {t('profile.peopleOnPlan', { count: profiles.length, max: peopleAllowed(plan), plan: t(`plans.${plan}`) })}
       </Text>
       <View style={styles.list}>
         {profiles.map((profile) => {
@@ -79,7 +88,7 @@ export default function ProfilesScreen() {
                   </Text>
                   <Text variant="small" color="textMuted">
                     {t(`profile.for_${profile.profileFor}`)} ·{' '}
-                    {t('profile.restrictionCount', { count: profile.restrictions.length })}
+                    {t('profile.foodCount', { count: profile.foods.length })}
                   </Text>
                   <Text variant="small" color="textMuted">
                     {t('profile.created', {
@@ -119,9 +128,13 @@ export default function ProfilesScreen() {
           );
         })}
         <ListRow
-          label={t('profile.addProfile')}
-          description={t('profile.addProfileHint')}
-          icon="plus"
+          label={room ? t('profile.addProfile') : t('profileTab.familyPlan')}
+          description={
+            room
+              ? t('profile.addProfileHint')
+              : t('profile.planFull', { count: peopleAllowed(plan), plan: t(`plans.${plan}`) })
+          }
+          icon={room ? 'plus' : 'people'}
           chevron
           onPress={addProfile}
         />

@@ -55,7 +55,7 @@ export const ProfileSwitcherSheet = forwardRef<SheetRef>(function ProfileSwitche
                   </Text>
                   <Text variant="small" color="textMuted">
                     {t(`profile.for_${profile.profileFor}`)} ·{' '}
-                    {t('profile.restrictionCount', { count: profile.restrictions.length })}
+                    {t('profile.foodCount', { count: profile.foods.length })}
                   </Text>
                 </View>
                 <RadioCheck selected={selected} />

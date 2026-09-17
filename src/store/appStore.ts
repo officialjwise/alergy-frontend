@@ -2,12 +2,13 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { mmkvStateStorage, storageKeys } from './storage';
-import type { AuthSession, LanguageCode, ScanMode } from '@/types';
+import type { AuthSession, LanguageCode, PlanId, ScanMode } from '@/types';
 
 export interface AccountInfo {
   name: string;
   username: string;
-  plan: 'free' | 'premium';
+  /** Free covers one person, Plus five, Family fifteen (questionnaire, section 1). */
+  plan: PlanId;
   lastSyncedAt: string | null;
 }
 

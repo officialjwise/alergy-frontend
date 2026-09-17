@@ -166,3 +166,12 @@ frame in `docs/design/SCREENSHOT_INVENTORY.md`.
 Useful deep links: `allergyapp://milestones`, `allergyapp://weight`,
 `allergyapp://exercise/new`, `allergyapp://settings/nutrition-goals`,
 `allergyapp://settings/apple-health`, `allergyapp://sign-in`.
+
+## Phase 4: the onboarding questionnaire
+
+Onboarding follows `Onboarding-Questionnaire.pdf` (version 2): about twelve
+questions per person, fewer without allergies, with the safety decisions from
+its section 4 built in. `docs/QUESTIONNAIRE.md` maps every question, rule and
+message to the code and lists what still needs clinical sign-off. Results
+show High risk or Warning per food; health conditions add ingredients to
+limit or avoid once the email is confirmed.

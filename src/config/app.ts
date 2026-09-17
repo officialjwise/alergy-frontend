@@ -23,6 +23,14 @@ export const appConfig = {
   },
   familyPlan: {
     priceLine: 'Only $2.50/mo more! ($59.99/yr)',
-    maxMembers: 6,
+  },
+  /**
+   * People per plan (questionnaire, section 1). The team can change these
+   * numbers on the server without an app update; these are the defaults.
+   */
+  plans: {
+    free: { people: 1 },
+    plus: { people: 5 },
+    family: { people: 15 },
   },
 } as const;

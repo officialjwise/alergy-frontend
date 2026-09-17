@@ -8,7 +8,7 @@ that are components (no URL) are marked as such.
 ```
 App start
   /                                app/index.tsx                       splash redirect
-  Onboarding not complete -> (onboarding) stack (Phase 1, unchanged)
+  Onboarding not complete -> (onboarding) stack: the questionnaire (docs/QUESTIONNAIRE.md)
   Session expired         -> /(auth)/session-expired
   Onboarding complete     -> /(tabs)/home
 
@@ -77,9 +77,8 @@ Groups
   /groups/posts/[id]         app/groups/posts/[id]/index.tsx   Post detail and comments
   /groups/posts/[id]/report  app/groups/posts/[id]/report.tsx  Report post
   /members/[id]              app/members/[id].tsx              Member profile (community) or family member detail
-  /profiles                  app/profiles/index.tsx            Family profiles (Phase 1)
-  /profiles/edit/[section]   app/profiles/edit/[section].tsx   Edit a profile section (Phase 1)
-  Add family member          -> /(onboarding)/who?mode=add (reuses the survey)
+  /profiles                  app/profiles/index.tsx            People on the plan; add a person (Plus and Family)
+  Add family member          -> questionnaire with target "other" (/(onboarding)/person-name)
 
 Notifications
   /notifications             app/notifications/index.tsx
@@ -95,10 +94,9 @@ Profile and settings
   /settings/apple-health     app/settings/apple-health.tsx     Sync to Apple Health (Connect / Disconnect)
   /settings/nutrition-goals  app/settings/nutrition-goals.tsx  Edit nutrition goals, Auto Generate Goals
   /settings/ring-colors      app/settings/ring-colors.tsx      Ring Colors Explained
-  /settings/restrictions     app/settings/restrictions.tsx     My allergens and ingredients
-  /settings/caution          app/settings/caution.tsx          Caution level
-  /settings/diet             app/settings/diet.tsx             Diet
-  /settings/survey           app/settings/survey.tsx           Other onboarding answers (frequency, watch for, reasons, challenges, goal)
+  /settings/allergies        app/settings/allergies.tsx        Allergies and foods to avoid: levels, deliberate removal, answer again; ?profileId=
+  /settings/conditions       app/settings/conditions.tsx       Health conditions and end dates
+  /settings/note             app/settings/note.tsx             The note kept with the profile
   /settings/reminders        app/settings/reminders.tsx        Tracking Reminders (breakfast, lunch, snack, dinner, end of day)
   /settings/verdict-colors   app/settings/verdict-colors.tsx   Verdict colors explained
   /settings/allergy-card     app/settings/allergy-card.tsx     Allergy card (share, language, full screen)
@@ -114,6 +112,12 @@ Auth (Phase 1 plus additions)
   /(auth)/email              app/(auth)/email.tsx
   /(auth)/verify             app/(auth)/verify.tsx
   /(auth)/session-expired    app/(auth)/session-expired.tsx    returns the user to sign in
+
+Questionnaire (app/(onboarding)/, in order; see docs/QUESTIONNAIRE.md)
+  welcome, who, person-name | person-pick, allergies, foods, foods-other,
+  food-reaction?id=, food-worst?id=, food-strictness?id=, food-doctor?id= (per food),
+  conditions, conditions-pick, condition-end?id= (per temporary condition), note,
+  camera, camera-permission, all-done, setup, ready (review), save-profile, notifications
 
 Global states
   /offline                   app/offline.tsx                   No internet; Retry

@@ -10,6 +10,7 @@ export const INGREDIENTS: readonly Ingredient[] = [
     name: 'Peanuts',
     aliases: ['peanut', 'groundnut', 'arachis oil', 'peanut butter'],
     category: 'nuts',
+    major: true,
     icon: 'peanut',
   },
   {
@@ -33,6 +34,7 @@ export const INGREDIENTS: readonly Ingredient[] = [
       'marzipan',
     ],
     category: 'nuts',
+    major: true,
     icon: 'nut',
   },
   {
@@ -70,6 +72,7 @@ export const INGREDIENTS: readonly Ingredient[] = [
       'milk solids',
     ],
     category: 'dairy',
+    major: true,
     icon: 'milk',
   },
   {
@@ -93,6 +96,7 @@ export const INGREDIENTS: readonly Ingredient[] = [
       'lysozyme',
     ],
     category: 'eggs',
+    major: true,
     icon: 'egg',
   },
   {
@@ -130,6 +134,7 @@ export const INGREDIENTS: readonly Ingredient[] = [
       'malt extract',
     ],
     category: 'grains',
+    major: true,
     icon: 'wheat',
   },
   {
@@ -178,6 +183,7 @@ export const INGREDIENTS: readonly Ingredient[] = [
       'textured vegetable protein',
     ],
     category: 'legumes',
+    major: true,
     icon: 'soy',
   },
   {
@@ -197,11 +203,12 @@ export const INGREDIENTS: readonly Ingredient[] = [
       'fish oil',
     ],
     category: 'seafood',
+    major: true,
     icon: 'fish',
   },
   {
     id: 'shellfish',
-    name: 'Shellfish',
+    name: 'Crustaceans',
     aliases: [
       'shrimp',
       'prawn',
@@ -214,6 +221,8 @@ export const INGREDIENTS: readonly Ingredient[] = [
       'scampi',
     ],
     category: 'seafood',
+    major: true,
+    example: 'e.g. prawns',
     icon: 'shellfish',
   },
   {
@@ -234,6 +243,8 @@ export const INGREDIENTS: readonly Ingredient[] = [
       'snail',
     ],
     category: 'seafood',
+    major: true,
+    example: 'e.g. mussels',
     icon: 'shellfish',
   },
   {
@@ -241,6 +252,7 @@ export const INGREDIENTS: readonly Ingredient[] = [
     name: 'Sesame',
     aliases: ['tahini', 'sesame oil', 'sesame seed', 'sesame seeds', 'benne', 'halva', 'halvah'],
     category: 'seeds',
+    major: true,
     icon: 'sesame',
   },
   {
@@ -248,6 +260,7 @@ export const INGREDIENTS: readonly Ingredient[] = [
     name: 'Mustard',
     aliases: ['mustard seed', 'mustard flour', 'dijon'],
     category: 'seeds',
+    major: true,
     icon: 'seed',
   },
   {
@@ -255,6 +268,7 @@ export const INGREDIENTS: readonly Ingredient[] = [
     name: 'Celery',
     aliases: ['celeriac', 'celery salt', 'celery seed'],
     category: 'vegetables',
+    major: true,
     icon: 'leaf',
   },
   {
@@ -262,6 +276,7 @@ export const INGREDIENTS: readonly Ingredient[] = [
     name: 'Lupin',
     aliases: ['lupine', 'lupin flour'],
     category: 'legumes',
+    major: true,
     icon: 'seed',
   },
   {
@@ -284,6 +299,7 @@ export const INGREDIENTS: readonly Ingredient[] = [
       'metabisulfite',
     ],
     category: 'additives',
+    major: true,
     icon: 'flask',
   },
   {
@@ -575,6 +591,60 @@ export const INGREDIENTS: readonly Ingredient[] = [
 ] as const;
 
 /** Chips shown by default in the onboarding ingredient screen before any search. */
+/** The 14 allergens UK and EU labels must highlight, in the questionnaire's order. */
+export const MAJOR_ALLERGEN_IDS = [
+  'peanuts',
+  'tree-nuts',
+  'milk',
+  'eggs',
+  'gluten',
+  'soy',
+  'fish',
+  'shellfish',
+  'molluscs',
+  'sesame',
+  'mustard',
+  'celery',
+  'lupin',
+  'sulphites',
+] as const;
+
+/**
+ * Words on almost every label. Typing one of these as a food to avoid is
+ * refused with a message asking for the food itself.
+ */
+export const GENERIC_LABEL_WORDS = [
+  'water',
+  'salt',
+  'sugar',
+  'oil',
+  'vegetable oil',
+  'natural flavouring',
+  'natural flavoring',
+  'flavouring',
+  'flavoring',
+  'natural flavour',
+  'natural flavor',
+  'spices',
+  'spice',
+  'seasoning',
+  'preservative',
+  'preservatives',
+  'colour',
+  'color',
+  'colours',
+  'colors',
+  'acid',
+  'starch',
+  'emulsifier',
+  'stabiliser',
+  'stabilizer',
+  'thickener',
+  'antioxidant',
+  'food',
+  'ingredients',
+] as const;
+
 export const SUGGESTED_INGREDIENT_IDS = [
   'eggs',
   'sesame',

@@ -1,4 +1,4 @@
-import type { ScanResult, TriggerKind, UserProfile, Verdict, VerdictTrigger } from '@/types';
+import type { ScanResult, TriggerKind, Verdict, VerdictTrigger } from '@/types';
 import { normalize } from '@/utils/text';
 
 export type IngredientStatus = TriggerKind | 'clear';
@@ -67,26 +67,6 @@ export function triggerCounts(verdict: Verdict): { contains: number; mayContain:
       verdict.triggers.filter((item) => kinds.includes(item.kind)).map((item) => item.ingredientId),
     ).size;
   return { contains: ids(['contains']), mayContain: ids(['may_contain', 'cross_contact']) };
-}
-
-export interface DietCompatibility {
-  diet: UserProfile['diet'];
-  compatible: boolean;
-  /** Label words that broke the diet rule. */
-  matched: string[];
-}
-
-/** Null when the profile has no diet; otherwise whether the product fits it. */
-export function dietCompatibility(
-  verdict: Verdict,
-  profile: UserProfile | null,
-): DietCompatibility | null {
-  if (!profile || profile.diet === 'none') return null;
-  const matched = verdict.triggers
-    .filter((item) => item.ingredientId === `diet:${profile.diet}`)
-    .map((item) => item.matchedText)
-    .filter(Boolean);
-  return { diet: profile.diet, compatible: matched.length === 0, matched };
 }
 
 export interface TextSegment {

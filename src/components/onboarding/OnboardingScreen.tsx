@@ -6,10 +6,12 @@ import { StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 import { ProgressHeader, Screen, Text } from '@/components/ui';
 import { useOnboardingNav, type OnboardingNav } from '@/features/onboarding/navigation';
 import { useOnboardingStore } from '@/store/onboardingStore';
+import { useProfileStore } from '@/store/profileStore';
 import { layout } from '@/theme/tokens';
 import { rs, rv } from '@/theme/responsive';
 
 export interface OnboardingScreenProps {
+  /** Step key: the route, or `route:id` for per-food and per-condition screens. */
   route: string;
   title?: string;
   subtitle?: string;
@@ -106,10 +108,24 @@ export function OnboardingScreen({
   );
 }
 
+/**
+ * Copy for a question: wherever a question says [name], the app uses the
+ * person's name, or "you" for the account holder (i18next context `other`).
+ */
 export function useQuestionCopy() {
   const { t } = useTranslation();
-  const profileFor = useOnboardingStore((state) => state.answers.profileFor) ?? 'myself';
-  return useCallback((key: string) => t(key, { context: profileFor }), [profileFor, t]);
+  const target = useOnboardingStore((state) => state.answers.target);
+  const personName = useOnboardingStore((state) => state.answers.personName);
+  const existingId = useOnboardingStore((state) => state.answers.existingProfileId);
+  const profiles = useProfileStore((state) => state.profiles);
+  const existingName = profiles.find((profile) => profile.id === existingId)?.name ?? '';
+  const name = target === 'other' ? personName.trim() : target === 'existing' ? existingName : '';
+  const other = name.length > 0;
+  return useCallback(
+    (key: string, values?: Record<string, unknown>) =>
+      t(key, { ...values, name, context: other ? 'other' : undefined }),
+    [name, other, t],
+  );
 }
 
 const styles = StyleSheet.create({

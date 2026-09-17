@@ -29,7 +29,7 @@ import { rs } from '@/theme/responsive';
 import type { Gender, ProfileFor } from '@/types';
 import { daysInMonth } from '@/utils/date';
 
-const PROFILE_FOR: ProfileFor[] = ['myself', 'child', 'family', 'care'];
+const PROFILE_FOR: ProfileFor[] = ['myself', 'other'];
 const GENDERS: Gender[] = ['male', 'female', 'other'];
 type NumberField = 'goal' | 'weight' | 'steps';
 

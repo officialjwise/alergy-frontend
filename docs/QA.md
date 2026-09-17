@@ -142,3 +142,19 @@ synthetic taps, iPhone SE (3rd generation) with the Pro Max state copied over.
   past day and referrals are tracked by a backend.
 - The Release simulator build was not repeated for Phase 3; the Debug build
   was verified on both simulators.
+
+# Phase 4 pass (questionnaire, 2026-09-17)
+
+Walked through on the iPhone 14 Pro Max simulator from a cleared state:
+Welcome, language sheet, Q1 (Free plan: "Me" and the upgrade card), Q2 "I'm
+not sure" with its note, Q3 with peanuts and milk, Q4 with "prawns" (recorded
+as Crustaceans), "dragon fruit" (checked by name only) and "water" (refused),
+Q5 to Q8 for each food including the "recorded as an allergy" and "treated as
+severe" notes and the Skip on Q8, Q9 to Q11 with diabetes and a pregnancy
+due date, Q12 note, camera question, setup, the review screen with the four
+foods and their levels plus the five messages, Apple sign-in, notifications,
+Home. Afterwards the allergies screen showed the four foods with High risk or
+Warning pills and their tags, the conditions screen showed both conditions
+with the end date, a peanut granola bar came back High risk with "Limit honey
+(Diabetes)", and dark chocolate came back High risk from its may-contain
+statement with "Limit sugar (Diabetes)". Typecheck, lint and 58 tests pass.

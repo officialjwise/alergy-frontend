@@ -34,11 +34,8 @@ export default function IngredientDetailScreen() {
   const profile = useProfileStore(selectActiveProfile);
   const history = useHistory(profile?.id ?? null);
 
-  const ingredient = useMemo(
-    () => (id ? (profile?.customIngredients[id] ?? ingredientById(id) ?? null) : null),
-    [id, profile?.customIngredients],
-  );
-  const restriction = profile?.restrictions.find((item) => item.ingredientId === id) ?? null;
+  const ingredient = useMemo(() => (id ? (ingredientById(id) ?? null) : null), [id]);
+  const restriction = profile?.foods.find((item) => item.id === id) ?? null;
   const flagged = useMemo(
     () =>
       (history.data ?? []).filter((scan) =>
@@ -82,14 +79,14 @@ export default function IngredientDetailScreen() {
         </View>
         {restriction ? (
           <Text variant="small" color="textMuted" style={styles.severity}>
-            {t('ingredientDetail.severity', { level: t(`severity.${restriction.severity}`) })}
+            {t('ingredientDetail.level', { level: t(`risk.${restriction.level}`) })}
           </Text>
         ) : null}
         <Button
           title={t('ingredientDetail.editList')}
           variant="secondary"
           size="md"
-          onPress={() => router.push('/settings/restrictions')}
+          onPress={() => router.push('/settings/allergies')}
           style={styles.edit}
         />
       </Card>

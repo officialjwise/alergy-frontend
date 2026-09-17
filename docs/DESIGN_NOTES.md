@@ -214,3 +214,27 @@ reference screens, with the walkthrough video as the source of truth.
   addition to the reference's Profile structure.
 - **Dark mode.** The appearance tiles store the choice; the palette is still
   light-only, and the screen says so.
+
+## Phase 4: the onboarding questionnaire (2026-09-17)
+
+The onboarding now follows "The Onboarding Questionnaire" (version 2). The
+mapping from questions and rules to code is in `docs/QUESTIONNAIRE.md`.
+
+- **Survey screens removed.** Frequency, tried other apps, watch for,
+  reasons, caution level, challenges, diet, goal, social proof, remember
+  foods and why were not in the questionnaire and are gone, together with the
+  diet presets and the caution-level setting. The verdict rules come from
+  each food's answers instead.
+- **Two levels.** Results show High risk or Warning per the questionnaire
+  (plus "Works for you" and "Not sure"). The internal verdict kinds did not
+  change, only their meaning and labels.
+- **May contain.** Traces count at the food's level for High risk foods and
+  as a Warning otherwise; flagged for clinical review.
+- **Per-food loop.** Questions 5 to 8 repeat per food through route params
+  (`food-reaction?id=`), so the progress bar and back navigation still work.
+- **Review before saving.** The review screen lists what was recorded, the
+  section 5 messages, and any missing answers with links back; nothing is
+  saved until they are answered.
+- **Plans.** Free covers one person; Plus and Family offer "Someone else"
+  while there is room. The limits are configuration, not copy.
+- **Legacy profiles.** Migrated on read and invited to answer again.

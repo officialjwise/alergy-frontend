@@ -1,19 +1,19 @@
 import {
-  dietCompatibility,
   flaggedNames,
   highlightSegments,
   ingredientRows,
   parseIngredients,
   triggerCounts,
 } from '../ingredients';
-import type { ScanResult, UserProfile, Verdict, VerdictTrigger } from '@/types';
+import type { ScanResult, Verdict, VerdictTrigger } from '@/types';
 
 const trigger = (over: Partial<VerdictTrigger>): VerdictTrigger => ({
   ingredientId: 'peanut',
   ingredientName: 'Peanuts',
   matchedText: 'peanuts',
   kind: 'contains',
-  severity: 'severe',
+  level: 'high',
+  byNameOnly: false,
   ...over,
 });
 
@@ -21,6 +21,7 @@ const verdict = (triggers: VerdictTrigger[], over: Partial<Verdict> = {}): Verdi
   kind: triggers.length ? 'unsafe' : 'safe',
   triggers,
   clearedIngredientIds: [],
+  conditionNotes: [],
   incomplete: false,
   ...over,
 });
@@ -37,23 +38,6 @@ const scan = (
   source: 'camera',
   scannedAt: new Date().toISOString(),
   saved: false,
-});
-
-const profile = (diet: UserProfile['diet']): UserProfile => ({
-  id: 'p1',
-  name: 'Me',
-  profileFor: 'myself',
-  birthDate: null,
-  restrictions: [],
-  customIngredients: {},
-  reasons: [],
-  cautionLevel: 'ingredient',
-  diet,
-  goal: null,
-  rememberFoods: true,
-  color: '#000',
-  createdAt: '',
-  updatedAt: '',
 });
 
 describe('parseIngredients', () => {
@@ -130,24 +114,6 @@ describe('triggerCounts', () => {
       ]),
     );
     expect(counts).toEqual({ contains: 1, mayContain: 1 });
-  });
-});
-
-describe('dietCompatibility', () => {
-  it('is null without a diet and reports broken diet rules', () => {
-    expect(dietCompatibility(verdict([]), profile('none'))).toBeNull();
-    expect(dietCompatibility(verdict([]), profile('halal'))).toEqual({
-      diet: 'halal',
-      compatible: true,
-      matched: [],
-    });
-    const broken = dietCompatibility(
-      verdict([
-        trigger({ ingredientId: 'diet:halal', ingredientName: 'Halal', matchedText: 'gelatin' }),
-      ]),
-      profile('halal'),
-    );
-    expect(broken).toEqual({ diet: 'halal', compatible: false, matched: ['gelatin'] });
   });
 });
 

@@ -21,10 +21,8 @@ export default function AllergyCardScreen() {
   const [fullScreen, setFullScreen] = useState(false);
   const fixed = useMemo(() => i18n.getFixedT(language), [i18n, language]);
 
-  const restrictions = profile?.restrictions ?? [];
-  const severe = restrictions.filter(
-    (item) => item.severity === 'severe' || item.severity === 'anaphylaxis',
-  );
+  const restrictions = profile?.foods ?? [];
+  const severe = restrictions.filter((item) => item.level === 'high');
   const lines = [
     fixed('settingsScreens.allergyCard.intro'),
     restrictions.map((item) => item.name).join(', ') || fixed('settingsScreens.allergyCard.none'),
@@ -52,7 +50,7 @@ export default function AllergyCardScreen() {
           fixed('settingsScreens.allergyCard.none')}
       </Text>
       {severe.map((item) => (
-        <Text key={item.ingredientId} variant={fullScreen ? 'subtitle' : 'body'} color="text">
+        <Text key={item.id} variant={fullScreen ? 'subtitle' : 'body'} color="text">
           {fixed('settingsScreens.allergyCard.severe', { name: item.name })}
         </Text>
       ))}

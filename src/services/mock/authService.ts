@@ -9,7 +9,8 @@ const pendingCodes = new Map<string, { code: string; expiresAt: number; attempts
 
 function makeSession(provider: AuthProvider, email?: string, name?: string): AuthSession {
   return {
-    user: { id: createId('user'), provider, email, name },
+    // Mock sign-ins count as confirmed addresses (Apple and Google verify them; the email flow used a code).
+    user: { id: createId('user'), provider, email, name, emailConfirmed: true },
     token: createId('token'),
     createdAt: new Date().toISOString(),
     expiresAt: new Date(Date.now() + 30 * 86_400_000).toISOString(),

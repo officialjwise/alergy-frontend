@@ -5,7 +5,7 @@ import { queryKeys } from '@/services/queryClient';
 import { useProfileStore, selectActiveProfile } from '@/store/profileStore';
 import type { ReportProblemInput, ScanResult } from '@/types';
 
-/** Runs a scan against the active profile and stores it in the history (when "remember foods" is on). */
+/** Runs a scan against the active profile and stores it in the history. */
 export function useAnalyze() {
   const client = useQueryClient();
   const profile = useProfileStore(selectActiveProfile);
@@ -14,7 +14,7 @@ export function useAnalyze() {
       if (!profile) throw new Error('No active profile');
       const services = getServices();
       const result = await services.scan.analyze({ ...input, profile });
-      if (profile.rememberFoods) await services.history.add(result);
+      await services.history.add(result);
       client.setQueryData(queryKeys.history.detail(result.id), result);
       return result;
     },

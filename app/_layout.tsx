@@ -89,7 +89,6 @@ export default function RootLayout() {
               <Stack.Screen name="history/index" />
               <Stack.Screen name="product/[id]" />
               <Stack.Screen name="profiles/index" />
-              <Stack.Screen name="profiles/edit/[section]" />
               <Stack.Screen name="milestones/index" />
               <Stack.Screen name="exercise/new" />
               <Stack.Screen name="weight/index" />

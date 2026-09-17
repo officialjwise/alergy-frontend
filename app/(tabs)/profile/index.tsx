@@ -175,15 +175,19 @@ export default function ProfileScreen() {
         <SettingsRow
           label={t('profileTab.allergens')}
           icon="ban"
-          value={t('profile.restrictionCount', { count: profile.restrictions.length })}
-          onPress={() => router.push('/settings/restrictions')}
+          value={t('profile.foodCount', { count: profile.foods.length })}
+          onPress={() => router.push('/settings/allergies')}
         />
-        <SettingsRow label={t('profileTab.caution')} icon="shieldCheck" value={t(`caution.${profile.cautionLevel}`)} onPress={() => router.push('/settings/caution')} />
-        <SettingsRow label={t('profileTab.diet')} icon="restaurant" value={t(`diet.${profile.diet}`)} onPress={() => router.push('/settings/diet')} />
+        <SettingsRow
+          label={t('profileTab.conditions')}
+          icon="heart"
+          value={profile.conditions.length ? String(profile.conditions.length) : undefined}
+          onPress={() => router.push('/settings/conditions')}
+        />
+        <SettingsRow label={t('profileTab.note')} icon="edit" value={profile.note ? undefined : undefined} onPress={() => router.push('/settings/note')} />
         <SettingsRow label={t('profileTab.allergyCard')} icon="card" onPress={() => router.push('/settings/allergy-card')} />
         <SettingsRow label={t('profileTab.reactions')} icon="reaction" onPress={() => router.push('/reactions')} />
         <SettingsRow label={t('profileTab.verdictColors')} icon="target" onPress={() => router.push('/settings/verdict-colors')} />
-        <SettingsRow label={t('profileTab.otherAnswers')} icon="document" onPress={() => router.push('/settings/survey')} />
       </SettingsSection>
 
       {/* Widgets */}

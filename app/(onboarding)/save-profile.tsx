@@ -8,6 +8,8 @@ import { Button, Checkbox, Icon, PressableScale, Text } from '@/components/ui';
 import { GoogleMark } from '@/features/auth/GoogleMark';
 import { authErrorKey, useSocialSignIn } from '@/features/auth/useAuth';
 import { buildProfileFromAnswers } from '@/features/onboarding/buildProfile';
+import { canAddPerson } from '@/features/questionnaire/plans';
+import { validateAnswers } from '@/features/questionnaire/rules';
 import { useAppStore } from '@/store/appStore';
 import { useOnboardingStore } from '@/store/onboardingStore';
 import { useProfileStore } from '@/store/profileStore';
@@ -29,22 +31,38 @@ export default function SaveProfileScreen() {
   const { signIn, pending } = useSocialSignIn();
 
   const session = useAppStore((state) => state.session);
+  const plan = useAppStore((state) => state.account.plan);
   const answers = useOnboardingStore((state) => state.answers);
   const profiles = useProfileStore((state) => state.profiles);
   const addProfile = useProfileStore((state) => state.addProfile);
 
-  const createProfile = useCallback(() => {
-    if (
-      profiles.length === 0 ||
-      !profiles.some(
-        (p) =>
-          p.profileFor === answers.profileFor &&
-          p.name === (answers.profileName.trim() || t('profile.for_myself')),
-      )
-    ) {
-      addProfile(buildProfileFromAnswers(answers, profiles.length, t('profile.for_myself')), true);
+  /**
+   * Writes the profile: a new one for "Me" or "Someone else", or an update of
+   * the person picked at question 1. Nothing is saved while an answer is
+   * missing (the review screen lists what to fix), and the plan limit is
+   * checked again here.
+   */
+  const createProfile = useCallback((): boolean => {
+    const existing =
+      answers.target === 'existing'
+        ? (profiles.find((p) => p.id === answers.existingProfileId) ?? null)
+        : answers.target === 'me'
+          ? (profiles.find((p) => p.isAccountHolder) ?? null)
+          : null;
+    const issues = validateAnswers(answers, {
+      canAddPerson: existing !== null || canAddPerson(plan, profiles.length),
+    });
+    if (issues.length > 0) {
+      setError(t('review.issuesTitle'));
+      return false;
     }
-  }, [addProfile, answers, profiles, t]);
+    const { profile } = buildProfileFromAnswers(answers, existing, profiles.length);
+    addProfile(
+      { ...profile, name: profile.name || t('profile.for_myself') },
+      existing === null || existing.isAccountHolder,
+    );
+    return true;
+  }, [addProfile, answers, plan, profiles, t]);
 
   const requireTerms = useCallback((): boolean => {
     if (!terms) {
@@ -61,8 +79,7 @@ export default function SaveProfileScreen() {
       if (!requireTerms()) return;
       try {
         await signIn(provider);
-        createProfile();
-        router.push('/(onboarding)/notifications');
+        if (createProfile()) router.push('/(onboarding)/notifications');
       } catch (caught) {
         const key = authErrorKey(caught);
         if (key) setError(t(key));
@@ -111,8 +128,7 @@ export default function SaveProfileScreen() {
           <Button
             title={t('common.save')}
             onPress={() => {
-              createProfile();
-              router.push('/(onboarding)/notifications');
+              if (createProfile()) router.push('/(onboarding)/notifications');
             }}
             haptic="medium"
           />

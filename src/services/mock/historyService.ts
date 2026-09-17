@@ -5,27 +5,57 @@ import { seedHistory } from '@/mocks/scans';
 import { useDevStore } from '@/store/devStore';
 import { storage, storageKeys } from '@/store/storage';
 import { useProfileStore } from '@/store/profileStore';
-import type { HistoryFilter, ScanResult } from '@/types';
+import type { ConditionNote, HistoryFilter, RiskLevel, ScanResult, VerdictTrigger } from '@/types';
 import { normalize } from '@/utils/text';
 
 /**
  * History lives in MMKV under one key so it survives relaunches. Seeded once
  * per profile so the home / history screens are not empty on first run.
  */
-/** Scans stored before the catalogue had nutrition facts get them from the catalogue on read. */
+/**
+ * Scans stored by older builds are brought up to date on read: nutrition facts
+ * from the catalogue, and verdicts without condition notes or trigger levels
+ * (the questionnaire model) get the missing fields.
+ */
 function hydrate(scan: ScanResult): ScanResult {
-  if (scan.product.nutrition) return scan;
-  const catalogue = productById(scan.product.id);
-  if (!catalogue?.nutrition) return scan;
-  return {
-    ...scan,
-    product: {
-      ...scan.product,
-      nutrition: catalogue.nutrition,
-      healthScore: catalogue.healthScore,
-      servingLabel: catalogue.servingLabel,
-    },
+  let next = scan;
+  if (!scan.product.nutrition) {
+    const catalogue = productById(scan.product.id);
+    if (catalogue?.nutrition) {
+      next = {
+        ...next,
+        product: {
+          ...next.product,
+          nutrition: catalogue.nutrition,
+          healthScore: catalogue.healthScore,
+          servingLabel: catalogue.servingLabel,
+        },
+      };
+    }
+  }
+  type LegacyTrigger = Omit<VerdictTrigger, 'level' | 'byNameOnly'> & {
+    level?: RiskLevel;
+    byNameOnly?: boolean;
+    severity?: string;
   };
+  const legacyTriggers = next.verdict.triggers as LegacyTrigger[];
+  const legacyNotes = (next.verdict as { conditionNotes?: ConditionNote[] }).conditionNotes;
+  if (!legacyNotes || legacyTriggers.some((trigger) => trigger.level === undefined)) {
+    next = {
+      ...next,
+      verdict: {
+        ...next.verdict,
+        conditionNotes: legacyNotes ?? [],
+        triggers: legacyTriggers.map(({ severity, ...trigger }) => ({
+          ...trigger,
+          level:
+            trigger.level ?? (severity === 'severe' || severity === 'anaphylaxis' ? 'high' : 'warning'),
+          byNameOnly: trigger.byNameOnly ?? false,
+        })),
+      },
+    };
+  }
+  return next;
 }
 
 function load(): ScanResult[] {

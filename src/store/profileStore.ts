@@ -2,7 +2,73 @@ import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 
 import { mmkvStateStorage, storageKeys } from './storage';
-import type { UserProfile } from '@/types';
+import type { AvoidedFood, UserProfile, WorstReaction } from '@/types';
+
+/** Shape of a profile persisted before the questionnaire (version 1). */
+interface LegacyProfile {
+  id: string;
+  name: string;
+  profileFor: string;
+  birthDate: UserProfile['birthDate'];
+  restrictions?: { ingredientId: string; name: string; severity: string }[];
+  customIngredients?: Record<string, { id: string; name: string }>;
+  color: string;
+  createdAt: string;
+  updatedAt: string;
+  body?: UserProfile['body'];
+  nutritionGoals?: UserProfile['nutritionGoals'];
+}
+
+const LEGACY_WORST: Record<string, WorstReaction> = {
+  mild: 'mild',
+  moderate: 'treatment',
+  severe: 'severe',
+  anaphylaxis: 'severe',
+};
+
+/** Profiles created with the old survey keep working; they are invited to answer the questionnaire. */
+export function migrateLegacyProfile(legacy: LegacyProfile): UserProfile {
+  const foods: AvoidedFood[] = (legacy.restrictions ?? []).map((item) => {
+    const custom = legacy.customIngredients?.[item.ingredientId];
+    const worst = LEGACY_WORST[item.severity] ?? 'unsure';
+    return {
+      id: item.ingredientId,
+      name: item.name,
+      allergenId: custom ? null : item.ingredientId,
+      byNameOnly: !!custom,
+      kind: 'allergy',
+      kindAssumed: false,
+      worst,
+      severityAssumed: worst === 'unsure',
+      strictness: null,
+      doctorConfirmed: null,
+      level: worst === 'mild' ? 'warning' : 'high',
+      addedAt: legacy.createdAt,
+      updatedAt: legacy.updatedAt,
+    };
+  });
+  return {
+    id: legacy.id,
+    name: legacy.name,
+    profileFor: legacy.profileFor === 'myself' ? 'myself' : 'other',
+    isAccountHolder: legacy.profileFor === 'myself',
+    birthDate: legacy.birthDate ?? null,
+    hasAllergies: foods.length ? 'yes' : 'no',
+    foods,
+    conditions: [],
+    note: '',
+    questionnaireVersion: 1,
+    answers: null,
+    emergencyContact: null,
+    doctor: '',
+    reactionFreeGoalDays: 30,
+    color: legacy.color,
+    body: legacy.body,
+    nutritionGoals: legacy.nutritionGoals,
+    createdAt: legacy.createdAt,
+    updatedAt: legacy.updatedAt,
+  };
+}
 
 export interface ProfileState {
   profiles: UserProfile[];
@@ -44,7 +110,19 @@ export const useProfileStore = create<ProfileState>()(
     {
       name: storageKeys.profiles,
       storage: createJSONStorage(() => mmkvStateStorage),
-      version: 1,
+      version: 2,
+      migrate: (persisted, version) => {
+        const state = persisted as { profiles?: unknown[]; activeProfileId?: string | null };
+        if (version < 2) {
+          return {
+            ...state,
+            profiles: (state.profiles ?? []).map((profile) =>
+              migrateLegacyProfile(profile as LegacyProfile),
+            ),
+          } as ProfileState;
+        }
+        return persisted as ProfileState;
+      },
     },
   ),
 );
