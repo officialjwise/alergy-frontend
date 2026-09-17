@@ -1,9 +1,8 @@
-import { useTranslation } from 'react-i18next';
+import { Redirect } from 'expo-router';
 
-import { NavHeader, Screen } from '@/components/ui';
-
-/** Caution level. Route skeleton; the full screen lands in milestone 9. */
-export default function CautionLevelScreen() {
-  const { t } = useTranslation();
-  return <Screen header={<NavHeader title={t('routes.settingsCaution')} />}>{null}</Screen>;
+/** "Caution level" reuses the onboarding caution editor. */
+export default function CautionSettingsScreen() {
+  return (
+    <Redirect href={{ pathname: '/profiles/edit/[section]', params: { section: 'caution' } }} />
+  );
 }

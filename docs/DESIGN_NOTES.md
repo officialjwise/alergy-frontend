@@ -161,3 +161,18 @@ Built with the same tokens: 20pt gutters, 16pt-radius bordered cards, 24pt-radiu
   profiles. Reactions are three fixed emoji; report and block are wired for
   the community features the brief requires. QR codes are drawn as a
   placeholder pattern until the backend issues invite links.
+- **Profile tab.** Sections follow the reference order (header card with plan
+  label, invite, account, safety profile, widgets, support and legal, follow
+  us, account actions). The referral reward text, support email and social
+  links come from `src/config/app.ts`, not from copy. "Manage Apple Health"
+  and the nutrition rows have no equivalent and were replaced by the safety
+  profile rows. Widget cards are previews only.
+- **Settings rows that reuse onboarding.** Allergens, caution level and diet
+  redirect to the Phase 1 section editor so the same option cards are used;
+  the remaining survey answers get their own sheet-based editor.
+- **Allergy card languages.** The card text is looked up in the chosen
+  language through i18n; locales that are not translated yet fall back to
+  English, so the switch is ready for the translations.
+- **Delete account.** Warning list, typed confirmation and a final dialog,
+  then every store and the local database are cleared and the app returns to
+  the welcome screen.

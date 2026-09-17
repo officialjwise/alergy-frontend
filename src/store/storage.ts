@@ -26,6 +26,7 @@ export const storageKeys = {
   reactions: 'reactions-v1',
   actionPlan: 'action-plan-v1',
   groups: 'groups-v1',
+  notifications: 'notifications-v1',
 } as const;
 
 export function clearAllStorage(): void {

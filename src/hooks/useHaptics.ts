@@ -1,3 +1,4 @@
+import { useAppStore } from '@/store/appStore';
 import * as Haptics from 'expo-haptics';
 import { Platform } from 'react-native';
 
@@ -6,6 +7,7 @@ export type HapticKind =
 
 /** Fire-and-forget haptics. Never throws (haptics are unavailable on some Android devices and simulators). */
 export function haptic(kind: HapticKind): void {
+  if (!useAppStore.getState().preferences.haptics) return;
   if (kind === 'none' || Platform.OS === 'web') return;
   const run = (): Promise<void> => {
     switch (kind) {

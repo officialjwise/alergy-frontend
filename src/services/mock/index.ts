@@ -5,6 +5,7 @@ import { mockGroupService } from './groupService';
 import { mockHistoryService } from './historyService';
 import { mockIngredientService } from './ingredientService';
 import { mockInsightsService } from './insightsService';
+import { mockNotificationService } from './notificationService';
 import { mockProfileService } from './profileService';
 import { mockReactionService } from './reactionService';
 import { mockScanService } from './scanService';
@@ -21,4 +22,5 @@ export const mockServices: Services = {
   badges: mockBadgeService,
   actionPlan: mockActionPlanService,
   groups: mockGroupService,
+  notifications: mockNotificationService,
 };
