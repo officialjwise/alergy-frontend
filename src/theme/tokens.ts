@@ -52,6 +52,21 @@ export const colors = {
   gold: '#EDB962', // rating stars and laurels
   info: '#3B9FD8', // loading spinner ring
   infoTint: '#E3F2FB',
+
+  // Nutrition tracking (Phase 3). Rings and chart bands per nutrient.
+  flame: '#F0782E', // streak flame, calorie ring accent
+  protein: '#EA4E5B',
+  carbs: '#EF9A3C',
+  fat: '#4C8FE0',
+  fiber: '#8B63D6',
+  sugar: '#E8679F',
+  sodium: '#D9B24C',
+  water: '#4FA6E8',
+  health: '#FF3B5C', // Apple Health heart
+  bmiUnder: '#5B9BEA',
+  bmiHealthy: '#3DBB6B',
+  bmiOver: '#E8B04D',
+  bmiObese: '#E45B5B',
 } as const;
 
 export type ColorToken = keyof typeof colors;

@@ -39,6 +39,30 @@ export const queryKeys = {
     daily: (profileId: string, week: number) => ['insights', 'daily', profileId, week] as const,
     weekly: (profileId: string, week: number) => ['insights', 'weekly', profileId, week] as const,
     topFlagged: (profileId: string) => ['insights', 'topFlagged', profileId] as const,
+    dashboard: (profileId: string, date: string) =>
+      ['insights', 'dashboard', profileId, date] as const,
+    nutritionDays: (profileId: string, from: string, to: string) =>
+      ['insights', 'nutritionDays', profileId, from, to] as const,
+    tracking: (profileId: string) => ['insights', 'tracking', profileId] as const,
+    weightSeries: (profileId: string, range: string) =>
+      ['insights', 'weightSeries', profileId, range] as const,
+    weightChanges: (profileId: string) => ['insights', 'weightChanges', profileId] as const,
+    dailyCalories: (profileId: string, week: number) =>
+      ['insights', 'dailyCalories', profileId, week] as const,
+    weeklyEnergy: (profileId: string, week: number) =>
+      ['insights', 'weeklyEnergy', profileId, week] as const,
+    expenditure: (profileId: string) => ['insights', 'expenditure', profileId] as const,
+  },
+  weight: {
+    all: ['weight'] as const,
+    list: (profileId: string) => ['weight', profileId] as const,
+  },
+  activity: {
+    all: ['activity'] as const,
+    health: ['activity', 'health'] as const,
+    day: (profileId: string, date: string) => ['activity', 'day', profileId, date] as const,
+    workouts: (profileId: string) => ['activity', 'workouts', profileId] as const,
+    water: (profileId: string, date: string) => ['activity', 'water', profileId, date] as const,
   },
   reactions: {
     all: ['reactions'] as const,

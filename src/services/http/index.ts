@@ -6,8 +6,21 @@ import type {
   AppNotification,
   AuthSession,
   Badge,
+  DailyActivity,
+  DailyCalories,
   DailyScans,
+  DayNutrition,
   DaySummary,
+  ExpenditureRow,
+  HealthConnection,
+  HomeDashboard,
+  TrackingOverview,
+  WaterDay,
+  WeeklyEnergy,
+  WeightChangeRow,
+  WeightEntry,
+  WeightPoint,
+  Workout,
   Group,
   GroupMember,
   InsightsOverview,
@@ -117,6 +130,51 @@ export const httpServices: Services = {
     weeklyOverview: (profileId, week) =>
       http<WeeklyOverview>(`/profiles/${profileId}/insights/weekly?week=${week}`),
     topFlagged: (profileId) => http<TopFlagged>(`/profiles/${profileId}/insights/top-flagged`),
+    homeDashboard: (profileId, date) =>
+      http<HomeDashboard>(`/profiles/${profileId}/tracking/dashboard?date=${date}`),
+    dayNutrition: (profileId, fromDate, toDate) =>
+      http<DayNutrition[]>(`/profiles/${profileId}/tracking/days?from=${fromDate}&to=${toDate}`),
+    trackingOverview: (profileId) =>
+      http<TrackingOverview>(`/profiles/${profileId}/tracking/overview`),
+    weightSeries: (profileId, range) =>
+      http<WeightPoint[]>(`/profiles/${profileId}/tracking/weight-series?range=${range}`),
+    weightChanges: (profileId) =>
+      http<WeightChangeRow[]>(`/profiles/${profileId}/tracking/weight-changes`),
+    dailyCalories: (profileId, week) =>
+      http<DailyCalories>(`/profiles/${profileId}/tracking/daily-calories?week=${week}`),
+    weeklyEnergy: (profileId, week) =>
+      http<WeeklyEnergy>(`/profiles/${profileId}/tracking/weekly-energy?week=${week}`),
+    expenditureChanges: (profileId) =>
+      http<ExpenditureRow[]>(`/profiles/${profileId}/tracking/expenditure`),
+  },
+  weight: {
+    list: (profileId) => http<WeightEntry[]>(`/profiles/${profileId}/weights`),
+    add: (input) =>
+      http<WeightEntry>(`/profiles/${input.profileId}/weights`, {
+        method: 'POST',
+        body: JSON.stringify(input),
+      }),
+    remove: (id) => http<void>(`/weights/${id}`, { method: 'DELETE' }),
+  },
+  activity: {
+    health: () => http<HealthConnection>('/health/connection'),
+    connectHealth: () => http<HealthConnection>('/health/connection', { method: 'POST' }),
+    disconnectHealth: () => http<HealthConnection>('/health/connection', { method: 'DELETE' }),
+    activity: (profileId, date) =>
+      http<DailyActivity>(`/profiles/${profileId}/activity?date=${date}`),
+    workouts: (profileId) => http<Workout[]>(`/profiles/${profileId}/workouts`),
+    logWorkout: (input) =>
+      http<Workout>(`/profiles/${input.profileId}/workouts`, {
+        method: 'POST',
+        body: JSON.stringify(input),
+      }),
+    removeWorkout: (id) => http<void>(`/workouts/${id}`, { method: 'DELETE' }),
+    water: (profileId, date) => http<WaterDay>(`/profiles/${profileId}/water?date=${date}`),
+    logWater: (profileId, date, ounces) =>
+      http<WaterDay>(`/profiles/${profileId}/water`, {
+        method: 'PUT',
+        body: JSON.stringify({ date, ounces }),
+      }),
   },
   reactions: {
     list: (profileId) => http<Reaction[]>(`/profiles/${profileId}/reactions`),
