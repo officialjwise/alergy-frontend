@@ -229,3 +229,111 @@ export interface Language {
   nativeName: string;
   flag: string;
 }
+
+// Reactions (personal log, not medical advice)
+export type ReactionSeverity = 'mild' | 'moderate' | 'severe';
+
+export type Symptom =
+  | 'hives'
+  | 'itching'
+  | 'swelling'
+  | 'stomach'
+  | 'nausea'
+  | 'vomiting'
+  | 'diarrhea'
+  | 'breathing'
+  | 'dizziness'
+  | 'other';
+
+export interface Reaction {
+  id: string;
+  profileId: string;
+  /** When the reaction happened (ISO). */
+  occurredAt: string;
+  foodName: string;
+  /** Linked scan when the food came from history. */
+  scanId?: string;
+  symptoms: Symptom[];
+  severity: ReactionSeverity;
+  notes?: string;
+  photoUri?: string;
+  createdAt: string;
+}
+
+export type ReactionInput = Omit<Reaction, 'id' | 'createdAt'>;
+
+// Badges (achievements computed from activity)
+export interface Badge {
+  id: string;
+  icon: string;
+  current: number;
+  target: number;
+  earnedAt: string | null;
+}
+
+// Allergy action plan photos
+export interface ActionPlanPhoto {
+  id: string;
+  profileId: string;
+  uri: string;
+  addedAt: string;
+}
+
+// Insights
+export interface InsightsOverview {
+  streak: number;
+  longestStreak: number;
+  totalScans: number;
+  flaggedScans: number;
+  /** Safe share of all scans, or null with no scans. */
+  safeRate: number | null;
+  daysWithScans: number;
+  firstScanAt: string | null;
+  badgesEarned: number;
+  daysSinceLastReaction: number | null;
+  longestReactionFreeRun: number;
+  lastReactionAt: string | null;
+}
+
+export type InsightsRange = '90d' | '6m' | '1y' | 'all';
+
+export interface SeriesPoint {
+  /** Bucket start day, YYYY-MM-DD. */
+  date: string;
+  flagged: number;
+  total: number;
+}
+
+export type ScanWindow = '3d' | '7d' | '14d' | '30d' | '90d' | 'all';
+
+export interface ScanChangeRow {
+  window: ScanWindow;
+  flagged: number;
+  /** Flagged count in the previous window of the same length (null for "all"). */
+  previous: number | null;
+  trend: 'fewer' | 'same' | 'more' | 'pending';
+  /** Flagged per bucket inside the window, oldest first, for the mini chart. */
+  series: number[];
+  ready: boolean;
+}
+
+export interface DailyScans {
+  weekStart: string;
+  days: DaySummary[];
+  averagePerDay: number;
+}
+
+export interface WeeklyOverview {
+  weekStart: string;
+  checked: number;
+  flagged: number;
+  safeRate: number | null;
+  days: { date: string; checked: number; flagged: number }[];
+}
+
+export interface TopFlagged {
+  unlocked: boolean;
+  daysWithScans: number;
+  requiredDays: number;
+  items: FlaggedIngredientCount[];
+}

@@ -33,5 +33,24 @@ export const queryKeys = {
     home: (profileId: string, date: string) => ['insights', 'home', profileId, date] as const,
     days: (profileId: string, from: string, to: string) =>
       ['insights', 'days', profileId, from, to] as const,
+    overview: (profileId: string) => ['insights', 'overview', profileId] as const,
+    series: (profileId: string, range: string) => ['insights', 'series', profileId, range] as const,
+    changes: (profileId: string) => ['insights', 'changes', profileId] as const,
+    daily: (profileId: string, week: number) => ['insights', 'daily', profileId, week] as const,
+    weekly: (profileId: string, week: number) => ['insights', 'weekly', profileId, week] as const,
+    topFlagged: (profileId: string) => ['insights', 'topFlagged', profileId] as const,
+  },
+  reactions: {
+    all: ['reactions'] as const,
+    list: (profileId: string) => ['reactions', profileId] as const,
+    detail: (id: string) => ['reactions', 'detail', id] as const,
+  },
+  badges: {
+    all: ['badges'] as const,
+    list: (profileId: string) => ['badges', profileId] as const,
+  },
+  actionPlan: {
+    all: ['actionPlan'] as const,
+    list: (profileId: string) => ['actionPlan', profileId] as const,
   },
 } as const;
