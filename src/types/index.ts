@@ -274,9 +274,20 @@ export interface Reaction {
 export type ReactionInput = Omit<Reaction, 'id' | 'createdAt'>;
 
 // Badges (achievements computed from activity)
+export type BadgeGroup =
+  | 'streak'
+  | 'meals'
+  | 'goals'
+  | 'friends'
+  | 'water'
+  | 'habits'
+  | 'food'
+  | 'special';
+
 export interface Badge {
   id: string;
   icon: string;
+  group: BadgeGroup;
   current: number;
   target: number;
   earnedAt: string | null;

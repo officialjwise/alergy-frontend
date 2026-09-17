@@ -67,9 +67,9 @@ export interface AppState {
   notificationsPrompted: boolean;
   marketingOptIn: boolean;
   acceptedTermsAt: string | null;
-  /** The product alerts intro sheet was shown (once, after the first saved food). */
-  featureIntroShown: boolean;
-  setFeatureIntroShown: () => void;
+  /** The "Add workouts to your daily budget" sheet was shown once. */
+  workoutsIntroShown: boolean;
+  setWorkoutsIntroShown: () => void;
   account: AccountInfo;
   setAccount: (patch: Partial<AccountInfo>) => void;
   preferences: Preferences;
@@ -98,8 +98,8 @@ export const useAppStore = create<AppState>()(
       notificationsPrompted: false,
       marketingOptIn: true,
       acceptedTermsAt: null,
-      featureIntroShown: false,
-      setFeatureIntroShown: () => set({ featureIntroShown: true }),
+      workoutsIntroShown: false,
+      setWorkoutsIntroShown: () => set({ workoutsIntroShown: true }),
       account: { name: '', username: '', plan: 'free', lastSyncedAt: null },
       setAccount: (patch) => set((state) => ({ account: { ...state.account, ...patch } })),
       preferences: {
@@ -145,7 +145,7 @@ export const useAppStore = create<AppState>()(
           notificationsPrompted: false,
           marketingOptIn: true,
           acceptedTermsAt: null,
-          featureIntroShown: false,
+          workoutsIntroShown: false,
           account: { name: '', username: '', plan: 'free', lastSyncedAt: null },
         }),
     }),
@@ -153,6 +153,8 @@ export const useAppStore = create<AppState>()(
       name: storageKeys.app,
       storage: createJSONStorage(() => mmkvStateStorage),
       version: 2,
+      // Version 1 state only lacks keys; `merge` below fills them from the defaults.
+      migrate: (persisted) => persisted as AppState,
       // Older persisted state lacks the Phase 3 preference keys; fill them from the defaults.
       merge: (persisted, current) => {
         const saved = (persisted ?? {}) as Partial<AppState>;

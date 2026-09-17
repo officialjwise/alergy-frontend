@@ -306,71 +306,58 @@
     "history": "History"
   },
   "home": {
-    "greeting": "Hi{{name}}",
-    "subtitle": "Ready to check something?",
     "quickScan": "Scan food",
-    "quickScanHint": "Label, menu or package",
-    "recent": "Recent scans",
-    "saved": "Saved safe foods",
-    "emptyRecentTitle": "No scans yet",
-    "emptyRecentBody": "Scan a label or a menu and your results will show up here.",
-    "emptySavedTitle": "Nothing saved yet",
-    "emptySavedBody": "Save foods you trust from a result screen to find them fast.",
     "activeProfile": "Checking for",
     "switchProfile": "Switch profile",
-    "watching": "Watching {{count}} ingredients",
-    "watching_one": "Watching 1 ingredient",
     "appName": "Allergy App",
-    "streakA11y": "Safe scan streak: {{count}} days. Opens Insights.",
-    "streakA11y_one": "Safe scan streak: 1 day. Opens Insights.",
+    "streakA11y": "Day streak: {{count}} days. Opens Milestones.",
+    "streakA11y_one": "Day streak: 1 day. Opens Milestones.",
     "checkingFor": "Checking for {{name}}",
     "dayA11y": "{{weekday}}: {{status}}",
-    "dayStatus_none": "no scans",
-    "dayStatus_safe": "{{count}} scans, all safe",
-    "dayStatus_safe_one": "1 scan, safe",
-    "dayStatus_caution": "{{count}} scans, at least one caution",
-    "dayStatus_caution_one": "1 scan, caution",
-    "dayStatus_unsafe": "{{count}} scans, at least one not safe",
-    "dayStatus_unsafe_one": "1 scan, not safe",
-    "foodsChecked": "Foods checked today",
-    "foodsCheckedDay": "Foods checked",
-    "safeRate": "Safe rate",
-    "safeRateDay": "Safe rate that day",
-    "toggleMetric": "Switch between foods checked and safe rate",
-    "noScansYet": "Nothing checked yet",
-    "statsA11y": "Stats, page {{current}} of {{total}}. Swipe to see more.",
-    "statSafe": "Safe",
-    "statCaution": "Caution",
-    "statUnsafe": "Not safe",
-    "statUnknown": "Not sure",
-    "statTopFlagged": "Top flagged",
-    "statTopFlaggedNone": "No flags yet",
-    "statTopFlaggedCount": "{{count}} times",
-    "statTopFlaggedCount_one": "1 time",
-    "statSavedFoods": "Saved foods",
-    "statStreak": "Day streak",
-    "statChecked": "Checked all time",
-    "statWatching": "Ingredients watched",
-    "recentTitle": "Recently scanned",
-    "dayTitle": "Scanned on {{date}}",
-    "emptyFirst": "Tap + to scan your first food",
-    "emptyDay": "Nothing scanned on this day",
+    "dayStatus_none": "no meals logged",
+    "toggleMetric": "Switch between eaten and left",
+    "statsA11y": "Dashboard, page {{current}} of {{total}}. Swipe to see more.",
+    "recentTitle": "Recently uploaded",
+    "dayTitle": "Logged on {{date}}",
+    "emptyFirst": "Tap + to add your first meal of the day",
+    "emptyDay": "Nothing logged on this day",
     "emptyHint": "Opens the scanner",
     "refresh": "Refresh",
-    "intro": {
-      "title": "Get alerts when your foods change",
-      "subtitle": "We notify you if a saved product changes its ingredients or has an allergy related recall.",
-      "sampleDetail": "Saved food",
-      "statusChanged": "Ingredients changed",
-      "statusSafe": "Still safe",
-      "statusRecall": "Recall notice",
-      "summaryLabel": "Alerts you would have received",
-      "summaryValue": "{{count}} this month",
-      "watched": "Saved foods watched: 0 → {{count}}",
-      "turnOn": "Turn on alerts",
-      "alertsOn": "Alerts are on for your saved foods",
-      "alertsDenied": "Notifications are off. You can enable them in Settings."
-    }
+    "dayStatus_green": "{{count}} meals logged, on target",
+    "dayStatus_green_one": "1 meal logged, on target",
+    "dayStatus_yellow": "{{count}} meals logged, close to target",
+    "dayStatus_yellow_one": "1 meal logged, close to target",
+    "dayStatus_red": "{{count}} meals logged, calories left",
+    "dayStatus_red_one": "1 meal logged, calories left",
+    "caloriesEaten": "Calories eaten",
+    "caloriesLeft": "Calories left",
+    "nutrient_protein": "Protein",
+    "nutrient_carbs": "Carbs",
+    "nutrient_fat": "Fat",
+    "nutrient_fiber": "Fiber",
+    "nutrient_sugar": "Sugar",
+    "nutrient_sodium": "Sodium",
+    "nutrient_calories": "Calories",
+    "nutrientEaten": "{{name}} eaten",
+    "nutrientLeft": "{{name}} left",
+    "healthScore": "Health Score",
+    "notAvailable": "N/A",
+    "healthScoreEmpty": "Track a few foods to generate your health score for today. Your score reflects nutritional content and how processed your meals are.",
+    "healthScoreBody": "Your score reflects the nutritional content of today's foods and how processed they are.",
+    "connectHealth": "Connect Apple Health",
+    "trackSteps": "Track your steps",
+    "connect": "Connect",
+    "healthConnected": "Apple Health",
+    "healthSyncing": "Connected",
+    "manage": "Manage",
+    "caloriesBurned": "Calories burned",
+    "steps": "Steps",
+    "cal": "cal",
+    "water": "Water",
+    "waterValue": "{{ounces}} fl oz ({{cups}} cups)",
+    "logWater": "Log Water",
+    "caloriesCount": "{{count}} calories",
+    "noFacts": "No nutrition facts yet"
   },
   "scan": {
     "title": "Scan",
@@ -627,10 +614,10 @@
   "plus": {
     "open": "Open menu",
     "close": "Close menu",
-    "logReaction": "Log reaction",
     "savedFoods": "Saved foods",
     "foodSearch": "Food search",
-    "scanFood": "Scan food"
+    "scanFood": "Scan food",
+    "logExercise": "Log exercise"
   },
   "result": {
     "save": "Save",
@@ -937,59 +924,131 @@
   },
   "badges": {
     "title": "Badges",
-    "earned": "{{count}} of {{total}} earned",
     "locked": "Locked",
+    "earnedShort": "Earned",
     "earnedOn": "Earned {{date}}",
     "progress": "{{current}} of {{target}}",
     "emptyTitle": "No badges yet",
-    "emptyBody": "Scan foods and keep a safe streak to earn your first badge.",
-    "first_scan": {
-      "name": "First check",
-      "description": "Checked your first food."
+    "emptyBody": "Log foods and keep your streak going to earn your first badge.",
+    "rookie": {
+      "name": "Rookie",
+      "description": "3 day streak"
     },
-    "ten_scans": {
-      "name": "Getting the hang of it",
-      "description": "Checked 10 foods."
+    "getting_serious": {
+      "name": "Getting Serious",
+      "description": "10 day streak"
     },
-    "fifty_scans": {
-      "name": "Label detective",
-      "description": "Checked 50 foods."
+    "locked_in": {
+      "name": "Locked In",
+      "description": "50 day streak"
     },
-    "first_saved": {
-      "name": "Keeper",
-      "description": "Saved your first trusted food."
+    "triple_threat": {
+      "name": "Triple Threat",
+      "description": "100 day streak"
     },
-    "five_saved": {
-      "name": "Pantry builder",
-      "description": "Saved 5 trusted foods."
+    "no_days_off": {
+      "name": "No Days Off",
+      "description": "365 day streak"
     },
-    "label_reader": {
-      "name": "Fine print",
-      "description": "Read 5 labels or menus with the camera."
+    "immortal": {
+      "name": "Immortal",
+      "description": "1000 day streak"
     },
-    "barcode_pro": {
-      "name": "Beep",
-      "description": "Scanned 5 barcodes."
+    "forking_around": {
+      "name": "Forking Around",
+      "description": "Logged 5 meals"
     },
-    "explorer": {
-      "name": "Explorer",
-      "description": "Checked 10 different products."
+    "mission_nutrition": {
+      "name": "Mission: Nutrition",
+      "description": "Logged 50 meals"
     },
-    "streak_7": {
-      "name": "One safe week",
-      "description": "Seven safe scanning days in a row."
+    "the_logfather": {
+      "name": "The Logfather",
+      "description": "Logged 500 meals"
     },
-    "streak_30": {
-      "name": "Safe month",
-      "description": "Thirty safe scanning days in a row."
+    "one_hit_wonder": {
+      "name": "One Hit Wonder",
+      "description": "Hit daily calorie goal once"
     },
-    "family": {
-      "name": "Looking out",
-      "description": "Set up a second profile."
+    "loyalty_iii": {
+      "name": "Loyalty III",
+      "description": "Hit calorie goal 7 days straight"
     },
-    "reaction_logger": {
-      "name": "Note taker",
-      "description": "Logged your first reaction."
+    "bullseye": {
+      "name": "Bullseye",
+      "description": "Hit calorie goal 30 days straight"
+    },
+    "helping_hand": {
+      "name": "Helping Hand",
+      "description": "Invited 1 friend"
+    },
+    "peer_pressurer": {
+      "name": "Peer Pressurer",
+      "description": "Invited 3 friends"
+    },
+    "cult_leader": {
+      "name": "Cult Leader",
+      "description": "Invited 10 friends"
+    },
+    "hydrated": {
+      "name": "Hydrated",
+      "description": "Log water intake once"
+    },
+    "sippin": {
+      "name": "Sippin'",
+      "description": "Log water 3 days in a row"
+    },
+    "aquaholic": {
+      "name": "Aquaholic",
+      "description": "Log water 10 days in a row"
+    },
+    "clean_sweep": {
+      "name": "Clean Sweep",
+      "description": "Log 3 meals in a day"
+    },
+    "sweat_equity": {
+      "name": "Sweat Equity",
+      "description": "Log 5 workouts"
+    },
+    "speed_logger": {
+      "name": "Speed logger",
+      "description": "Save 10 meals"
+    },
+    "green_machine": {
+      "name": "Green Machine",
+      "description": "Eat leafy greens 5 days in a week"
+    },
+    "nut_case": {
+      "name": "Nut Case",
+      "description": "Check nuts on labels 4 days in a week"
+    },
+    "berry_suspicious": {
+      "name": "Berry Suspicious",
+      "description": "Eat berries 3 days in a week"
+    },
+    "time_traveler": {
+      "name": "Time Traveler",
+      "description": "Log something on an old day"
+    },
+    "gremlin": {
+      "name": "Gremlin",
+      "description": "Log something after midnight"
+    },
+    "health_nut": {
+      "name": "Health Nut",
+      "description": "Get a 10 health score in a day"
+    },
+    "dumpster_diver": {
+      "name": "Dumpster Diver",
+      "description": "Get a 1 health score in a day"
+    },
+    "doppelganger": {
+      "name": "Doppelgänger",
+      "description": "Log an identical day twice"
+    },
+    "the_omega_log": {
+      "name": "The Omega Log",
+      "description": "Log every feature: food, water, workout and weight"
     }
   },
   "actionPlan": {
@@ -1381,5 +1440,91 @@
     "body": "This version of Allergy App is no longer supported. Update to keep checking foods safely.",
     "update": "Update now",
     "version": "You have version {{version}}"
+  },
+  "milestones": {
+    "title": "Milestones",
+    "dayStreak": "Day Streak",
+    "badgesEarned": "Badges earned",
+    "streakA11y": "Day streak: {{count}} days",
+    "badgesA11y": "Badges earned: {{count}}",
+    "longestStreak": "{{count}} days",
+    "longestStreak_one": "1 day",
+    "longestStreakLabel": "longest streak",
+    "badgesCount": "{{earned}}/{{total}} badges",
+    "share": "Share milestones",
+    "shareMessage": "I'm on a {{streak}} day streak with {{earned}}/{{total}} badges on {{app}}."
+  },
+  "water": {
+    "title": "Log water",
+    "cups": "{{count}} cups",
+    "cups_one": "1 cup",
+    "ounces": "{{count}} fl oz",
+    "addCup": "Add a cup",
+    "removeCup": "Remove a cup",
+    "saved": "Water logged"
+  },
+  "exercise": {
+    "title": "Log exercise",
+    "kind": "Workout",
+    "duration": "Duration",
+    "minutes": "{{count}} min",
+    "less": "Five minutes less",
+    "more": "Five minutes more",
+    "intensity": "Intensity",
+    "intensity_low": "Low",
+    "intensity_medium": "Medium",
+    "intensity_high": "High",
+    "estimate": "About {{count}} cal burned",
+    "estimateNote": "Estimated from the workout, your weight and the intensity. Apple Health workouts replace this estimate when connected.",
+    "log": "Log exercise",
+    "logged": "Workout logged, +{{count}} cal added to today's budget",
+    "kind_run": "Run",
+    "kind_walk": "Walk",
+    "kind_cycle": "Cycle",
+    "kind_strength": "Strength",
+    "kind_yoga": "Yoga",
+    "kind_swim": "Swim",
+    "kind_hiit": "HIIT",
+    "kind_other": "Other"
+  },
+  "ringColors": {
+    "title": "Ring Colors Explained",
+    "previewA11y": "Sample week from the home calendar",
+    "intro": "On the homepage calendar, the colored rings around each date show how close you were to your daily calorie goal:",
+    "greenName": "Green",
+    "greenBody": "≤100 calories left (or already slightly over)",
+    "yellowName": "Yellow",
+    "yellowBody": "Within 200 calories of your planned surplus",
+    "redName": "Red",
+    "redBody": "More than 200 calories left to eat",
+    "noneName": "Dotted",
+    "noneBody": "No meals logged that day"
+  },
+  "appleHealth": {
+    "title": "Sync to Apple Health",
+    "subtitle": "Sync calories, macros and daily activity from {{app}} to Apple Health.",
+    "artA11y": "Walking, running, yoga and sleep flowing between Apple Health and the app",
+    "walking": "Walking",
+    "running": "Running",
+    "yoga": "Yoga",
+    "sleep": "Sleep",
+    "connect": "Connect",
+    "disconnect": "Disconnect",
+    "connected": "Apple Health connected",
+    "disconnected": "Apple Health disconnected",
+    "failed": "Apple Health could not be connected. Try again.",
+    "connectedSince": "Connected since {{date}}"
+  },
+  "workoutsIntro": {
+    "title": "Add workouts to your daily budget",
+    "subtitle": "{{app}} reads workouts from Apple Health and pays what you burn back into your day.",
+    "run": "Morning Run",
+    "yoga": "Yoga",
+    "steps": "Steps",
+    "fromHealth": "{{minutes}} min · Apple Health",
+    "stepsToday": "{{count}} today",
+    "summaryLabel": "Added to today's budget",
+    "budget": "Daily Calorie Budget {{from}} → {{to}}",
+    "connect": "Connect Apple Health"
   }
 }

@@ -2,17 +2,8 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
 
-import {
-  Button,
-  ErrorState,
-  IconChip,
-  NavHeader,
-  Ring,
-  Screen,
-  Skeleton,
-  Text,
-} from '@/components/ui';
-import { badgeIcon } from './index';
+import { Button, ErrorState, NavHeader, Screen, Skeleton, Text } from '@/components/ui';
+import { BadgeEmblem, GROUP_COLOR, badgeIcon } from '@/features/badges/components/BadgeEmblem';
 import { useBadges } from '@/features/badges/useBadges';
 import { selectActiveProfile, useProfileStore } from '@/store/profileStore';
 import { radii, spacing } from '@/theme/tokens';
@@ -56,22 +47,12 @@ export default function BadgeDetailScreen() {
       testID={`badge-detail-${badge.id}`}
     >
       <View style={styles.hero}>
-        <Ring
+        <BadgeEmblem
           size={rs(150)}
-          thickness={8}
-          progress={earned ? 1 : badge.current / badge.target}
-          color={earned ? 'gold' : 'info'}
-          trackColor="ring"
-        >
-          <IconChip
-            icon={badgeIcon(badge)}
-            size={112}
-            iconSize={52}
-            background={earned ? 'warningTint' : 'surface'}
-            color={earned ? 'gold' : 'textMuted'}
-            outline={!earned}
-          />
-        </Ring>
+          color={GROUP_COLOR[badge.group]}
+          icon={badgeIcon(badge)}
+          locked={!earned}
+        />
         <Text variant="title" color="text" align="center" accessibilityRole="header">
           {t(`badges.${badge.id}.name`)}
         </Text>

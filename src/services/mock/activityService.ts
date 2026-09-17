@@ -86,6 +86,21 @@ export function waterFor(profileId: string, date: string): WaterDay {
 
 export const healthConnection = loadHealth;
 
+/** Days (YYYY-MM-DD) with any water logged, for the water badges. */
+export function waterDays(profileId: string): string[] {
+  return Object.keys(loadWater())
+    .filter((key) => key.startsWith(`${profileId}:`))
+    .map((key) => key.slice(profileId.length + 1))
+    .sort();
+}
+
+/** Every workout the profile has, Apple Health ones for today included. */
+export function allWorkouts(profileId: string): Workout[] {
+  const today = dayKey(new Date());
+  const health = loadHealth().connected ? healthWorkouts(profileId, today) : [];
+  return [...health, ...loadWorkouts().filter((workout) => workout.profileId === profileId)];
+}
+
 export const mockActivityService: ActivityService = {
   async health() {
     await simulate(0.2);

@@ -18,7 +18,7 @@ export interface HomeHeaderProps {
   onSwitchPress: () => void;
 }
 
-/** Logo and app name on the left, safe scan streak pill on the right, optional profile switcher below. */
+/** Logo and app name on the left, the flame streak pill on the right, optional profile switcher below. */
 export function HomeHeader({
   streak,
   onStreakPress,
@@ -42,7 +42,7 @@ export function HomeHeader({
             contentFit="cover"
             accessibilityIgnoresInvertColors
           />
-          <Text variant="cardTitle" color="text">
+          <Text variant="sectionTitle" color="text">
             {t('home.appName')}
           </Text>
         </View>
@@ -55,7 +55,7 @@ export function HomeHeader({
           style={styles.streak}
           testID="home-streak"
         >
-          <Icon name="shieldCheck" size={rs(18)} color={streak > 0 ? 'success' : 'textMuted'} />
+          <Icon name="flame" size={rs(18)} color={streak > 0 ? 'flame' : 'textMuted'} />
           <Text variant="statSm" color="text">
             {streak}
           </Text>
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
   wrap: { gap: rs(spacing.sm) },
   row: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   brand: { flexDirection: 'row', alignItems: 'center', gap: rs(spacing.xs) },
-  logo: { width: rs(30), height: rs(30), borderRadius: rs(8) },
+  logo: { width: rs(32), height: rs(32), borderRadius: rs(8) },
   streak: {
     flexDirection: 'row',
     alignItems: 'center',
