@@ -155,3 +155,9 @@ Built with the same tokens: 20pt gutters, 16pt-radius bordered cards, 24pt-radiu
   flame and shield artwork.
 - **Reactions.** The log is personal, never medical advice; the form and the
   Insights card repeat the emergency notice from the brief.
+- **Groups.** Community groups use invented member names and blurhash artwork
+  (no photos of people). A private "My family" group is derived from the
+  profiles on the device, so its members and verdict pills follow the real
+  profiles. Reactions are three fixed emoji; report and block are wired for
+  the community features the brief requires. QR codes are drawn as a
+  placeholder pattern until the backend issues invite links.

@@ -337,3 +337,83 @@ export interface TopFlagged {
   requiredDays: number;
   items: FlaggedIngredientCount[];
 }
+
+// Groups (private family groups and community groups)
+export type GroupKind = 'community' | 'private';
+
+export interface Group {
+  id: string;
+  name: string;
+  description: string;
+  kind: GroupKind;
+  memberCount: number;
+  /** Blurhash placeholder artwork; no photos of real people. */
+  blurhash: string;
+  imageUri?: string;
+  joined: boolean;
+  /** True when the current user created the group. */
+  owner: boolean;
+  /** Invite code (private groups). */
+  code?: string;
+  createdAt: string;
+}
+
+export interface GroupMember {
+  id: string;
+  name: string;
+  color: string;
+  streak: number;
+  isOwner: boolean;
+  /** Set when the member is one of the profiles on this device (family). */
+  profileId?: string;
+  /** True for the current user. */
+  isMe: boolean;
+}
+
+export interface PostVerdict {
+  memberId: string;
+  name: string;
+  kind: VerdictKind;
+}
+
+export interface PostReaction {
+  emoji: string;
+  count: number;
+  reacted: boolean;
+}
+
+export interface Post {
+  id: string;
+  groupId: string;
+  author: GroupMember;
+  createdAt: string;
+  text: string;
+  foodName?: string;
+  scanId?: string;
+  blurhash?: string;
+  imageUri?: string;
+  /** Verdict per family member (private groups) or for the poster (community). */
+  verdicts: PostVerdict[];
+  reactions: PostReaction[];
+  commentCount: number;
+}
+
+export interface PostComment {
+  id: string;
+  postId: string;
+  author: GroupMember;
+  createdAt: string;
+  text: string;
+}
+
+export interface NewPostInput {
+  groupId: string;
+  text: string;
+  foodName?: string;
+  scanId?: string;
+  imageUri?: string;
+}
+
+export type PostFilter = 'all' | VerdictKind;
+
+export type PostReportReason = 'spam' | 'harmful' | 'offensive' | 'other';

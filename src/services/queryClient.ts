@@ -49,6 +49,17 @@ export const queryKeys = {
     all: ['badges'] as const,
     list: (profileId: string) => ['badges', profileId] as const,
   },
+  groups: {
+    all: ['groups'] as const,
+    list: ['groups', 'list'] as const,
+    detail: (id: string) => ['groups', 'detail', id] as const,
+    members: (id: string) => ['groups', 'members', id] as const,
+    member: (id: string) => ['groups', 'member', id] as const,
+    posts: (id: string, filter: string) => ['groups', 'posts', id, filter] as const,
+    post: (id: string) => ['groups', 'post', id] as const,
+    comments: (id: string) => ['groups', 'comments', id] as const,
+    invite: (id: string) => ['groups', 'invite', id] as const,
+  },
   actionPlan: {
     all: ['actionPlan'] as const,
     list: (profileId: string) => ['actionPlan', profileId] as const,
