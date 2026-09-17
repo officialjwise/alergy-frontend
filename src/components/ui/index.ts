@@ -54,3 +54,5 @@ export type { ToastOptions } from './Toast';
 export { ConfirmDialogHost, confirm } from './ConfirmDialog';
 export type { ConfirmOptions } from './ConfirmDialog';
 export { PaddingGuideOverlay } from './PaddingGuideOverlay';
+export { TextField } from './TextField';
+export type { TextFieldProps } from './TextField';

@@ -130,3 +130,12 @@ Built with the same tokens: 20pt gutters, 16pt-radius bordered cards, 24pt-radiu
 - **Unreadable photos.** The mock reports an unreadable photo when the hidden
   gallery's "next photo is unreadable" switch is on, so the recovery screen can
   be tested without a real blurry photo.
+- **Result layout.** One `ResultView` renders the scan result and (later) the
+  product detail: hero image, overlapping card, floating verdict card, three
+  tiles, diet row, ingredient rows, family members, scanned text (label
+  variant) and the safety notice. The quantity stepper from the reference has
+  no meaning for an allergy check and was dropped. Ingredient entries are
+  split on commas outside brackets so "(peanuts, salt)" stays together.
+- **Fix results.** Edits rebuild the product's ingredient text (unsure entries
+  move to "may contain") and re-run the verdict engine before saving, so the
+  result, Home and history all update from one place.

@@ -192,6 +192,14 @@ export interface HomeSummary {
   totalScans: number;
 }
 
+export type ReportReason = 'ingredients' | 'verdict' | 'product' | 'other';
+
+export interface ReportProblemInput {
+  scanId: string;
+  reason: ReportReason;
+  notes?: string;
+}
+
 export interface HistoryFilter {
   query?: string;
   verdict?: VerdictKind | 'all';

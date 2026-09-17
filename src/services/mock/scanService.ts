@@ -78,4 +78,8 @@ export const mockScanService: ScanService = {
     await simulate(0.3);
     return evaluateProduct(product, profile);
   },
+  async report() {
+    // The mock accepts every report; the backend will store it.
+    await simulate(0.8);
+  },
 };

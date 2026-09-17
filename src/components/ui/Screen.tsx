@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { ReactNode, RefObject } from 'react';
 import {
   KeyboardAvoidingView,
   Platform,
@@ -24,6 +24,10 @@ export interface ScreenProps {
   scroll?: boolean;
   /** Leave room at the bottom for the floating tab bar (tab screens). */
   tabBar?: boolean;
+  /** Content starts under the status bar (hero image screens draw their own header). */
+  hero?: boolean;
+  /** Access to the ScrollView (scroll-to-section). */
+  scrollRef?: RefObject<ScrollView | null>;
   contentStyle?: StyleProp<ViewStyle>;
   /** Removes the horizontal padding for full-bleed content. */
   bleed?: boolean;
@@ -44,6 +48,8 @@ export function Screen({
   footer,
   scroll = true,
   tabBar = false,
+  hero = false,
+  scrollRef,
   contentStyle,
   bleed = false,
   keyboardAvoiding = false,
@@ -60,6 +66,7 @@ export function Screen({
 
   const body = scroll ? (
     <ScrollView
+      ref={scrollRef}
       keyboardShouldPersistTaps="handled"
       keyboardDismissMode="on-drag"
       showsVerticalScrollIndicator={false}
@@ -91,14 +98,16 @@ export function Screen({
 
   const content = (
     <View style={[styles.flex, { backgroundColor }]} testID={testID}>
-      <View
-        style={{
-          paddingTop: insets.top + rs(layout.headerTop),
-          paddingHorizontal: rs(layout.screenPaddingH),
-        }}
-      >
-        {header}
-      </View>
+      {hero ? null : (
+        <View
+          style={{
+            paddingTop: insets.top + rs(layout.headerTop),
+            paddingHorizontal: rs(layout.screenPaddingH),
+          }}
+        >
+          {header}
+        </View>
+      )}
       {body}
       {footer ? (
         <View

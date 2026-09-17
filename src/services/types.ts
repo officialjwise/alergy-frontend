@@ -5,6 +5,7 @@ import type {
   HomeSummary,
   Ingredient,
   Product,
+  ReportProblemInput,
   ScanMode,
   ScanResult,
   ScanSource,
@@ -56,12 +57,18 @@ export interface ScanService {
   searchProducts(query: string): Promise<Product[]>;
   /** Re-evaluates an existing product against a profile (profile edits, switching profiles). */
   verdictFor(product: Product, profile: UserProfile): Promise<Verdict>;
+  /** Sends a "this result looks wrong" report. */
+  report(input: ReportProblemInput): Promise<void>;
 }
+
+/** Fields a user can change from "Fix results". */
+export type ScanPatch = Partial<Pick<ScanResult, 'product' | 'verdict' | 'labelText' | 'saved'>>;
 
 export interface HistoryService {
   list(profileId: string, filter?: HistoryFilter): Promise<ScanResult[]>;
   get(id: string): Promise<ScanResult | null>;
   add(result: ScanResult): Promise<ScanResult>;
+  update(id: string, patch: ScanPatch): Promise<ScanResult>;
   setSaved(id: string, saved: boolean): Promise<ScanResult>;
   remove(id: string): Promise<void>;
   clearForProfile(profileId: string): Promise<void>;

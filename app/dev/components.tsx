@@ -45,7 +45,10 @@ import {
 } from '@/components/ui';
 import { VerdictCard } from '@/components/app/VerdictCard';
 import { queryClient } from '@/services/queryClient';
+import { INGREDIENTS } from '@/mocks/ingredients';
+import { getServices, mockConfig } from '@/services';
 import { useDevStore } from '@/store/devStore';
+import { useProfileStore } from '@/store/profileStore';
 import { colors, spacing, type ColorToken } from '@/theme/tokens';
 import { typography, type TypographyToken } from '@/theme/typography';
 import type { VerdictKind } from '@/types';
@@ -91,6 +94,7 @@ export default function ComponentsGallery() {
   const showGuides = useDevStore((state) => state.showGuides);
   const setShowGuides = useDevStore((state) => state.setShowGuides);
   const mockDataset = useDevStore((state) => state.mockDataset);
+  const [unreadableNext, setUnreadableNext] = useState(mockConfig.unreadableNext);
   const setMockDataset = useDevStore((state) => state.setMockDataset);
 
   const toggleMulti = (value: string) =>
@@ -123,6 +127,18 @@ export default function ComponentsGallery() {
               toggle={{ value: showGuides, onChange: setShowGuides }}
             />
             <SettingsRow
+              label="Next photo is unreadable"
+              description="The next camera or gallery scan opens the unreadable photo screen"
+              icon="eyeOff"
+              toggle={{
+                value: unreadableNext,
+                onChange: (value) => {
+                  mockConfig.unreadableNext = value;
+                  setUnreadableNext(value);
+                },
+              }}
+            />
+            <SettingsRow
               label="Mock data: active user"
               description="Off serves the new-user data set (empty states)"
               icon="database"
@@ -135,6 +151,40 @@ export default function ComponentsGallery() {
               }}
             />
           </SettingsSection>
+          <Button
+            title="Sample restrictions: peanuts + milk"
+            size="md"
+            variant="secondary"
+            onPress={() => {
+              const { profiles, activeProfileId, updateProfile } = useProfileStore.getState();
+              const active = profiles.find((p) => p.id === activeProfileId) ?? profiles[0];
+              if (!active) return;
+              const pick = (name: string) => INGREDIENTS.find((i) => i.name === name);
+              const peanuts = pick('Peanuts');
+              const milk = pick('Milk');
+              updateProfile(active.id, {
+                restrictions: [
+                  ...(peanuts
+                    ? [
+                        {
+                          ingredientId: peanuts.id,
+                          name: peanuts.name,
+                          severity: 'severe' as const,
+                        },
+                      ]
+                    : []),
+                  ...(milk
+                    ? [{ ingredientId: milk.id, name: milk.name, severity: 'moderate' as const }]
+                    : []),
+                ],
+              });
+              // Seeded scans were judged with the old profile: clear them so they are re-seeded.
+              void getServices()
+                .history.clearForProfile(active.id)
+                .then(() => queryClient.invalidateQueries());
+              showToast({ message: 'Active profile now avoids peanuts and milk', icon: 'person' });
+            }}
+          />
         </Section>
 
         <Section title="Headers">
