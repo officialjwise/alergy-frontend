@@ -62,3 +62,15 @@ export function useRemoveScan() {
     onSuccess: () => void client.invalidateQueries({ queryKey: queryKeys.history.all }),
   });
 }
+
+/** Puts a deleted scan back (undo after a swipe delete). */
+export function useRestoreScan() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: (scan: ScanResult) => getServices().history.add(scan),
+    onSuccess: () => {
+      void client.invalidateQueries({ queryKey: queryKeys.history.all });
+      void client.invalidateQueries({ queryKey: queryKeys.insights.all });
+    },
+  });
+}

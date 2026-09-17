@@ -53,6 +53,8 @@ export interface ScanService {
   analyze(input: AnalyzeInput): Promise<ScanResult>;
   /** Looks up a product by barcode. */
   lookupBarcode(barcode: string): Promise<Product | null>;
+  /** Loads one catalogue product (search results, notifications). */
+  getProduct(id: string): Promise<Product | null>;
   /** Product name / barcode search for the manual fallback. */
   searchProducts(query: string): Promise<Product[]>;
   /** Re-evaluates an existing product against a profile (profile edits, switching profiles). */

@@ -51,6 +51,7 @@ export const httpServices: Services = {
       };
     },
     lookupBarcode: (barcode) => http<Product | null>(`/products/barcode/${barcode}`),
+    getProduct: (id) => http<Product | null>(`/products/${id}`),
     searchProducts: (query) => http<Product[]>(`/products?q=${encodeURIComponent(query)}`),
     verdictFor: async (product, profile) => evaluateProduct(product, profile),
     report: (input) =>

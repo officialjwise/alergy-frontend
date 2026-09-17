@@ -26,7 +26,8 @@
     "notSelectedState": "not selected",
     "step": "Step {{current}} of {{total}}",
     "you": "you",
-    "clear": "Clear"
+    "clear": "Clear",
+    "undo": "Undo"
   },
   "welcome": {
     "title": "Eating with restrictions made easy",
@@ -463,10 +464,17 @@
     "source_camera": "Camera",
     "source_barcode": "Barcode",
     "source_gallery": "Photo",
-    "source_manual": "Search"
+    "source_manual": "Search",
+    "save": "Save food",
+    "saved": "Saved",
+    "savedToast": "Saved to your foods",
+    "unsavedToast": "Removed from saved foods",
+    "notFound": "This product is no longer available.",
+    "back": "Back to search",
+    "checkedNow": "Checked just now"
   },
   "history": {
-    "title": "History",
+    "title": "Scan history",
     "searchPlaceholder": "Search foods",
     "filterAll": "All",
     "filterSafe": "Works",
@@ -482,7 +490,10 @@
     "yesterday": "Yesterday",
     "earlier": "Earlier",
     "count": "{{count}} foods",
-    "count_one": "1 food"
+    "count_one": "1 food",
+    "deleted": "Scan deleted",
+    "compare": "Compare products",
+    "delete": "Delete"
   },
   "profile": {
     "title": "Profile",
@@ -716,5 +727,80 @@
     "send": "Send report",
     "sent": "Thanks, we will look into it",
     "failed": "Could not send the report. Try again."
+  },
+  "search": {
+    "title": "Food search",
+    "placeholder": "Search foods or barcodes",
+    "recent": "Recent searches",
+    "clear": "Clear",
+    "removeRecent": "Remove {{query}} from recent searches",
+    "hintTitle": "Search any packaged food",
+    "hintBody": "Type a product name, brand or barcode to check it against your profile.",
+    "noResultsTitle": "No products found",
+    "noResultsBody": "Try another name, or add it manually and we will check the ingredients you type.",
+    "addManually": "Add it manually",
+    "resultsCount": "{{count}} products",
+    "resultsCount_one": "1 product"
+  },
+  "saved": {
+    "title": "Saved foods",
+    "count": "{{count}} saved foods",
+    "count_one": "1 saved food",
+    "emptyTitle": "Nothing saved yet",
+    "emptyBody": "Save foods you trust from a result and find them here in a tap.",
+    "noMatchTitle": "No saved foods match",
+    "noMatchBody": "Try another filter.",
+    "scan": "Scan food",
+    "removed": "Removed from saved foods",
+    "filterAll": "All",
+    "remove": "Remove"
+  },
+  "compare": {
+    "title": "Compare products",
+    "pickTwo": "Pick two products to compare",
+    "pickTwoBody": "Tap a recent product below to fill the highlighted side.",
+    "onlyDifferences": "Only show differences",
+    "ingredients": "Ingredients",
+    "absent": "Not listed",
+    "same": "No differences between these two products.",
+    "share": "Share comparison",
+    "shareMessage": "{{a}} ({{verdictA}}) vs {{b}} ({{verdictB}}). Compared with Allergy App.",
+    "slotA": "First product",
+    "slotB": "Second product",
+    "slotEmpty": "Choose a product",
+    "recent": "Recent products",
+    "selectSlot": "{{slot}}, tap to replace",
+    "rowA11y": "{{name}}: {{a}} in the first, {{b}} in the second",
+    "noRecent": "Scan a few foods first, then compare them here."
+  },
+  "ingredientDetail": {
+    "title": "Ingredient",
+    "alsoCalled": "Also called",
+    "onYourList": "On your list",
+    "severity": "Severity: {{level}}",
+    "notOnList": "Not on your list",
+    "editList": "Edit my list",
+    "flaggedScans": "Scans that flagged it",
+    "flaggedCount": "{{count}} scans",
+    "flaggedCount_one": "1 scan",
+    "emptyTitle": "No scans flagged this yet",
+    "emptyBody": "When a scanned food contains it, that scan shows up here.",
+    "category": "Category",
+    "unknown": "Unknown ingredient"
+  },
+  "ingredientCategory": {
+    "nuts": "Nuts",
+    "dairy": "Dairy",
+    "seafood": "Seafood",
+    "meat": "Meat",
+    "grains": "Grains",
+    "eggs": "Eggs",
+    "seeds": "Seeds",
+    "legumes": "Legumes",
+    "fruit": "Fruit",
+    "vegetables": "Vegetables",
+    "additives": "Additives",
+    "alcohol": "Alcohol",
+    "other": "Other"
   }
 }

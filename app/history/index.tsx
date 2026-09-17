@@ -1,16 +1,26 @@
 import { FlashList } from '@shopify/flash-list';
-import { useLocalSearchParams, useRouter, type Href } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ScanRow } from '@/components/app/ScanRow';
-import { Chip, EmptyState, ErrorState, SearchInput, Skeleton, Text } from '@/components/ui';
-import { useHistory } from '@/features/history/useHistory';
+import {
+  Chip,
+  EmptyState,
+  ErrorState,
+  NavHeader,
+  Screen,
+  SearchInput,
+  showToast,
+  Skeleton,
+  SwipeRow,
+  Text,
+} from '@/components/ui';
+import { useHistory, useRemoveScan, useRestoreScan } from '@/features/history/useHistory';
 import { useDebounced } from '@/features/onboarding/useIngredientSearch';
 import { selectActiveProfile, useProfileStore } from '@/store/profileStore';
-import { colors, layout, radii, spacing } from '@/theme/tokens';
+import { radii, spacing } from '@/theme/tokens';
 import { rs } from '@/theme/responsive';
 import type { ScanResult, VerdictKind } from '@/types';
 import { formatRelativeDay } from '@/utils/date';
@@ -33,18 +43,19 @@ function filterFromParams(params: { saved?: string; verdict?: string }): Filter 
   return match ? match.key : 'all';
 }
 
-/** Personal food library: search, verdict / saved filters, grouped by day. */
+/** Scan history grouped by day with search, verdict filters and swipe to delete (with undo). */
 export default function HistoryScreen() {
   const { t, i18n } = useTranslation();
   const router = useRouter();
-  const insets = useSafeAreaInsets();
-  const params = useLocalSearchParams<{ saved?: string; verdict?: string }>();
+  const params = useLocalSearchParams<{ saved?: string; verdict?: string; range?: string }>();
   const profile = useProfileStore(selectActiveProfile);
   const [query, setQuery] = useState('');
   const paramFilter = filterFromParams(params);
   const [filter, setFilter] = useState<Filter>(paramFilter);
   const [lastParamFilter, setLastParamFilter] = useState(paramFilter);
   const debounced = useDebounced(query, 180);
+  const removeScan = useRemoveScan();
+  const restoreScan = useRestoreScan();
 
   // Home passes ?saved=1 or ?verdict= while this screen may already be mounted: derive, don't effect.
   if (paramFilter !== lastParamFilter) {
@@ -59,9 +70,8 @@ export default function HistoryScreen() {
   });
 
   const rows = useMemo<Row[]>(() => {
-    const items = history.data ?? [];
     const groups = new Map<string, ScanResult[]>();
-    items.forEach((scan) => {
+    (history.data ?? []).forEach((scan) => {
       const label = formatRelativeDay(scan.scannedAt, i18n.language, {
         today: t('history.today'),
         yesterday: t('history.yesterday'),
@@ -76,17 +86,28 @@ export default function HistoryScreen() {
     return out;
   }, [history.data, i18n.language, t]);
 
-  const openScan = useCallback(
-    (scan: ScanResult) => router.push(`/scan/result/${scan.id}` as Href),
+  const open = useCallback(
+    (scan: ScanResult) =>
+      router.push({ pathname: '/scan/result/[id]', params: { id: scan.id, from: 'history' } }),
     [router],
   );
+
+  const remove = useCallback(
+    (scan: ScanResult) => {
+      removeScan.mutate(scan.id);
+      showToast({
+        message: t('history.deleted'),
+        icon: 'trash',
+        action: { label: t('common.undo'), onPress: () => restoreScan.mutate(scan) },
+      });
+    },
+    [removeScan, restoreScan, t],
+  );
+
   const hasFilters = query.trim().length > 0 || filter !== 'all';
 
   const header = (
-    <View style={styles.header}>
-      <Text variant="titleLg" color="text" accessibilityRole="header">
-        {t('history.title')}
-      </Text>
+    <View>
       <View style={styles.search}>
         <SearchInput
           value={query}
@@ -115,85 +136,90 @@ export default function HistoryScreen() {
   );
 
   return (
-    <View style={[styles.root, { paddingTop: insets.top + spacing.md }]}>
-      {history.isLoading ? (
-        <View style={styles.padded}>
-          {header}
-          <Skeleton height={rs(80)} radius={radii.card} style={styles.skeleton} />
-          <Skeleton height={rs(80)} radius={radii.card} style={styles.skeleton} />
-          <Skeleton height={rs(80)} radius={radii.card} style={styles.skeleton} />
-        </View>
-      ) : history.isError ? (
-        <View style={styles.padded}>
-          {header}
-          <ErrorState
-            title={t('states.errorTitle')}
-            body={t('states.errorBody')}
-            actionLabel={t('common.retry')}
-            onAction={() => void history.refetch()}
-          />
-        </View>
-      ) : (
-        <FlashList
-          data={rows}
-          keyExtractor={(row) => (row.kind === 'header' ? `h-${row.title}` : row.scan.id)}
-          getItemType={(row) => row.kind}
-          renderItem={({ item }) =>
-            item.kind === 'header' ? (
-              <Text
-                variant="sectionLabel"
-                color="textMuted"
-                style={styles.groupTitle}
-                accessibilityRole="header"
-              >
-                {item.title}
-              </Text>
-            ) : (
-              <View style={styles.rowGap}>
-                <ScanRow scan={item.scan} onPress={openScan} />
-              </View>
-            )
-          }
-          ListHeaderComponent={header}
-          ListEmptyComponent={
-            hasFilters ? (
-              <EmptyState
-                icon="search"
-                title={t('history.noMatchTitle')}
-                body={t('history.noMatchBody')}
-                actionLabel={t('common.clear')}
-                onAction={() => {
-                  setQuery('');
-                  setFilter('all');
-                }}
-              />
-            ) : (
-              <EmptyState
-                icon="history"
-                title={t('history.emptyTitle')}
-                body={t('history.emptyBody')}
-                actionLabel={t('home.quickScan')}
-                onAction={() => router.push('/scan' as Href)}
-              />
-            )
-          }
-          contentContainerStyle={styles.listContent}
-          keyboardShouldPersistTaps="handled"
-          keyboardDismissMode="on-drag"
-          showsVerticalScrollIndicator={false}
-          refreshing={history.isRefetching}
-          onRefresh={() => void history.refetch()}
+    <Screen
+      header={
+        <NavHeader
+          title={t('history.title')}
+          rightIcon="compare"
+          rightLabel={t('history.compare')}
+          onRightPress={() => router.push('/compare')}
         />
-      )}
-    </View>
+      }
+      scroll={false}
+      testID="history"
+    >
+      <FlashList
+        data={rows}
+        keyExtractor={(row) => (row.kind === 'header' ? `h-${row.title}` : row.scan.id)}
+        getItemType={(row) => row.kind}
+        renderItem={({ item }) =>
+          item.kind === 'header' ? (
+            <Text
+              variant="sectionLabel"
+              color="textMuted"
+              style={styles.groupTitle}
+              accessibilityRole="header"
+            >
+              {item.title}
+            </Text>
+          ) : (
+            <SwipeRow
+              actionLabel={t('history.delete')}
+              onAction={() => remove(item.scan)}
+              style={styles.rowGap}
+            >
+              <ScanRow scan={item.scan} onPress={open} showTriggers />
+            </SwipeRow>
+          )
+        }
+        ListHeaderComponent={header}
+        ListEmptyComponent={
+          history.isLoading ? (
+            <View style={styles.list}>
+              <Skeleton height={rs(92)} radius={radii.card} />
+              <Skeleton height={rs(92)} radius={radii.card} />
+              <Skeleton height={rs(92)} radius={radii.card} />
+            </View>
+          ) : history.isError ? (
+            <ErrorState
+              title={t('states.errorTitle')}
+              body={t('states.errorBody')}
+              actionLabel={t('common.retry')}
+              onAction={() => void history.refetch()}
+              compact
+            />
+          ) : hasFilters ? (
+            <EmptyState
+              icon="search"
+              title={t('history.noMatchTitle')}
+              body={t('history.noMatchBody')}
+              actionLabel={t('common.clear')}
+              onAction={() => {
+                setQuery('');
+                setFilter('all');
+              }}
+              compact
+            />
+          ) : (
+            <EmptyState
+              icon="history"
+              title={t('history.emptyTitle')}
+              body={t('history.emptyBody')}
+              actionLabel={t('home.quickScan')}
+              onAction={() => router.push({ pathname: '/scan', params: { from: 'history' } })}
+            />
+          )
+        }
+        contentContainerStyle={styles.listContent}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
+        showsVerticalScrollIndicator={false}
+      />
+    </Screen>
   );
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: colors.background },
-  padded: { paddingHorizontal: rs(layout.screenPaddingH) },
-  listContent: { paddingHorizontal: rs(layout.screenPaddingH), paddingBottom: spacing.xl },
-  header: { paddingBottom: spacing.xs },
   search: { marginTop: rs(spacing.md) },
   filters: {
     flexDirection: 'row',
@@ -203,6 +229,7 @@ const styles = StyleSheet.create({
   },
   count: { marginTop: rs(spacing.sm) },
   groupTitle: { marginTop: rs(spacing.lg), marginBottom: rs(spacing.sm) },
+  list: { gap: rs(spacing.sm), paddingTop: rs(spacing.lg) },
+  listContent: { paddingBottom: rs(spacing.xl) },
   rowGap: { marginBottom: rs(spacing.sm) },
-  skeleton: { marginTop: rs(spacing.sm) },
 });

@@ -62,6 +62,10 @@ export const mockScanService: ScanService = {
     const digits = barcode.replace(/\D/g, '');
     return PRODUCTS.find((p) => p.barcode === digits) ?? null;
   },
+  async getProduct(id) {
+    await simulate(0.3);
+    return PRODUCTS.find((p) => p.id === id) ?? null;
+  },
   async searchProducts(query) {
     await simulate(0.6);
     const q = normalize(query);
