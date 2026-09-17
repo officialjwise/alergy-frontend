@@ -176,3 +176,41 @@ Built with the same tokens: 20pt gutters, 16pt-radius bordered cards, 24pt-radiu
 - **Delete account.** Warning list, typed confirmation and a final dialog,
   then every store and the local database are cleared and the app returns to
   the welcome screen.
+
+## Phase 3: literal reference copy (2026-09-17)
+
+The product owner reversed the Phase 2 rule that translated calorie and
+fitness concepts into allergy equivalents and asked for an exact copy of the
+reference screens, with the walkthrough video as the source of truth.
+
+- **Tracking model.** Products carry per-serving nutrition and a 1-10 health
+  score; each logged food (scan) adds to the day's calories and macros. Goals
+  default to the reference values until "Auto Generate Goals" derives them
+  from height, weight, age, gender and the goal weight (Mifflin-St Jeor,
+  light activity, 500 kcal a day towards the goal).
+- **Ring colours.** Green within 100 kcal of the budget (or slightly over),
+  yellow within 200, red beyond, dotted with nothing logged. The streak counts
+  days with at least one logged food.
+- **Home pager.** The hero card and its small cards are one page so swiping
+  any card moves the block, as the video shows. Page 3 holds Apple Health,
+  calories burned, steps and water.
+- **Apple Health.** Behind `ActivityService`; the mock flips a flag and
+  returns the sample workouts and steps from the "Add workouts" sheet. The
+  real HealthKit adapter is a follow-up that needs the native module and a
+  rebuild.
+- **Dashboard cards.** White cards with a soft shadow (`shadows.card`) rather
+  than a hairline border, matching the reference's lift on white.
+- **Badges.** The 30 reference badges with their names; emblems are drawn as
+  hexagons with our icon set (grey while locked). "Nut Case" counts nut labels
+  checked rather than nuts eaten because this is an allergy app.
+- **Weight.** Pounds and feet/inches as in the reference; the weight log
+  seeds one entry from the current weight so the chart draws the flat line the
+  reference shows for a new account.
+- **Body metrics.** Profiles created before Phase 3 have no metrics; the mock
+  "active" data set shows the reference demo values and a new user sees empty
+  fields, so nothing is fabricated for a real account.
+- **Allergy features kept.** The verdict pill stays on every food row and the
+  allergy rows live in an "Allergies & diet" section on Profile, the one
+  addition to the reference's Profile structure.
+- **Dark mode.** The appearance tiles store the choice; the palette is still
+  light-only, and the screen says so.

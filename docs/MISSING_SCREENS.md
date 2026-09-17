@@ -1,8 +1,9 @@
 # Missing screens, taps and states
 
-Built from every screen in the onboarding PDF, both screenshot sets and the
-Phase 2 brief. **Status (milestone 10):** every screen and state listed below is
-built. The only placeholders are the two the brief approved: the Family plan
+Built from every screen in the onboarding PDF, both screenshot sets, the
+Phase 2 brief and, since Phase 3, the walkthrough video. **Status (milestone
+15):** every screen and state listed below is built; the Phase 3 additions
+are listed in the "Phase 3" tables at the end of each part. The only placeholders are the two the brief approved: the Family plan
 upgrade screen and the app update required screen. Part 1 lists where every tap goes. Part 2 lists the screens
 that none of the sources show but the taps need. Part 3 lists the states each
 screen must handle. Everything here is built; nothing stays a placeholder
@@ -31,16 +32,16 @@ without approval (the two placeholders the brief itself allows are marked).
 | --- | --- | --- |
 | Tab bar | Home, Insights, Groups, Profile | that tab |
 | Tab bar | + | PlusMenu overlay; + becomes X |
-| PlusMenu | Log reaction | `/reactions/new` |
+| PlusMenu | Log exercise | `/exercise/new` |
 | PlusMenu | Saved foods | `/saved` |
 | PlusMenu | Food search | `/search` |
 | PlusMenu | Scan food | `/scan` |
 | PlusMenu | X or dimmed area | closes |
-| Home | streak pill | `/(tabs)/insights` |
+| Home | streak pill | `/milestones` |
 | Home | profile switcher | ProfileSwitcherSheet |
 | Home | week strip day | loads that day |
-| Home | hero card (chevron) | toggles Foods checked / Safe rate |
-| Home | stat cards (swipe) | pages; Safe/Caution/Not safe cards open `/history?verdict=` |
+| Home | calories card | toggles eaten / left for every card on the page |
+| Home | dashboard (swipe) | pages 1 to 3 move the hero card and the small cards together; page 3 Connect opens the workouts sheet, Log Water opens the water sheet |
 | Home | "Top flagged ingredient" card | `/ingredients/[id]` |
 | Home | "Saved foods" card | `/saved` |
 | Home | "See all" | `/history` |
@@ -123,20 +124,20 @@ without approval (the two placeholders the brief itself allows are marked).
 | Screen | Tap | Goes to |
 | --- | --- | --- |
 | Insights | Day streak card | StreakSheet (how the streak works, calendar) |
-| Insights | Badges earned card | `/badges` |
+| Insights | Day Streak and Badges Earned tiles | `/milestones` |
 | Insights | Reactions card | `/reactions` |
-| Insights | Log reaction pill | `/reactions/new` |
+| Insights | Log weight pill | LogWeightSheet |
 | Insights | chart point (press) | tooltip |
 | Insights | range selector, week selectors | in place |
 | Insights | scan changes row | `/history?range=` |
-| Insights | Allergy action plan: Upload a photo | image picker, then `/action-plan` |
-| Insights | Allergy action plan card | `/action-plan` |
-| Insights | Most flagged ingredient row | `/ingredients/[id]` |
-| Insights | Most flagged locked card | (not tappable, explains what unlocks it) |
+| Insights | Progress Photos: Upload a Photo | `/progress-photos/privacy`, then the image picker |
+| Insights | Progress Photos thumbnails | `/progress-photos` |
+| Insights | BMI help icon | BmiSheet |
+| Insights | Set a goal weight / Add details | `/settings/personal` |
 | Insights | Caution level card | `/settings/caution` |
 | Insights | Caution level help icon | `/settings/verdict-colors` |
-| Badges | badge tile | `/badges/[id]` |
-| Action plan | photo | `/action-plan/[id]` viewer |
+| Milestones | badge cell | `/badges/[id]` |
+| Progress photos | photo | `/progress-photos/[id]` viewer |
 | Action plan | add | image picker |
 | Action plan viewer | delete | ConfirmDialog |
 
@@ -178,7 +179,7 @@ without approval (the two placeholders the brief itself allows are marked).
 | Profile | Caution level | `/settings/caution` |
 | Profile | Diet | `/settings/diet` |
 | Profile | Other answers | `/settings/survey` |
-| Profile | Scan reminders | `/settings/reminders` |
+| Profile | Tracking Reminders | `/settings/reminders` |
 | Profile | Reaction history | `/reactions` |
 | Profile | Verdict colors explained | `/settings/verdict-colors` |
 | Profile | Allergy card | `/settings/allergy-card` |
@@ -211,7 +212,7 @@ without approval (the two placeholders the brief itself allows are marked).
 | Missing screen | Purpose | Reached from |
 | --- | --- | --- |
 | Plus menu overlay | 2x2 actions | + button |
-| Feature intro sheet | product alerts opt in | Home, after first saved food |
+| Feature intro sheet | Add workouts to your daily budget (Connect Apple Health) | Home page 3, first visit and Connect |
 | Scanner help sheet | explains modes and photo tips | Scanner help button |
 | Analyzing | progress between capture and result | Scanner |
 | Fix results | edit name and ingredients | Result |
@@ -227,7 +228,7 @@ without approval (the two placeholders the brief itself allows are marked).
 | Food picker sheet | choose a food from history for a reaction | Log reaction |
 | Streak sheet | how the streak works | Insights streak card |
 | Badges, Badge detail | achievements | Insights |
-| Allergy action plan, photo viewer | document photos | Insights |
+| Progress photos, privacy notice, photo viewer | progress photos | Insights |
 | Group detail feed, Post detail, Create post, Report post | community | Groups |
 | Create private group, Invite to group, Member list | private groups | Groups |
 | Member profile / family member detail | who is in a group | Group detail, Result |
@@ -241,7 +242,7 @@ without approval (the two placeholders the brief itself allows are marked).
 | Family plan | upgrade placeholder (allowed by the brief) | Profile |
 | Invite friends | code and share | Profile |
 | My allergens and ingredients, Caution level, Diet, Other answers | edit onboarding answers | Profile |
-| Scan reminders | daily reminder toggle and time | Profile |
+| Tracking Reminders | a reminder per meal and end of day | Profile |
 | Verdict colors explained | what the four verdicts mean | Profile, Result, Insights |
 | Allergy card | restaurant card with language switch and full screen | Profile |
 | Widgets how to add sheet | steps to add a widget | Profile |
@@ -284,3 +285,33 @@ without approval (the two placeholders the brief itself allows are marked).
 | Allergy card / Export | - | - | preview | - | works | - | - |
 | Delete account | - | - | 3 steps | request failed | blocked with message | - | - |
 | Session expired / No internet / Update required | - | - | single message | - | - | - | - |
+
+
+## Phase 3 additions (2026-09-17)
+
+| Screen | Tap | Goes to |
+| --- | --- | --- |
+| Profile | Manage Apple Health | `/settings/apple-health` (Connect / Disconnect) |
+| Profile | Edit Nutrition Goals | `/settings/nutrition-goals` |
+| Profile | Goals & current weight | `/settings/personal` (Change Goal) |
+| Profile | Weight History | `/weight` |
+| Profile | Ring Colors Explained | `/settings/ring-colors` |
+| Profile | Language | LanguageSheet |
+| Profile | header card | `/settings/name` (Confirm your name) |
+| Profile | Refer a friend | `/settings/invite` (Refer your friend: code, Share, How to earn) |
+| Personal Details | any row | sheet for that value (wheel or radio) |
+| Edit nutrition goals | a field | saves on end of editing; auto adjust re-balances the other macros |
+| Edit nutrition goals | Auto Generate Goals | goals from height, weight, age, gender and goal weight |
+| Log exercise | Log exercise | saves the workout, adds the calories to today's budget |
+| Weight History | Log Weight | LogWeightSheet; a row swiped left deletes |
+| Welcome | Already have an account? Sign in | `/(auth)/sign-in` |
+| Sign in | Apple / Google / email | Home when a profile exists, otherwise the survey |
+
+| State | Where |
+| --- | --- |
+| Apple Health not connected | Home page 3 card with Connect; expenditure rows pending |
+| Apple Health connected (mock) | steps and workouts fill in, budget grows by the burned calories |
+| No weight or height | Current Weight card asks for a weight, BMI card asks for details |
+| No goal weight | Current Weight card shows "Set a goal weight" |
+| Nothing logged this week | Daily Average Calories and Weekly Energy show "No data to show" |
+| Notifications denied | Tracking Reminders shows the disabled notice with Open Settings |
