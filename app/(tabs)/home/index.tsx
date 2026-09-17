@@ -1,12 +1,13 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'expo-router';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { RefreshControl, StyleSheet, View } from 'react-native';
 
 import { FeatureIntroSheet, type FeatureIntroRow } from '@/components/app/FeatureIntroSheet';
 import { ProfileSwitcherSheet } from '@/components/app/ProfileSwitcherSheet';
 import {
+  confirm,
   ErrorState,
   Screen,
   SectionHeader,
@@ -26,6 +27,7 @@ import { LogWaterSheet } from '@/features/home/components/LogWaterSheet';
 import { NutrientCard } from '@/features/home/components/NutrientCard';
 import { WeekStrip } from '@/features/home/components/WeekStrip';
 import { useRecentScans } from '@/features/home/useHome';
+import { conditionNeedsCheck } from '@/features/questionnaire/rules';
 import { useConnectHealth, useHomeDashboard, useLogWater } from '@/features/tracking/useTracking';
 import { queryKeys } from '@/services/queryClient';
 import { useAppStore } from '@/store/appStore';
@@ -60,11 +62,42 @@ export default function HomeScreen() {
   const queryClient = useQueryClient();
   const profile = useProfileStore(selectActiveProfile);
   const profileCount = useProfileStore((state) => state.profiles.length);
+  const updateProfile = useProfileStore((state) => state.updateProfile);
   const workoutsIntroShown = useAppStore((state) => state.workoutsIntroShown);
   const setWorkoutsIntroShown = useAppStore((state) => state.setWorkoutsIntroShown);
 
   const today = dayKey(new Date());
   const [selectedDate, setSelectedDate] = useState(today);
+
+  // Question 11: two weeks after a temporary condition's end date, ask whether it still applies.
+  useEffect(() => {
+    if (!profile) return;
+    const due = profile.conditions.find((condition) => conditionNeedsCheck(condition, today));
+    if (!due) return;
+    let cancelled = false;
+    const ask = async () => {
+      const still = await confirm({
+        title: t('conditionsScreen.stillApplies', { condition: t(`conditions.${due.id}`) }),
+        message: t('conditionsScreen.stillAppliesBody', { date: due.endsAt ?? '' }),
+        confirmLabel: t('conditionsScreen.stillYes'),
+        cancelLabel: t('conditionsScreen.stillNo'),
+        icon: 'heart',
+      });
+      if (cancelled) return;
+      updateProfile(profile.id, {
+        conditions: still
+          ? profile.conditions.map((condition) =>
+              condition.id === due.id ? { ...condition, confirmedAt: today } : condition,
+            )
+          : profile.conditions.filter((condition) => condition.id !== due.id),
+      });
+    };
+    const handle = setTimeout(() => void ask(), 900);
+    return () => {
+      cancelled = true;
+      clearTimeout(handle);
+    };
+  }, [profile, t, today, updateProfile]);
   const [metric, setMetric] = useState<NutrientMetric>('eaten');
   const [refreshing, setRefreshing] = useState(false);
   const switcherRef = useSheetRef();

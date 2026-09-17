@@ -3,25 +3,20 @@
 Each journey as a Mermaid diagram. Route names come from `NAVIGATION.md`.
 Rules that apply to all flows are at the end.
 
-## 1. First launch
+## 1. First launch (the questionnaire)
 
 ```mermaid
 flowchart TD
-  Splash --> Welcome["/(onboarding)/welcome"]
-  Welcome -->|Get started| Language[Language sheet]
-  Language --> Who["/(onboarding)/who"]
-  Who --> Survey[Survey steps: name, birth, frequency, tried apps,\nwatch for, ingredients, severity, reasons, caution,\nchallenges, diet, goal, camera, social, remember]
-  Survey --> AllDone["/(onboarding)/all-done"]
-  AllDone --> Setup["/(onboarding)/setup (profile generation)"]
-  Setup --> Ready["/(onboarding)/ready"]
-  Ready --> Why["/(onboarding)/why"]
-  Why --> Save["/(onboarding)/save-profile"]
-  Save -->|Apple / Google| Notif["/(onboarding)/notifications"]
-  Save -->|Email| Email["/(auth)/email"] --> Verify["/(auth)/verify"] --> Notif
-  Notif --> Home["/(tabs)/home (replace, no back to onboarding)"]
-  Home -->|first saved food| Intro[FeatureIntroSheet: product alerts]
-  Intro -->|Turn on alerts| Permission[Notification permission] --> Home
-  Intro -->|Not now| Home
+  W["/(onboarding)/welcome"] --> Q1["Q1 who"] -->|Me| Q2["Q2 allergies?"]
+  Q1 -->|"Someone else (Plus/Family)"| N["person-name"] --> Q2
+  Q1 -->|"Already added"| P["person-pick"] --> Q2
+  Q2 -->|No| Q9
+  Q2 -->|"Yes / not sure"| Q3["Q3 foods list"] --> Q4["Q4 typed foods"] --> F["Q5-Q8 per food"] --> Q9["Q9 conditions?"]
+  Q9 -->|Yes| Q10["Q10 which"] --> Q11["Q11 end date (temporary)"] --> Q12
+  Q9 -->|No| Q12["Q12 note"]
+  Q12 --> C["camera explainer"] --> S["setup"] --> R["review: foods, conditions, messages, issues"]
+  R -->|"Looks right"| SP["save profile (sign in)"] --> NP["notifications"] --> H["/(tabs)/home"]
+  R -->|Fix| F
 ```
 
 ## 2. Returning user

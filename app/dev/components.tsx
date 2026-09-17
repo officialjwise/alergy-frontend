@@ -52,7 +52,7 @@ import { useDevStore } from '@/store/devStore';
 import { useProfileStore } from '@/store/profileStore';
 import { colors, spacing, type ColorToken } from '@/theme/tokens';
 import { typography, type TypographyToken } from '@/theme/typography';
-import type { VerdictKind } from '@/types';
+import type { AvoidedFood, VerdictKind } from '@/types';
 
 const VERDICTS: VerdictKind[] = ['safe', 'caution', 'unsafe', 'unknown'];
 const WEEKS = [
@@ -174,32 +174,46 @@ export default function ComponentsGallery() {
               showToast({ message: 'Session expired: relaunch the app' });
             }}
           />
+          <SegmentedControl
+            options={[
+              { key: 'free', label: 'Free plan' },
+              { key: 'plus', label: 'Plus' },
+              { key: 'family', label: 'Family' },
+            ]}
+            value={useAppStore.getState().account.plan}
+            onChange={(plan) => {
+              useAppStore.getState().setAccount({ plan });
+              showToast({ message: `Plan set to ${plan}` });
+            }}
+            accessibilityLabel="Mock plan"
+          />
           <Button
-            title="Sample restrictions: peanuts + milk"
+            title="Sample foods: peanuts (high risk) + milk (warning)"
             size="md"
             variant="secondary"
             onPress={() => {
               const { profiles, activeProfileId, updateProfile } = useProfileStore.getState();
               const active = profiles.find((p) => p.id === activeProfileId) ?? profiles[0];
               if (!active) return;
-              const pick = (name: string) => INGREDIENTS.find((i) => i.name === name);
-              const peanuts = pick('Peanuts');
-              const milk = pick('Milk');
+              const now = new Date().toISOString();
+              const sample = (id: string, level: 'high' | 'warning'): AvoidedFood => ({
+                id,
+                name: INGREDIENTS.find((i) => i.id === id)?.name ?? id,
+                allergenId: id,
+                byNameOnly: false,
+                kind: 'allergy',
+                kindAssumed: false,
+                worst: level === 'high' ? 'severe' : 'mild',
+                severityAssumed: false,
+                strictness: null,
+                doctorConfirmed: null,
+                level,
+                addedAt: now,
+                updatedAt: now,
+              });
               updateProfile(active.id, {
-                restrictions: [
-                  ...(peanuts
-                    ? [
-                        {
-                          ingredientId: peanuts.id,
-                          name: peanuts.name,
-                          severity: 'severe' as const,
-                        },
-                      ]
-                    : []),
-                  ...(milk
-                    ? [{ ingredientId: milk.id, name: milk.name, severity: 'moderate' as const }]
-                    : []),
-                ],
+                hasAllergies: 'yes',
+                foods: [sample('peanuts', 'high'), sample('milk', 'warning')],
               });
               // Seeded scans were judged with the old profile: clear them so they are re-seeded.
               void getServices()

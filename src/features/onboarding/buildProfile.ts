@@ -1,42 +1,25 @@
-import { ingredientById } from '@/mocks/ingredients';
-import type { OnboardingAnswers, ProfileFor, Restriction, UserProfile } from '@/types';
+import { mergeProfile, type ReviewMessage } from '@/features/questionnaire/rules';
+import { useAppStore } from '@/store/appStore';
+import type { QuestionnaireAnswers, UserProfile } from '@/types';
 import { createId } from '@/utils/id';
 
 const AVATAR_COLORS = ['#1C1A20', '#1C9750', '#3B9FD8', '#E8A317', '#F5433A', '#7C5CBF'];
 
-export function defaultProfileName(profileFor: ProfileFor, fallback: string): string {
-  return fallback;
-}
-
-/** Turns the onboarding answers into a UserProfile. Used by the summary screen and when saving. */
+/**
+ * Turns the questionnaire answers into a profile: a new one for "Me" or
+ * "Someone else", or an update of the person picked at question 1. Never
+ * removes anything from an existing profile.
+ */
 export function buildProfileFromAnswers(
-  answers: OnboardingAnswers,
+  answers: QuestionnaireAnswers,
+  existing: UserProfile | null,
   existingCount = 0,
-  nameFallback = 'Me',
-): UserProfile {
-  const restrictions: Restriction[] = answers.ingredients.map((id) => {
-    const ingredient = answers.customIngredients[id] ?? ingredientById(id);
-    return {
-      ingredientId: id,
-      name: ingredient?.name ?? id,
-      severity: answers.severities[id] ?? 'moderate',
-    };
-  });
-  const now = new Date().toISOString();
-  return {
-    id: createId('profile'),
-    name: answers.profileName.trim() || nameFallback,
-    profileFor: answers.profileFor ?? 'myself',
-    birthDate: answers.birthDate,
-    restrictions,
-    customIngredients: answers.customIngredients,
-    reasons: answers.reasons,
-    cautionLevel: answers.cautionLevel ?? 'may_contain',
-    diet: answers.diet ?? 'none',
-    goal: answers.goal,
-    rememberFoods: answers.rememberFoods ?? true,
+): { profile: UserProfile; messages: ReviewMessage[] } {
+  const session = useAppStore.getState().session;
+  return mergeProfile(answers, existing, {
+    now: new Date().toISOString(),
+    newId: createId('profile'),
     color: AVATAR_COLORS[existingCount % AVATAR_COLORS.length] ?? '#1C1A20',
-    createdAt: now,
-    updatedAt: now,
-  };
+    emailConfirmed: session?.user.emailConfirmed ?? false,
+  });
 }

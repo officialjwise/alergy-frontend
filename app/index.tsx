@@ -4,7 +4,7 @@ import { useState } from 'react';
 
 import { appConfig } from '@/config/app';
 import { stepHref } from '@/features/onboarding/navigation';
-import { ONBOARDING_STEPS } from '@/features/onboarding/steps';
+import { ONBOARDING_ROUTES } from '@/features/onboarding/steps';
 import { useAppStore } from '@/store/appStore';
 import { useDevStore } from '@/store/devStore';
 import { useOnboardingStore } from '@/store/onboardingStore';
@@ -47,8 +47,15 @@ export default function Index() {
   if (completed && hasProfile) {
     return <Redirect href="/(tabs)/home" />;
   }
-  if (hasStarted && currentStep && ONBOARDING_STEPS.some((step) => step.route === currentStep)) {
-    return <Redirect href={stepHref(currentStep)} />;
+  if (hasStarted && currentStep) {
+    const [route = '', id] = currentStep.split(':');
+    if ((ONBOARDING_ROUTES as readonly string[]).includes(route)) {
+      return (
+        <Redirect
+          href={stepHref({ key: currentStep, route, params: id ? { id } : undefined, header: true })}
+        />
+      );
+    }
   }
   return <Redirect href="/(onboarding)/welcome" />;
 }

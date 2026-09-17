@@ -45,21 +45,6 @@
     "title": "Select Language",
     "a11yRow": "{{language}}, {{state}}"
   },
-  "who": {
-    "title": "Who are you setting this up for?",
-    "myself": "Myself",
-    "child": "My child",
-    "family": "A family member",
-    "care": "Someone I care for"
-  },
-  "profileName": {
-    "title_child": "What's your child's name?",
-    "title_family": "What's their name?",
-    "title_care": "What's their name?",
-    "subtitle": "Optional. It helps when you switch between profiles.",
-    "placeholder": "Name or nickname",
-    "skip": "Skip for now"
-  },
   "birth": {
     "title_myself": "When were you born?",
     "title_child": "When was your child born?",
@@ -71,137 +56,10 @@
     "day": "Day",
     "year": "Year"
   },
-  "frequency": {
-    "title_myself": "How often do dietary restrictions affect what you eat?",
-    "title_child": "How often do dietary restrictions affect what your child eats?",
-    "title_family": "How often do dietary restrictions affect what they eat?",
-    "title_care": "How often do dietary restrictions affect what they eat?",
-    "few_month": "A few times a month",
-    "few_week": "A few times a week",
-    "daily": "Every day",
-    "every_meal": "Almost every meal"
-  },
-  "triedApps": {
-    "title": "Have you tried other dietary restriction apps?",
-    "yes": "Yes",
-    "no": "No"
-  },
-  "watchFor": {
-    "title": "What should we watch for?",
-    "subtitle": "Select all that apply.",
-    "allergies": "Food allergies",
-    "intolerances": "Intolerances / sensitivities",
-    "gluten": "Gluten / celiac",
-    "religious": "Religious restrictions",
-    "vegetarian": "Vegetarian / vegan"
-  },
-  "ingredients": {
-    "title_myself": "Which ingredients do you avoid?",
-    "title_child": "Which ingredients does your child avoid?",
-    "title_family": "Which ingredients do they avoid?",
-    "title_care": "Which ingredients do they avoid?",
-    "searchPlaceholder": "Search ingredients",
-    "suggested": "Suggested",
-    "results": "Results",
-    "noResults": "No match for \"{{query}}\"",
-    "addCustom": "Add \"{{query}}\"",
-    "addCustomHint": "Add it as a custom ingredient and we will look for it on labels.",
-    "removeChip": "Remove {{name}}",
-    "selectedCount": "{{count}} selected"
-  },
-  "severity": {
-    "title_myself": "How serious is each one for you?",
-    "title_child": "How serious is each one for your child?",
-    "title_family": "How serious is each one for them?",
-    "title_care": "How serious is each one for them?",
-    "subtitle": "This changes how strongly we warn you.",
-    "mild": "Mild",
-    "mildHint": "Discomfort, no danger",
-    "moderate": "Moderate",
-    "moderateHint": "Clear reaction, avoid it",
-    "severe": "Severe",
-    "severeHint": "Serious reaction, strict avoidance",
-    "anaphylaxis": "Anaphylaxis",
-    "anaphylaxisHint": "Life-threatening, warn on any trace",
-    "applyAll": "Apply to all"
-  },
-  "reasons": {
-    "title_myself": "Why do you avoid these foods?",
-    "title_child": "Why does your child avoid these foods?",
-    "title_family": "Why do they avoid these foods?",
-    "title_care": "Why do they avoid these foods?",
-    "allergy": "Allergy",
-    "intolerance": "Intolerance / sensitivity",
-    "religious": "Religious reasons",
-    "lifestyle": "Lifestyle / ethical",
-    "preference": "Personal preference"
-  },
-  "caution": {
-    "title": "How careful do we need to be?",
-    "ingredient": "Avoid the ingredient itself",
-    "may_contain": "Also warn me about may contain",
-    "cross_contact": "Also warn me about cross-contact",
-    "uncertain": "Warn me when you're not certain"
-  },
-  "challenges": {
-    "title_myself": "What's hardest about eating with your restrictions?",
-    "title_child": "What's hardest about feeding your child?",
-    "title_family": "What's hardest about eating with their restrictions?",
-    "title_care": "What's hardest about eating with their restrictions?",
-    "labels": "Reading every ingredient label",
-    "hidden": "Hidden ingredients",
-    "cross_contact": "Cross-contact uncertainty",
-    "restaurants": "Eating at restaurants",
-    "alternatives": "Finding alternatives"
-  },
-  "diet": {
-    "title_myself": "Do you follow a specific diet?",
-    "title_child": "Does your child follow a specific diet?",
-    "title_family": "Do they follow a specific diet?",
-    "title_care": "Do they follow a specific diet?",
-    "none": "No specific diet",
-    "halal": "Halal",
-    "vegetarian": "Vegetarian",
-    "vegan": "Vegan",
-    "gluten_free": "Gluten-free",
-    "dairy_free": "Dairy-free",
-    "low_fodmap": "Low FODMAP",
-    "keto": "Keto",
-    "kosher": "Kosher",
-    "pescatarian": "Pescatarian",
-    "paleo": "Paleo"
-  },
-  "goal": {
-    "title": "What is your main goal?",
-    "know_instantly": "Know instantly if I can eat something",
-    "avoid_exposure": "Avoid accidental exposure",
-    "shop_faster": "Shop faster",
-    "eat_out": "Eat out more confidently",
-    "summary_know_instantly": "Eat with confidence",
-    "summary_avoid_exposure": "Avoid accidental exposure",
-    "summary_shop_faster": "Shop faster",
-    "summary_eat_out": "Eat out confidently"
-  },
   "camera": {
     "title": "Would you like to scan foods with your camera?",
     "subtitle": "Take a photo of a meal, menu, package, or ingredient list and we'll check it for you.",
     "imageA11y": "Hand holding a phone scanning a nutrition label with a \"Works for you\" badge"
-  },
-  "social": {
-    "title": "Join people eating with more confidence",
-    "avgRating": "avg rating",
-    "ratings": "50K+ App Ratings",
-    "users": "1M+ Users",
-    "reviewAuthor": "Sarah, March 18, 2025",
-    "reviewText": "This app makes checking ingredients incredibly fast and easy.",
-    "ratingA11y": "Rated 4.8 out of 5",
-    "starsA11y": "5 out of 5 stars"
-  },
-  "remember": {
-    "title": "Should we remember foods you've checked?",
-    "subtitle": "Build your personal library so foods you've already checked are instant next time.",
-    "yes": "Yes",
-    "no": "No"
   },
   "allDone": {
     "caption": "All done!",
@@ -211,41 +69,11 @@
   "setup": {
     "title": "We're setting everything up for you",
     "card": "Setting up",
-    "watchlist": "Ingredient watchlist",
-    "caution": "Caution level",
-    "diet": "Diet preferences",
+    "foods": "Foods to avoid",
+    "conditions": "Health conditions",
+    "notes": "Notes",
     "scan": "Scan profile",
     "progressA11y": "Setting up, {{percent}} percent complete"
-  },
-  "ready": {
-    "title": "Your food profile is ready",
-    "profile": "Your profile",
-    "profileFor": "{{name}}'s profile",
-    "avoid": "Avoid:",
-    "protection": "Protection:",
-    "diet": "Diet:",
-    "goal": "Main goal:",
-    "nothingSelected": "Nothing selected yet",
-    "protection_ingredient": "Standard",
-    "protection_may_contain": "Cautious",
-    "protection_cross_contact": "Extra cautious",
-    "protection_uncertain": "Maximum",
-    "howItWorks": "How it works",
-    "step1": "Scan food",
-    "step2": "Check ingredients",
-    "step3": "Get a clear verdict",
-    "step4": "Save foods you trust"
-  },
-  "why": {
-    "title": "Why use this app?",
-    "without": "Without the app",
-    "without1": "Read every label manually",
-    "without2": "Search unfamiliar ingredients",
-    "without3": "Second-guess what is safe",
-    "with": "With the app",
-    "with1": "Scan in seconds",
-    "with2": "Get personalized checks",
-    "with3": "Know what works for you"
   },
   "saveProfile": {
     "title": "Save your profile",
@@ -420,13 +248,13 @@
   "verdict": {
     "safe": "Works for you",
     "safe_other": "Works for {{name}}",
-    "caution": "Caution",
-    "unsafe": "Not safe",
-    "unsafe_other": "Not safe for {{name}}",
+    "caution": "Warning",
+    "unsafe": "High risk",
+    "unsafe_other": "High risk for {{name}}",
     "unknown": "Not sure",
-    "safeBody": "None of your watched ingredients were found on this label.",
-    "cautionBody": "This may contain something you avoid. Check the label before eating.",
-    "unsafeBody": "This contains something you avoid.",
+    "safeBody": "None of your foods to avoid were found on this label.",
+    "cautionBody": "This may contain, or is made near, something you avoid. Check the label before eating.",
+    "unsafeBody": "This contains something you must avoid.",
     "unknownBody": "We couldn't read enough of the label to be sure.",
     "triggers": "What we found",
     "cleared": "Checked and not found",
@@ -487,22 +315,12 @@
   },
   "profile": {
     "title": "Profile",
-    "restrictions": "Ingredients to avoid",
-    "severity": "Severity",
-    "cautionLevel": "Caution level",
-    "diet": "Diet",
-    "goal": "Main goal",
     "language": "Language",
     "profiles": "Profiles",
     "manageProfiles": "Manage profiles",
-    "addProfile": "Add a profile",
-    "addProfileHint": "Set up someone else's restrictions",
-    "editRestrictions": "Edit ingredients",
-    "noRestrictions": "No ingredients yet",
+    "addProfile": "Add a person",
+    "addProfileHint": "Set up someone you shop for",
     "for_myself": "Me",
-    "for_child": "Child",
-    "for_family": "Family member",
-    "for_care": "Someone I care for",
     "active": "Active",
     "makeActive": "Make active",
     "deleteProfile": "Delete profile",
@@ -511,8 +329,12 @@
     "name": "Name",
     "rename": "Rename",
     "created": "Created {{date}}",
-    "restrictionCount": "{{count}} ingredients",
-    "restrictionCount_one": "1 ingredient"
+    "for_other": "Someone I shop for",
+    "foodCount": "{{count}} foods to avoid",
+    "foodCount_one": "1 food to avoid",
+    "planFull": "Your {{plan}} plan covers {{count}} people. Upgrade to add more.",
+    "planFull_one": "Your {{plan}} plan covers 1 person. Upgrade to add more.",
+    "peopleOnPlan": "{{count}} of {{max}} people on your {{plan}} plan"
   },
   "settings": {
     "title": "Settings",
@@ -556,8 +378,8 @@
     "clearSearch": "Clear search",
     "star": "star",
     "verdictIcon_safe": "Safe",
-    "verdictIcon_caution": "Caution",
-    "verdictIcon_unsafe": "Not safe",
+    "verdictIcon_caution": "Warning",
+    "verdictIcon_unsafe": "High risk",
     "verdictIcon_unknown": "Unknown"
   },
   "routes": {
@@ -632,9 +454,6 @@
     "mayContain": "May contain",
     "checkedAgainst": "Checked against",
     "tilesHint": "Shows the ingredients",
-    "diet": "Diet",
-    "dietCompatible": "Fits your {{diet}} diet",
-    "dietNotCompatible": "Not {{diet}}: {{matched}}",
     "ingredients": "Ingredients",
     "addMore": "Add more",
     "noIngredients": "No ingredient list was read for this product.",
@@ -645,8 +464,8 @@
     "reason_clear": "Not on your list",
     "summary_safe": "No flagged ingredients",
     "summary_unsafe": "Contains {{names}}",
-    "summary_caution": "May contain {{names}}",
-    "summary_caution_unclear": "Some wording is unclear",
+    "summary_caution": "Warning: {{names}}",
+    "summary_caution_unclear": "An ingredient a health condition asks you to limit or avoid",
     "summary_unknown": "Not enough label information",
     "worksFor": "Works for",
     "worksForHint": "Checked for every profile you manage",
@@ -666,7 +485,13 @@
     "shareTitle": "Scan result",
     "colorsLink": "What the colors mean",
     "scannedAt": "Scanned at {{time}}",
-    "productDetails": "Product details"
+    "productDetails": "Product details",
+    "byNameOnly": "checked by name only",
+    "conditionsTitle": "For your health conditions",
+    "conditionsA11y": "Ingredients to limit or avoid for your health conditions",
+    "condition_limit": "Limit {{ingredient}} ({{condition}})",
+    "condition_avoid": "Avoid {{ingredient}} ({{condition}})",
+    "summary_traces": "May contain {{names}}"
   },
   "fix": {
     "title": "Fix results",
@@ -767,7 +592,6 @@
     "title": "Ingredient",
     "alsoCalled": "Also called",
     "onYourList": "On your list",
-    "severity": "Severity: {{level}}",
     "notOnList": "Not on your list",
     "editList": "Edit my list",
     "flaggedScans": "Scans that flagged it",
@@ -776,7 +600,8 @@
     "emptyTitle": "No scans flagged this yet",
     "emptyBody": "When a scanned food contains it, that scan shows up here.",
     "category": "Category",
-    "unknown": "Unknown ingredient"
+    "unknown": "Unknown ingredient",
+    "level": "Shown as {{level}}"
   },
   "ingredientCategory": {
     "nuts": "Nuts",
@@ -1167,10 +992,7 @@
     "language": "Language",
     "familyPlan": "Upgrade to Family Plan",
     "safety": "Allergies & diet",
-    "allergens": "My allergens and ingredients",
-    "caution": "Caution level",
-    "diet": "Diet",
-    "otherAnswers": "Other answers",
+    "allergens": "Allergies and foods to avoid",
     "reminders": "Tracking Reminders",
     "reactions": "Reaction history",
     "verdictColors": "Verdict colors explained",
@@ -1218,7 +1040,12 @@
     "widgetBarcode": "Barcode",
     "widgetCaloriesA11y": "Calories left widget: {{count}} calories left",
     "widgetStreakA11y": "Streak widget: {{count}} day streak",
-    "widgetMediumA11y": "Calories and macros widget with Scan Food and Barcode shortcuts"
+    "widgetMediumA11y": "Calories and macros widget with Scan Food and Barcode shortcuts",
+    "conditions": "Health conditions",
+    "note": "Note",
+    "answerAgain": "Answer the questions again",
+    "plan_plus": "Plus",
+    "plan_family": "Family"
   },
   "settingsScreens": {
     "name": {
@@ -1244,7 +1071,7 @@
       "stepsUnit": "steps per day",
       "feet": "Feet",
       "inches": "Inches",
-      "sheet_goal": "Goal weight (lbs)",
+      "sheet_goal": "Days without a reaction",
       "sheet_weight": "Current weight (lbs)",
       "sheet_steps": "Daily step goal",
       "notSet": "Not set",
@@ -1254,7 +1081,12 @@
       "email": "Email",
       "noEmail": "Not signed in",
       "saved": "Details saved",
-      "done": "Done"
+      "done": "Done",
+      "goalDays": "Reaction-free goal",
+      "goalDaysValue": "{{count}} days",
+      "emergencyContact": "Emergency contact",
+      "doctor": "Doctor or clinic",
+      "note": "Note"
     },
     "preferences": {
       "title": "Preferences",
@@ -1284,15 +1116,16 @@
     "familyPlan": {
       "title": "{{app}} Family Plan",
       "artA11y": "A family holding each other",
-      "b1": "Up to {{count}} members, one plan",
-      "b2": "Unlimited scanning for all",
-      "b3": "Personalized plans for everyone",
+      "b1": "Up to {{count}} people, one plan",
+      "b2": "Unlimited scanning for everyone",
+      "b3": "Each person's own allergies and conditions",
       "cta": "Upgrade to Family Plan",
       "notified": "We will let you know when the Family Plan launches",
       "terms": "Terms",
       "privacy": "Privacy",
       "restore": "Restore",
-      "restored": "Nothing to restore yet"
+      "restored": "Nothing to restore yet",
+      "plusLine": "Plus covers {{plus}} people, Family covers {{family}}."
     },
     "invite": {
       "title": "Refer your friend",
@@ -1345,11 +1178,11 @@
     "verdictColors": {
       "title": "Verdict colors explained",
       "intro": "Every result uses an icon and a label, never colour alone.",
-      "safeBody": "None of your watched ingredients were found on the label.",
-      "cautionBody": "The label says it may contain, or was made near, something you avoid. Your caution level decides when we warn you.",
-      "unsafeBody": "The label lists something you avoid.",
+      "safeBody": "None of your foods to avoid were found on the label.",
+      "cautionBody": "Warning: the label lists, may contain, or is made near a food you avoid with a mild reaction or a preference, or an ingredient a health condition asks you to limit.",
+      "unsafeBody": "High risk: the label lists or may contain a food with a severe reaction, one needing treatment, one you are not sure about, or one you avoid strictly.",
       "unknownBody": "The label could not be read fully. Check it yourself or scan again.",
-      "cautionLink": "Change my caution level"
+      "cautionLink": "Change how serious a food is"
     },
     "allergyCard": {
       "title": "Allergy card",
@@ -1383,7 +1216,7 @@
       "title": "Export summary report",
       "subtitle": "A summary you can share with a doctor or dietitian.",
       "profile": "Profile",
-      "restrictions": "Restrictions",
+      "restrictions": "Foods to avoid",
       "activity": "Activity",
       "scans": "{{count}} foods checked",
       "flagged": "{{count}} flagged",
@@ -1391,7 +1224,8 @@
       "period": "Last 90 days",
       "share": "Share report",
       "note": "PDF export arrives with the backend; this shares the text summary.",
-      "noRestrictions": "None"
+      "noRestrictions": "None",
+      "conditions": "Health conditions"
     },
     "changeEmail": {
       "title": "Change email",
@@ -1608,5 +1442,209 @@
     "title": "Sign in",
     "subtitle": "Pick up where you left off. Your profile, history and streak come with you.",
     "terms": "By continuing you agree to the Terms and Privacy Policy."
+  },
+  "plans": {
+    "free": "Free",
+    "plus": "Plus",
+    "family": "Family"
+  },
+  "q1": {
+    "title": "Who are you setting up?",
+    "me": "Me",
+    "other": "Someone else",
+    "otherHint": "A child, partner or anyone you shop for",
+    "existing": "Someone I've already added",
+    "existingHint": "Update their profile",
+    "upsellTitle": "Add family members",
+    "upsellBody": "The Free plan covers you. Plus covers five people and Family fifteen.",
+    "noRoom": "Your {{plan}} plan has no room for another person.",
+    "nameTitle": "What's their name?",
+    "nameSubtitle": "The app uses it in the questions and on their profile.",
+    "namePlaceholder": "Name or nickname",
+    "pickTitle": "Who would you like to update?",
+    "pickSubtitle": "Answering again adds to their profile and never removes anything."
+  },
+  "q2": {
+    "title": "Do you have any food allergies or intolerances, or foods you must avoid?",
+    "title_other": "Does {{name}} have any food allergies or intolerances, or foods they must avoid?",
+    "unsure": "I'm not sure",
+    "unsureHint": "Pick anything you suspect",
+    "unsureNote": "You can pick anything you suspect. It is also worth speaking to a doctor."
+  },
+  "q3": {
+    "title": "Which of these do you need to avoid?",
+    "title_other": "Which of these does {{name}} need to avoid?",
+    "subtitle": "The 14 allergens labels must highlight come first. Picking is optional; the next question covers anything missing.",
+    "showMore": "Show more",
+    "moreTitle": "More specific items",
+    "searchPlaceholder": "Search foods",
+    "noResults": "No match for \"{{query}}\""
+  },
+  "q4": {
+    "title": "Is there anything else you need to avoid that isn't in the list?",
+    "title_other": "Is there anything else {{name}} needs to avoid that isn't in the list?",
+    "subtitle": "Optional. Type each food on its own, for example \"kiwi\" or \"plantain\".",
+    "placeholder": "Type a food",
+    "known": "We already know this food: recorded as {{name}}, which also catches its other names.",
+    "byName": "Checked by name only. It may be missed under a different name.",
+    "refused": "\"{{text}}\" is on almost every label. Please type the food itself.",
+    "count": "{{count}} of {{max}} added",
+    "full": "You can add up to {{count}} foods."
+  },
+  "q5": {
+    "title": "What happens when you eat {{food}}?",
+    "title_other": "What happens when {{name}} eats {{food}}?",
+    "short": "What happens",
+    "allergy": "An allergic reaction",
+    "allergyHint": "Hives, itching, swelling, vomiting or trouble breathing, usually within minutes to two hours",
+    "intolerance": "Digestive trouble",
+    "intoleranceHint": "Bloating, cramps or diarrhoea, often hours later",
+    "sensitivity": "Something else, or hard to pin down",
+    "sensitivityHint": "Headaches, skin flare-ups, feeling unwell",
+    "choice": "No reaction; avoided for another reason",
+    "choiceHint": "Diet, religion or personal preference",
+    "unsure": "I'm not sure",
+    "unsureHint": "We'll treat it as an allergy until you tell us more",
+    "unsureNote": "Recorded as an allergy, the cautious choice, until you tell us more."
+  },
+  "q6": {
+    "title": "How bad has your worst reaction to {{food}} been?",
+    "title_other": "How bad has {{name}}'s worst reaction to {{food}} been?",
+    "short": "Worst reaction",
+    "severe": "Severe",
+    "severeHint": "Trouble breathing, throat or tongue swelling, fainting, or needed an EpiPen or emergency care",
+    "treatment": "Needed treatment",
+    "treatmentHint": "Medicine or a doctor, but not an emergency",
+    "mild": "Mild",
+    "mildHint": "Uncomfortable, but it passed on its own",
+    "unsure": "I'm not sure, or it hasn't happened yet",
+    "unsureHint": "We'll treat it as severe until you tell us otherwise",
+    "unsureNote": "Treated as severe: products containing it will be shown as High risk. You can change this later.",
+    "highNote": "Products containing it will be shown as High risk.",
+    "warningNote": "Products containing it will be shown as a Warning."
+  },
+  "q7": {
+    "title": "How strictly do you avoid {{food}}?",
+    "title_other": "How strictly does {{name}} avoid {{food}}?",
+    "short": "How strictly",
+    "strict": "Strictly",
+    "strictHint": "Any amount is a problem. Shown as High risk.",
+    "prefers": "Prefers to avoid it",
+    "prefersHint": "A small amount is acceptable. Shown as a Warning."
+  },
+  "q8": {
+    "title": "Has a doctor confirmed that you react to {{food}}?",
+    "title_other": "Has a doctor confirmed that {{name}} reacts to {{food}}?",
+    "subtitle": "Optional. Saved for reference only; it does not change any warning.",
+    "short": "Doctor confirmed",
+    "unknown": "I don't know"
+  },
+  "q9": {
+    "title": "Do you have a health condition that affects what you eat?",
+    "title_other": "Does {{name}} have a health condition that affects what they eat?",
+    "subtitle": "The app then points out ingredients to limit or avoid when products are scanned."
+  },
+  "q10": {
+    "title": "Which of these apply to you?",
+    "title_other": "Which of these apply to {{name}}?",
+    "subtitle": "Select all that apply."
+  },
+  "q11": {
+    "title": "When is your {{condition}} expected to end?",
+    "title_other": "When is {{name}}'s {{condition}} expected to end?",
+    "subtitle": "Optional.",
+    "subtitlePregnancy": "Optional. The due date is fine.",
+    "note": "Two weeks after this date we will ask whether it still applies. The advice never switches off by itself."
+  },
+  "q12": {
+    "title": "Anything else you'd like to keep with your profile?",
+    "title_other": "Anything else you'd like to keep with {{name}}'s profile?",
+    "subtitle": "Optional. A short note, for example \"carries an EpiPen\" or \"school packed lunch\".",
+    "placeholder": "Your note",
+    "privacy": "Only you can see this note. Scans never read it."
+  },
+  "conditions": {
+    "diabetes": "Diabetes",
+    "kidney_disease": "Kidney disease",
+    "pregnancy": "Pregnancy",
+    "breastfeeding": "Breastfeeding",
+    "high_blood_pressure": "High blood pressure",
+    "heart_disease": "Heart disease",
+    "coeliac": "Coeliac disease",
+    "ibs": "IBS",
+    "gout": "Gout",
+    "pku": "Phenylketonuria (PKU)"
+  },
+  "review": {
+    "title": "Here's what we recorded",
+    "titleFor": "Here's what we recorded for {{name}}",
+    "subtitle": "Check it and correct anything that is wrong. Every scan is checked against this.",
+    "continue": "Looks right",
+    "foodsTitle": "Foods to avoid",
+    "noFoods": "No foods to avoid.",
+    "nothingPicked": "No foods were picked or typed.",
+    "byNameOnly": "checked by name only",
+    "incomplete": "Answers missing",
+    "conditionsTitle": "Health conditions",
+    "endsOn": "Expected to end {{date}}",
+    "noteTitle": "Note",
+    "issuesTitle": "Nothing is saved until these are answered",
+    "fix": "Fix",
+    "issue_target": "Who this is for",
+    "issue_person_name": "Their name",
+    "issue_plan_limit": "Your plan has no room for another person",
+    "issue_has_allergies": "Whether there are foods to avoid",
+    "issue_food_kind": "What happens with {{food}}",
+    "issue_food_worst": "How bad the worst reaction to {{food}} has been",
+    "issue_food_strictness": "How strictly {{food}} is avoided",
+    "issue_has_conditions": "Whether a health condition applies",
+    "msg_severe_assumed_title": "Some reactions were recorded as severe",
+    "msg_severe_assumed_body": "You were not sure how bad a reaction is, so we treat it as severe. You can change this later on the allergies screen.",
+    "msg_see_doctor_title": "Consider speaking to a doctor",
+    "msg_see_doctor_body": "You were not sure whether there are allergies at all. A doctor can confirm what to avoid.",
+    "msg_confirm_email_title": "Confirm your email to switch on health conditions",
+    "msg_confirm_email_body": "Health conditions are saved but only take effect once your email address is confirmed.",
+    "msg_known_food_title": "We already know this food",
+    "msg_known_food_body": "A typed-in food was one on our list, so that allergen was used instead.",
+    "msg_by_name_only_title": "Checked by name only",
+    "msg_by_name_only_body": "Typed-in foods were kept as typed; scans look for that name on labels.",
+    "msg_earlier_entries_title": "Earlier entries are still on the profile",
+    "msg_earlier_entries_body": "Foods you left out this time were kept. Remove foods deliberately from the allergies screen."
+  },
+  "risk": {
+    "high": "High risk",
+    "warning": "Warning"
+  },
+  "allergies": {
+    "title": "Allergies and foods to avoid",
+    "forName": "{{name}}'s foods to avoid",
+    "outdated": "The questions were updated. Answer them again to make sure nothing is missing.",
+    "emptyTitle": "No foods to avoid yet",
+    "emptyBody": "Answer the questions to add the foods to avoid.",
+    "answerAgain": "Answer the questions again",
+    "assumedSevere": "treated as severe",
+    "doctorConfirmed": "doctor confirmed",
+    "shownAs": "Products containing it are shown as",
+    "saved": "Food updated",
+    "removeTitle": "Remove {{name}}?",
+    "removeBody": "Scans will no longer warn about it. Answering the questions again never removes foods; this does.",
+    "removed": "{{name}} removed",
+    "hint": "Tap a food to change how serious it is. Answering the questions again adds foods and never removes any."
+  },
+  "conditionsScreen": {
+    "title": "Health conditions",
+    "subtitle": "The app points out ingredients to limit or avoid for these when products are scanned.",
+    "endsOn": "Expected to end {{date}}",
+    "noEndDate": "No end date set",
+    "setEnd": "End date",
+    "saved": "Condition updated",
+    "stillApplies": "Does {{condition}} still apply?",
+    "stillAppliesBody": "It was expected to end on {{date}}. We keep the advice on until you tell us.",
+    "stillYes": "Still applies",
+    "stillNo": "It has ended"
+  },
+  "noteScreen": {
+    "title": "Note",
+    "saved": "Note saved"
   }
 }

@@ -2,6 +2,8 @@ import { simulate } from './support';
 import { mockConfig } from '../config';
 import { ServiceError, type ScanService } from '../types';
 import { evaluateProduct } from '../verdictEngine';
+import { activeConditionIds } from '@/features/questionnaire/rules';
+import { useAppStore } from '@/store/appStore';
 import { PRODUCTS } from '@/mocks/products';
 import type { Product, ScanResult } from '@/types';
 import { createId } from '@/utils/id';
@@ -32,6 +34,9 @@ function productFromCapture(labelText?: string): Product {
   return PRODUCTS.find((p) => p.id === id) ?? PRODUCTS[0]!;
 }
 
+/** Health conditions only take effect once the email address is confirmed. */
+const emailConfirmed = () => useAppStore.getState().session?.user.emailConfirmed ?? false;
+
 export const mockScanService: ScanService = {
   async analyze({ profile, source, mode, product, labelText, imageUri }) {
     const fromPhoto = source === 'camera' || source === 'gallery';
@@ -47,7 +52,7 @@ export const mockScanService: ScanService = {
       id: createId('scan'),
       profileId: profile.id,
       product: withImage,
-      verdict: evaluateProduct(withImage, profile),
+      verdict: evaluateProduct(withImage, profile, activeConditionIds(profile, emailConfirmed())),
       source,
       mode,
       // Mock OCR: the label variant shows the ingredient list as the scanned text.
@@ -80,7 +85,7 @@ export const mockScanService: ScanService = {
   },
   async verdictFor(product, profile) {
     await simulate(0.3);
-    return evaluateProduct(product, profile);
+    return evaluateProduct(product, profile, activeConditionIds(profile, emailConfirmed()));
   },
   async report() {
     // The mock accepts every report; the backend will store it.

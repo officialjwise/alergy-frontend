@@ -21,7 +21,7 @@ export default function VerdictColorsScreen() {
         <Button
           title={t('settingsScreens.verdictColors.cautionLink')}
           variant="secondary"
-          onPress={() => router.push('/settings/caution')}
+          onPress={() => router.push('/settings/allergies')}
         />
       }
       testID="settings-verdict-colors"

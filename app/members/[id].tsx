@@ -143,7 +143,7 @@ export default function MemberScreen() {
           </View>
           {isFamily ? (
             <Text variant="small" color="textMuted">
-              {t('groups.restrictions', { count: profile.restrictions.length })}
+              {t('groups.restrictions', { count: profile.foods.length })}
             </Text>
           ) : null}
         </View>
@@ -162,12 +162,7 @@ export default function MemberScreen() {
           <SettingsRow
             label={t('groups.editRestrictions')}
             icon="edit"
-            onPress={() =>
-              router.push({
-                pathname: '/profiles/edit/[section]',
-                params: { section: 'restrictions', profileId: profile.id },
-              })
-            }
+            onPress={() => router.push({ pathname: '/settings/allergies', params: { profileId: profile.id } })}
           />
           <SettingsRow
             label={t('groups.removeMember')}

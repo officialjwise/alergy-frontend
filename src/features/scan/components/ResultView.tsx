@@ -7,13 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { LabelTextCard } from './LabelTextCard';
 import { ResultMoreSheet } from './ResultMoreSheet';
-import {
-  dietCompatibility,
-  flaggedNames,
-  ingredientRows,
-  triggerCounts,
-  type IngredientStatus,
-} from '../ingredients';
+import { flaggedNames, ingredientRows, type IngredientStatus } from '../ingredients';
 import { VERDICT_THEME } from '../verdictTheme';
 import { SafetyNotice } from '@/components/app/SafetyNotice';
 import { VerdictBadge } from '@/components/app/VerdictBadge';
@@ -36,7 +30,9 @@ import {
   type IconName,
 } from '@/components/ui';
 import { useToggleSaved } from '@/features/history/useHistory';
+import { activeConditionIds } from '@/features/questionnaire/rules';
 import { evaluateProduct } from '@/services';
+import { useAppStore } from '@/store/appStore';
 import { useProfileStore } from '@/store/profileStore';
 import { colors, layout, radii, spacing, type ColorToken } from '@/theme/tokens';
 import { rs } from '@/theme/responsive';
@@ -96,35 +92,45 @@ export function ResultView({
   const [ingredientsY, setIngredientsY] = useState(0);
   const toggleSaved = useToggleSaved();
   const profiles = useProfileStore((state) => state.profiles);
+  const emailConfirmed = useAppStore((state) => state.session?.user.emailConfirmed ?? false);
 
   const { product, verdict } = scan;
   const theme = VERDICT_THEME[verdict.kind];
   const rows = useMemo(() => ingredientRows(scan), [scan]);
-  const counts = useMemo(() => triggerCounts(verdict), [verdict]);
-  const diet = useMemo(() => dietCompatibility(verdict, profile), [profile, verdict]);
+  const counts = useMemo(() => {
+    const ids = (level: 'high' | 'warning') =>
+      new Set(verdict.triggers.filter((item) => item.level === level).map((item) => item.ingredientId)).size;
+    return { high: ids('high'), warning: ids('warning') };
+  }, [verdict]);
   const names = useMemo(() => flaggedNames(verdict), [verdict]);
+  const traceOnly = useMemo(
+    () => verdict.triggers.length > 0 && verdict.triggers.every((item) => item.kind !== 'contains'),
+    [verdict.triggers],
+  );
   const members = useMemo(
     () =>
       profiles.length > 1
         ? profiles.map((member) => ({
             member,
             kind:
-              member.id === scan.profileId ? verdict.kind : evaluateProduct(product, member).kind,
+              member.id === scan.profileId
+                ? verdict.kind
+                : evaluateProduct(product, member, activeConditionIds(member, emailConfirmed)).kind,
           }))
         : [],
-    [product, profiles, scan.profileId, verdict.kind],
+    [emailConfirmed, product, profiles, scan.profileId, verdict.kind],
   );
 
   const summary =
     verdict.kind === 'safe'
       ? t('result.summary_safe')
-      : verdict.kind === 'unsafe'
-        ? t('result.summary_unsafe', { names: names.join(', ') })
-        : verdict.kind === 'caution'
-          ? names.length
-            ? t('result.summary_caution', { names: names.join(', ') })
-            : t('result.summary_caution_unclear')
-          : t('result.summary_unknown');
+      : verdict.kind === 'unknown'
+        ? t('result.summary_unknown')
+        : names.length === 0
+          ? t('result.summary_caution_unclear')
+          : traceOnly
+            ? t('result.summary_traces', { names: names.join(', ') })
+            : t('result.summary_unsafe', { names: names.join(', ') });
 
   const scrollToIngredients = useCallback(() => {
     scrollRef.current?.scrollTo({ y: Math.max(0, ingredientsY - rs(spacing.md)), animated: true });
@@ -258,64 +264,46 @@ export function ResultView({
         <View style={styles.tiles}>
           <StatCard
             layout="tile"
-            value={counts.contains}
-            label={t('result.contains')}
+            value={counts.high}
+            label={t('risk.high')}
             ring={{ progress: 0, color: 'danger', icon: 'closeCircle' }}
             onPress={scrollToIngredients}
-            accessibilityLabel={`${t('result.contains')}: ${counts.contains}. ${t('result.tilesHint')}`}
+            accessibilityLabel={`${t('risk.high')}: ${counts.high}. ${t('result.tilesHint')}`}
             style={styles.tile}
           />
           <StatCard
             layout="tile"
-            value={counts.mayContain}
-            label={t('result.mayContain')}
+            value={counts.warning}
+            label={t('risk.warning')}
             ring={{ progress: 0, color: 'warning', icon: 'warning' }}
             onPress={scrollToIngredients}
-            accessibilityLabel={`${t('result.mayContain')}: ${counts.mayContain}. ${t('result.tilesHint')}`}
+            accessibilityLabel={`${t('risk.warning')}: ${counts.warning}. ${t('result.tilesHint')}`}
             style={styles.tile}
           />
           <StatCard
             layout="tile"
-            value={profile?.restrictions.length ?? 0}
+            value={profile?.foods.length ?? 0}
             label={t('result.checkedAgainst')}
             ring={{ progress: 0, color: 'success', icon: 'shieldCheck' }}
             onPress={scrollToIngredients}
-            accessibilityLabel={`${t('result.checkedAgainst')}: ${profile?.restrictions.length ?? 0}. ${t('result.tilesHint')}`}
+            accessibilityLabel={`${t('result.checkedAgainst')}: ${profile?.foods.length ?? 0}. ${t('result.tilesHint')}`}
             style={styles.tile}
           />
         </View>
 
-        {diet ? (
-          <View
-            style={styles.dietRow}
-            accessible
-            accessibilityLabel={
-              diet.compatible
-                ? t('result.dietCompatible', { diet: t(`diet.${diet.diet}`) })
-                : t('result.dietNotCompatible', {
-                    diet: t(`diet.${diet.diet}`),
-                    matched: diet.matched.join(', '),
-                  })
-            }
-          >
-            <Icon
-              name={diet.compatible ? 'checkCircle' : 'closeCircle'}
-              size={rs(22)}
-              color={diet.compatible ? 'successBright' : 'danger'}
-            />
-            <View style={styles.dietText}>
-              <Text variant="small" color="textMuted">
-                {t('result.diet')}
-              </Text>
-              <Text variant="label" color="text">
-                {diet.compatible
-                  ? t('result.dietCompatible', { diet: t(`diet.${diet.diet}`) })
-                  : t('result.dietNotCompatible', {
-                      diet: t(`diet.${diet.diet}`),
-                      matched: diet.matched.join(', '),
-                    })}
-              </Text>
-            </View>
+        {(verdict.conditionNotes ?? []).length > 0 ? (
+          <View style={styles.conditions} accessible accessibilityLabel={t('result.conditionsA11y')}>
+            <Text variant="small" color="textMuted">
+              {t('result.conditionsTitle')}
+            </Text>
+            {(verdict.conditionNotes ?? []).map((note) => (
+              <View key={`${note.conditionId}-${note.matchedText}`} style={styles.conditionRow}>
+                <Icon name={note.advice === 'avoid' ? 'closeCircle' : 'warning'} size={rs(18)} color={note.advice === 'avoid' ? 'danger' : 'warning'} />
+                <Text variant="label" color="text" style={styles.conditionText}>
+                  {t(`result.condition_${note.advice}`, { ingredient: note.matchedText, condition: t(`conditions.${note.conditionId}`) })}
+                </Text>
+              </View>
+            ))}
           </View>
         ) : null}
       </View>
@@ -355,12 +343,15 @@ export function ResultView({
                   : t(`result.reason_${row.status}`, {
                       name: row.trigger?.ingredientName ?? row.name,
                     });
-              const description = row.fromMayContain
-                ? `${t('result.mayContain')} · ${reason}`
-                : reason;
+              const description = [
+                row.fromMayContain ? t('result.mayContain') : null,
+                reason,
+                row.trigger?.byNameOnly ? t('result.byNameOnly') : null,
+              ]
+                .filter(Boolean)
+                .join(' · ');
               const ingredientId = row.trigger?.ingredientId;
-              const canOpen =
-                !!ingredientId && !ingredientId.startsWith('diet:') && ingredientId !== 'unclear';
+              const canOpen = !!ingredientId && ingredientId !== 'unclear';
               return (
                 <View key={`${row.name}-${index}`}>
                   <ListRow
@@ -462,16 +453,15 @@ const styles = StyleSheet.create({
   verdict: { marginTop: rs(spacing.sm) },
   tiles: { flexDirection: 'row', gap: rs(spacing.xs), marginTop: rs(spacing.sm) },
   tile: { flex: 1 },
-  dietRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: rs(spacing.sm),
+  conditions: {
+    gap: rs(spacing.xs),
     marginTop: rs(spacing.sm),
     padding: rs(spacing.md),
     borderRadius: radii.card,
     backgroundColor: colors.surface,
   },
-  dietText: { flex: 1 },
+  conditionRow: { flexDirection: 'row', alignItems: 'center', gap: rs(spacing.xs) },
+  conditionText: { flex: 1 },
   section: { paddingHorizontal: rs(layout.screenPaddingH), marginTop: rs(spacing.xl) },
   row: { paddingHorizontal: rs(spacing.sm) },
   emptyRows: { padding: rs(spacing.sm) },

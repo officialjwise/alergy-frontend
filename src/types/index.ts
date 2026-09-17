@@ -1,33 +1,31 @@
-/** Who the profile is being set up for (onboarding question 1). */
-export type ProfileFor = 'myself' | 'child' | 'family' | 'care';
+/**
+ * Profile model from "The Onboarding Questionnaire" (version 2, 17 Sep 2026):
+ * a list of foods to avoid (each with how serious it is), any health
+ * conditions, and personal notes. The original answers are kept alongside.
+ */
 
-export type Frequency = 'few_month' | 'few_week' | 'daily' | 'every_meal';
+export type PlanId = 'free' | 'plus' | 'family';
 
-export type WatchCategory = 'allergies' | 'intolerances' | 'gluten' | 'religious' | 'vegetarian';
+/** "Me" or someone the account holder shops for (Plus and Family plans). */
+export type ProfileFor = 'myself' | 'other';
 
-export type AvoidReason = 'allergy' | 'intolerance' | 'religious' | 'lifestyle' | 'preference';
+/** Question 2. */
+export type HasAllergiesAnswer = 'yes' | 'no' | 'unsure';
 
-export type CautionLevel = 'ingredient' | 'may_contain' | 'cross_contact' | 'uncertain';
+/** Question 5: what happens when they eat it. "Not sure" is recorded as an allergy. */
+export type ReactionKind = 'allergy' | 'intolerance' | 'sensitivity' | 'choice';
 
-export type Challenge = 'labels' | 'hidden' | 'cross_contact' | 'restaurants' | 'alternatives';
+/** Question 6: how bad the worst reaction has been. "Not sure" is treated as severe. */
+export type WorstReaction = 'severe' | 'treatment' | 'mild' | 'unsure';
 
-export type Diet =
-  | 'none'
-  | 'halal'
-  | 'vegetarian'
-  | 'vegan'
-  | 'gluten_free'
-  | 'dairy_free'
-  | 'low_fodmap'
-  | 'keto'
-  | 'kosher'
-  | 'pescatarian'
-  | 'paleo';
+/** Question 7: how strictly a food avoided by choice is avoided. */
+export type Strictness = 'strict' | 'prefers';
 
-export type Goal = 'know_instantly' | 'avoid_exposure' | 'shop_faster' | 'eat_out';
+/** Question 8: saved for reference only. */
+export type DoctorConfirmed = 'yes' | 'no' | 'unknown';
 
-/** Per-ingredient severity (not in the PDF; asked after the ingredient picker). */
-export type Severity = 'mild' | 'moderate' | 'severe' | 'anaphylaxis';
+/** How a product containing the food is shown. */
+export type RiskLevel = 'high' | 'warning';
 
 export type IngredientCategory =
   | 'nuts'
@@ -52,14 +50,102 @@ export interface Ingredient {
   category: IngredientCategory;
   /** Icon name from the semantic icon set. */
   icon: string;
+  /** One of the 14 allergens that UK and EU labels must highlight; shown first. */
+  major?: boolean;
+  /** Example shown next to the name ("e.g. prawns"). */
+  example?: string;
   /** True for ingredients typed in by the user. */
   isCustom?: boolean;
 }
 
-export interface Restriction {
-  ingredientId: string;
+export interface AvoidedFood {
+  /** Catalogue allergen id, or a generated id for a food kept as typed. */
+  id: string;
   name: string;
-  severity: Severity;
+  /** Set when the food is (or was resolved to) a catalogue allergen. */
+  allergenId: string | null;
+  /** Kept as typed: labels are checked for this name only. */
+  byNameOnly: boolean;
+  kind: ReactionKind;
+  /** The user was not sure what kind of reaction; allergy was assumed. */
+  kindAssumed: boolean;
+  /** Null for foods avoided by choice. */
+  worst: WorstReaction | null;
+  /** The user was not sure how bad, or it has not happened yet; severe was assumed. */
+  severityAssumed: boolean;
+  /** Only for foods avoided by choice. */
+  strictness: Strictness | null;
+  doctorConfirmed: DoctorConfirmed | null;
+  /** Derived from the answers above; how a product containing it is shown. */
+  level: RiskLevel;
+  addedAt: string;
+  updatedAt: string;
+}
+
+export type HealthConditionId =
+  | 'diabetes'
+  | 'kidney_disease'
+  | 'pregnancy'
+  | 'breastfeeding'
+  | 'high_blood_pressure'
+  | 'heart_disease'
+  | 'coeliac'
+  | 'ibs'
+  | 'gout'
+  | 'pku';
+
+export interface HealthCondition {
+  id: HealthConditionId;
+  temporary: boolean;
+  /** YYYY-MM-DD; for a pregnancy the due date. */
+  endsAt: string | null;
+  /** When the user last confirmed the condition still applies (asked two weeks after `endsAt`). */
+  confirmedAt: string | null;
+  addedAt: string;
+}
+
+/** Answers to questions 5 to 8 for one food. */
+export interface FoodAnswers {
+  kind: ReactionKind | null;
+  /** Answered "I'm not sure" to question 5. */
+  kindUnsure: boolean;
+  worst: WorstReaction | null;
+  strictness: Strictness | null;
+  doctorConfirmed: DoctorConfirmed | null;
+}
+
+export type TypedFoodResolution =
+  | { kind: 'known'; allergenId: string }
+  | { kind: 'custom'; id: string }
+  | { kind: 'refused' };
+
+/** A food typed in at question 4 and what the app did with it. */
+export interface TypedFood {
+  text: string;
+  resolution: TypedFoodResolution;
+}
+
+export type QuestionnaireTarget = 'me' | 'other' | 'existing';
+
+/** Everything the questionnaire collects for one person; kept with the profile. */
+export interface QuestionnaireAnswers {
+  version: number;
+  target: QuestionnaireTarget | null;
+  personName: string;
+  existingProfileId: string | null;
+  hasAllergies: HasAllergiesAnswer | null;
+  /** Catalogue ids picked at question 3. */
+  pickedFoods: string[];
+  typedFoods: TypedFood[];
+  /** Keyed by food id (catalogue id or custom id). */
+  perFood: Record<string, FoodAnswers>;
+  hasConditions: boolean | null;
+  conditions: HealthConditionId[];
+  /** YYYY-MM-DD per temporary condition (question 11). */
+  conditionEnds: Record<string, string | null>;
+  note: string;
+  cameraScanning: boolean | null;
+  notificationsAsked: boolean;
 }
 
 export interface BirthDate {
@@ -70,40 +156,31 @@ export interface BirthDate {
   day: number;
 }
 
-export interface OnboardingAnswers {
-  profileFor: ProfileFor | null;
-  profileName: string;
-  birthDate: BirthDate | null;
-  frequency: Frequency | null;
-  triedOtherApps: boolean | null;
-  watchFor: WatchCategory[];
-  /** Ingredient ids, in the order they were added. */
-  ingredients: string[];
-  /** Custom ingredients created during onboarding, keyed by id. */
-  customIngredients: Record<string, Ingredient>;
-  severities: Record<string, Severity>;
-  reasons: AvoidReason[];
-  cautionLevel: CautionLevel | null;
-  challenges: Challenge[];
-  diet: Diet | null;
-  goal: Goal | null;
-  cameraScanning: boolean | null;
-  rememberFoods: boolean | null;
-  notificationsAsked: boolean;
+export interface EmergencyContact {
+  name: string;
+  phone: string;
 }
 
 export interface UserProfile {
   id: string;
   name: string;
   profileFor: ProfileFor;
+  /** The account holder's own profile ("Me"). */
+  isAccountHolder: boolean;
   birthDate: BirthDate | null;
-  restrictions: Restriction[];
-  customIngredients: Record<string, Ingredient>;
-  reasons: AvoidReason[];
-  cautionLevel: CautionLevel;
-  diet: Diet;
-  goal: Goal | null;
-  rememberFoods: boolean;
+  hasAllergies: HasAllergiesAnswer;
+  foods: AvoidedFood[];
+  conditions: HealthCondition[];
+  /** Question 12; only the account holder sees it and scans never read it. */
+  note: string;
+  /** Version of the questionnaire the answers came from; older invites a redo. */
+  questionnaireVersion: number;
+  /** The original answers, kept so it is always possible to see why something was recorded. */
+  answers: QuestionnaireAnswers | null;
+  emergencyContact: EmergencyContact | null;
+  doctor: string;
+  /** Days without a reaction the person is aiming for (Insights goal). */
+  reactionFreeGoalDays: number;
   /** Colour token used for the avatar initial. */
   color: string;
   /** Height, weights and step goal (Personal Details). Missing on profiles created before Phase 3. */
@@ -119,19 +196,32 @@ export type VerdictKind = 'safe' | 'caution' | 'unsafe' | 'unknown';
 export type TriggerKind = 'contains' | 'may_contain' | 'cross_contact' | 'unclear';
 
 export interface VerdictTrigger {
+  /** The avoided food's id (catalogue allergen or custom). */
   ingredientId: string;
   ingredientName: string;
   /** The label text that matched ("whey (milk)"). */
   matchedText: string;
   kind: TriggerKind;
-  severity: Severity;
+  /** How the food is shown when a product contains it. */
+  level: RiskLevel;
+  /** The food is checked by its typed name only. */
+  byNameOnly: boolean;
+}
+
+/** An ingredient a health condition asks to limit or avoid. */
+export interface ConditionNote {
+  conditionId: HealthConditionId;
+  matchedText: string;
+  advice: 'limit' | 'avoid';
 }
 
 export interface Verdict {
   kind: VerdictKind;
   triggers: VerdictTrigger[];
-  /** Ingredient ids from the profile that were checked and not found. */
+  /** Food ids from the profile that were checked and not found. */
   clearedIngredientIds: string[];
+  /** Ingredients to limit or avoid for the person's active health conditions. */
+  conditionNotes: ConditionNote[];
   /** True when the label could not be read fully. */
   incomplete: boolean;
 }
@@ -194,6 +284,8 @@ export interface AuthUser {
   provider: AuthProvider;
   email?: string;
   name?: string;
+  /** Health conditions only take effect once the email address is confirmed. */
+  emailConfirmed: boolean;
 }
 
 export interface AuthSession {

@@ -1,33 +1,33 @@
 import type { TFunction } from 'i18next';
 
-import { ingredientById } from '@/mocks/ingredients';
-import type { OnboardingAnswers } from '@/types';
-import { joinNames } from '@/utils/text';
+import { foodIds, foodName, resolveFoodAnswers } from '@/features/questionnaire/rules';
+import type { QuestionnaireAnswers, RiskLevel } from '@/types';
 
-export interface SummaryRow {
-  key: 'avoid' | 'protection' | 'diet' | 'goal';
-  labelKey: string;
-  value: string;
+export interface ReviewFoodRow {
+  id: string;
+  name: string;
+  level: RiskLevel | null;
+  kindLabel: string;
+  byNameOnly: boolean;
+  /** The answers for this food are incomplete. */
+  incomplete: boolean;
 }
 
-/** Builds the "Your profile" rows from the user's real answers (never the PDF sample values). */
-export function summaryRows(answers: OnboardingAnswers, t: TFunction): SummaryRow[] {
-  const rows: SummaryRow[] = [];
-  const names = answers.ingredients.map(
-    (id) => (answers.customIngredients[id] ?? ingredientById(id))?.name ?? id,
-  );
-  if (names.length > 0)
-    rows.push({ key: 'avoid', labelKey: 'ready.avoid', value: joinNames(names) });
-  if (answers.cautionLevel) {
-    rows.push({
-      key: 'protection',
-      labelKey: 'ready.protection',
-      value: t(`ready.protection_${answers.cautionLevel}`),
-    });
-  }
-  if (answers.diet && answers.diet !== 'none')
-    rows.push({ key: 'diet', labelKey: 'ready.diet', value: t(`diet.${answers.diet}`) });
-  if (answers.goal)
-    rows.push({ key: 'goal', labelKey: 'ready.goal', value: t(`goal.summary_${answers.goal}`) });
-  return rows;
+/** The resulting list of foods for the review screen, built from the real answers. */
+export function reviewFoods(answers: QuestionnaireAnswers, t: TFunction): ReviewFoodRow[] {
+  if (answers.hasAllergies === 'no') return [];
+  return foodIds(answers).map((id) => {
+    const resolved = resolveFoodAnswers(answers.perFood[id]);
+    const typed = answers.typedFoods.find(
+      (item) => item.resolution.kind === 'custom' && item.resolution.id === id,
+    );
+    return {
+      id,
+      name: foodName(answers, id),
+      level: resolved?.level ?? null,
+      kindLabel: resolved ? t(`q5.${resolved.kind}`) : t('review.incomplete'),
+      byNameOnly: !!typed,
+      incomplete: !resolved,
+    };
+  });
 }

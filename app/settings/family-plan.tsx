@@ -79,12 +79,15 @@ export default function FamilyPlanScreen() {
       <Text variant="title" color="text" align="center" accessibilityRole="header">
         {t('settingsScreens.familyPlan.title', { app })}
       </Text>
+      <Text variant="body" color="textMuted" align="center" style={styles.plusLine}>
+        {t('settingsScreens.familyPlan.plusLine', { plus: appConfig.plans.plus.people, family: appConfig.plans.family.people })}
+      </Text>
       <View style={styles.list}>
         {BENEFITS.map((benefit) => (
           <View key={benefit.key} style={styles.row}>
             <Icon name={benefit.icon} size={rs(22)} color="text" outline />
             <Text variant="body" color="textBody" style={styles.rowText}>
-              {t(`settingsScreens.familyPlan.${benefit.key}`, { count: appConfig.familyPlan.maxMembers })}
+              {t(`settingsScreens.familyPlan.${benefit.key}`, { count: appConfig.plans.family.people })}
             </Text>
           </View>
         ))}
@@ -104,6 +107,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   heart: { position: 'absolute', right: rs(40), top: rs(46) },
+  plusLine: { marginTop: rs(spacing.sm) },
   list: { gap: rs(spacing.md), marginTop: rs(spacing.xl), alignSelf: 'center' },
   row: { flexDirection: 'row', alignItems: 'center', gap: rs(spacing.md) },
   rowText: { flexShrink: 1 },

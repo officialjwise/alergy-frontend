@@ -17,12 +17,15 @@ export default function ExportReportScreen() {
   const reactions = useReactions(profile?.id ?? null);
 
   const restrictions =
-    profile?.restrictions
-      .map((item) => `${item.name} (${t(`severity.${item.severity}`)})`)
+    profile?.foods
+      .map((item) => `${item.name} (${t(`q5.${item.kind}`)}, ${t(`risk.${item.level}`)})`)
       .join(', ') || t('settingsScreens.export.noRestrictions');
+  const conditions =
+    profile?.conditions.map((item) => t(`conditions.${item.id}`)).join(', ') ||
+    t('settingsScreens.export.noRestrictions');
   const lines = [
     `${t('settingsScreens.export.title')} · ${formatLongDate(new Date().toISOString(), i18n.language)}`,
-    `${t('settingsScreens.export.profile')}: ${profile?.name ?? ''} · ${t(`diet.${profile?.diet ?? 'none'}`)} · ${t(`caution.${profile?.cautionLevel ?? 'ingredient'}`)}`,
+    `${t('settingsScreens.export.profile')}: ${profile?.name ?? ''} · ${t('settingsScreens.export.conditions')}: ${conditions}`,
     `${t('settingsScreens.export.restrictions')}: ${restrictions}`,
     `${t('settingsScreens.export.activity')} (${t('settingsScreens.export.period')}): ${t('settingsScreens.export.scans', { count: overview.data?.mealsLogged ?? 0 })}, ${t('settingsScreens.export.flagged', { count: overview.data?.flaggedMeals ?? 0 })}, ${t('settingsScreens.export.reactions', { count: reactions.data?.length ?? 0 })}`,
   ];
@@ -46,11 +49,9 @@ export default function ExportReportScreen() {
       </Text>
       {overview.data ? (
         <Card variant="outlined" padding={spacing.lg} style={styles.card}>
-          <Section
-            label={t('settingsScreens.export.profile')}
-            value={`${profile?.name ?? ''} · ${t(`diet.${profile?.diet ?? 'none'}`)} · ${t(`caution.${profile?.cautionLevel ?? 'ingredient'}`)}`}
-          />
+          <Section label={t('settingsScreens.export.profile')} value={profile?.name ?? ''} />
           <Section label={t('settingsScreens.export.restrictions')} value={restrictions} />
+          <Section label={t('settingsScreens.export.conditions')} value={conditions} />
           <Section
             label={`${t('settingsScreens.export.activity')} · ${t('settingsScreens.export.period')}`}
             value={[

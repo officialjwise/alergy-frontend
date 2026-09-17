@@ -1,59 +1,26 @@
-import { buildProfileFromAnswers } from '../buildProfile';
-import { summaryRows } from '../summary';
+import { reviewFoods } from '../summary';
 import { emptyAnswers } from '@/store/onboardingStore';
-import type { OnboardingAnswers } from '@/types';
+import type { QuestionnaireAnswers } from '@/types';
 
-const t = ((key: string) => key) as unknown as Parameters<typeof summaryRows>[1];
+const t = ((key: string) => key) as unknown as Parameters<typeof reviewFoods>[1];
 
-const answers: OnboardingAnswers = {
+const answers: QuestionnaireAnswers = {
   ...emptyAnswers,
-  profileFor: 'child',
-  profileName: 'Ada',
-  ingredients: ['peanuts', 'milk', 'custom_1'],
-  customIngredients: {
-    custom_1: {
-      id: 'custom_1',
-      name: 'Quinoa',
-      aliases: ['quinoa'],
-      category: 'grains',
-      icon: 'wheat',
-      isCustom: true,
-    },
+  hasAllergies: 'yes',
+  pickedFoods: ['peanuts'],
+  typedFoods: [{ text: 'dragon fruit', resolution: { kind: 'custom', id: 'custom_dragon-fruit' } }],
+  perFood: {
+    peanuts: { kind: 'allergy', kindUnsure: false, worst: 'mild', strictness: null, doctorConfirmed: null },
   },
-  severities: { peanuts: 'anaphylaxis' },
-  cautionLevel: 'cross_contact',
-  diet: 'halal',
-  goal: 'know_instantly',
 };
 
-describe('summaryRows', () => {
-  it('uses the real answers and hides empty rows', () => {
-    const rows = summaryRows(answers, t);
-    expect(rows.map((r) => r.key)).toEqual(['avoid', 'protection', 'diet', 'goal']);
-    expect(rows[0]?.value).toBe('Peanuts, Milk, Quinoa');
-    expect(rows[1]?.value).toBe('ready.protection_cross_contact');
-    expect(summaryRows({ ...emptyAnswers, diet: 'none' }, t)).toEqual([]);
-  });
-});
-
-describe('buildProfileFromAnswers', () => {
-  it('maps answers to a profile with default severities and the chosen name', () => {
-    const profile = buildProfileFromAnswers(answers, 1, 'Me');
-    expect(profile.name).toBe('Ada');
-    expect(profile.profileFor).toBe('child');
-    expect(profile.restrictions).toEqual([
-      { ingredientId: 'peanuts', name: 'Peanuts', severity: 'anaphylaxis' },
-      { ingredientId: 'milk', name: 'Milk', severity: 'moderate' },
-      { ingredientId: 'custom_1', name: 'Quinoa', severity: 'moderate' },
+describe('reviewFoods', () => {
+  it('lists every food with its level and flags incomplete answers', () => {
+    const rows = reviewFoods(answers, t);
+    expect(rows).toEqual([
+      { id: 'peanuts', name: 'Peanuts', level: 'warning', kindLabel: 'q5.allergy', byNameOnly: false, incomplete: false },
+      { id: 'custom_dragon-fruit', name: 'dragon fruit', level: null, kindLabel: 'review.incomplete', byNameOnly: true, incomplete: true },
     ]);
-    expect(profile.diet).toBe('halal');
-    expect(profile.cautionLevel).toBe('cross_contact');
-  });
-
-  it('falls back to the default name and caution level', () => {
-    const profile = buildProfileFromAnswers({ ...emptyAnswers, profileFor: 'myself' }, 0, 'Me');
-    expect(profile.name).toBe('Me');
-    expect(profile.cautionLevel).toBe('may_contain');
-    expect(profile.diet).toBe('none');
+    expect(reviewFoods({ ...answers, hasAllergies: 'no' }, t)).toEqual([]);
   });
 });

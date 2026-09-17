@@ -28,10 +28,10 @@ import { useOnboardingStore } from '@/store/onboardingStore';
 import { colors, radii, sizes, spacing } from '@/theme/tokens';
 import { rs, rv } from '@/theme/responsive';
 
-const STEPS: { key: 'watchlist' | 'caution' | 'diet' | 'scan'; icon: IconName; at: number }[] = [
-  { key: 'watchlist', icon: 'document', at: 30 },
-  { key: 'caution', icon: 'shieldCheck', at: 55 },
-  { key: 'diet', icon: 'restaurant', at: 78 },
+const STEPS: { key: 'foods' | 'conditions' | 'notes' | 'scan'; icon: IconName; at: number }[] = [
+  { key: 'foods', icon: 'document', at: 30 },
+  { key: 'conditions', icon: 'heart', at: 55 },
+  { key: 'notes', icon: 'edit', at: 78 },
   { key: 'scan', icon: 'barcode', at: 100 },
 ];
 

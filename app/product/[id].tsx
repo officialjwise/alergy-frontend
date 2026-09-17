@@ -7,7 +7,9 @@ import { Button, ErrorState, Icon, NavHeader, Screen, showToast, Skeleton } from
 import { useProduct, useSaveProduct } from '@/features/foods/useProduct';
 import { useHistory, useToggleSaved } from '@/features/history/useHistory';
 import { ResultView } from '@/features/scan/components/ResultView';
+import { activeConditionIds } from '@/features/questionnaire/rules';
 import { evaluateProduct } from '@/services';
+import { useAppStore } from '@/store/appStore';
 import { selectActiveProfile, useProfileStore } from '@/store/profileStore';
 import { radii, spacing } from '@/theme/tokens';
 import { rs } from '@/theme/responsive';
@@ -24,6 +26,7 @@ export default function ProductScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const product = useProduct(id);
   const profile = useProfileStore(selectActiveProfile);
+  const emailConfirmed = useAppStore((state) => state.session?.user.emailConfirmed ?? false);
   const history = useHistory(profile?.id ?? null);
   const saveProduct = useSaveProduct();
   const toggleSaved = useToggleSaved();
@@ -46,13 +49,13 @@ export default function ProductScreen() {
       profileId: profile?.id ?? '',
       product: product.data,
       verdict: profile
-        ? evaluateProduct(product.data, profile)
-        : { kind: 'unknown', triggers: [], clearedIngredientIds: [], incomplete: true },
+        ? evaluateProduct(product.data, profile, activeConditionIds(profile, emailConfirmed))
+        : { kind: 'unknown', triggers: [], clearedIngredientIds: [], conditionNotes: [], incomplete: true },
       source: 'manual',
       scannedAt: new Date().toISOString(),
       saved: false,
     };
-  }, [existing, product.data, profile]);
+  }, [emailConfirmed, existing, product.data, profile]);
 
   const toggleSave = useCallback(() => {
     if (!product.data) return;

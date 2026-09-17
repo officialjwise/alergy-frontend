@@ -6,6 +6,7 @@ import { StyleSheet, TextInput, View } from 'react-native';
 import { BackButton, Button, PressableScale, Screen, Text } from '@/components/ui';
 import { authErrorKey, useEmailCode } from '@/features/auth/useAuth';
 import { buildProfileFromAnswers } from '@/features/onboarding/buildProfile';
+import { validateAnswers } from '@/features/questionnaire/rules';
 import { apiMode, mockConfig } from '@/services';
 import { useOnboardingStore } from '@/store/onboardingStore';
 import { useProfileStore } from '@/store/profileStore';
@@ -42,8 +43,10 @@ export default function VerifyScreen() {
       setError(null);
       try {
         await verify.mutateAsync({ email, code: value });
-        if (profiles.length === 0)
-          addProfile(buildProfileFromAnswers(answers, 0, t('profile.for_myself')), true);
+        if (profiles.length === 0 && answers.target && validateAnswers(answers, { canAddPerson: true }).length === 0) {
+          const { profile } = buildProfileFromAnswers(answers, null, 0);
+          addProfile({ ...profile, name: profile.name || t('profile.for_myself') }, true);
+        }
         router.replace((next === 'home' ? '/(tabs)/home' : '/(onboarding)/notifications') as Href);
       } catch (caught) {
         const key = authErrorKey(caught);

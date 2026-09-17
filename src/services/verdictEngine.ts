@@ -1,10 +1,12 @@
+import { CONDITION_RULES } from './conditionRules';
 import { INGREDIENTS } from '@/mocks/ingredients';
 import type {
-  Diet,
+  AvoidedFood,
+  ConditionNote,
+  HealthConditionId,
   Ingredient,
   Product,
-  Restriction,
-  Severity,
+  RiskLevel,
   TriggerKind,
   UserProfile,
   Verdict,
@@ -16,7 +18,19 @@ import { normalize } from '@/utils/text';
 /**
  * Local verdict engine. It is deliberately simple and readable: the backend
  * will own the real one. It exists so the UI has realistic, explainable
- * results ("why is this unsafe") while the API is being built.
+ * results ("why is this high risk") while the API is being built.
+ *
+ * Rules (questionnaire sections 2 and 4, awaiting clinical review):
+ * - A product that contains a food is shown at the food's level: High risk
+ *   or Warning.
+ * - "May contain" and shared-equipment statements count too. For a High risk
+ *   food any trace matters, so they are shown as High risk; for a Warning
+ *   food they stay a Warning.
+ * - A typed-in food is checked by its name only and can only make a result
+ *   more cautious.
+ * - Labels that could not be read fully come back as "Not sure".
+ * - Active health conditions add notes about ingredients to limit or avoid;
+ *   an "avoid" note turns a safe result into a Warning.
  */
 
 const CROSS_CONTACT_PHRASES = [
@@ -30,216 +44,27 @@ const CROSS_CONTACT_PHRASES = [
   'may contain traces',
 ];
 
-const UNCLEAR_TERMS = [
-  'natural flavor',
-  'natural flavour',
-  'spices',
-  'seasoning',
-  'vegetable fat',
-  'flavoring',
-  'flavouring',
-  '...',
-];
-
-const DIET_RULES: Partial<
-  Record<Diet, { name: string; ingredientIds: string[]; aliases: string[] }>
-> = {
-  halal: {
-    name: 'Halal',
-    ingredientIds: ['pork', 'alcohol', 'gelatin'],
-    aliases: [
-      'pork',
-      'bacon',
-      'ham',
-      'lard',
-      'gelatin',
-      'gelatine',
-      'alcohol',
-      'wine',
-      'beer',
-      'rum',
-      'ethanol',
-    ],
-  },
-  kosher: {
-    name: 'Kosher',
-    ingredientIds: ['pork', 'shellfish', 'molluscs', 'gelatin'],
-    aliases: [
-      'pork',
-      'bacon',
-      'ham',
-      'lard',
-      'shrimp',
-      'prawn',
-      'crab',
-      'lobster',
-      'gelatin',
-      'gelatine',
-      'oyster',
-      'clam',
-      'squid',
-    ],
-  },
-  vegetarian: {
-    name: 'Vegetarian',
-    ingredientIds: ['pork', 'beef', 'chicken', 'fish', 'shellfish', 'molluscs', 'gelatin'],
-    aliases: [
-      'pork',
-      'bacon',
-      'ham',
-      'lard',
-      'beef',
-      'chicken',
-      'chicken stock',
-      'chicken bones',
-      'fish',
-      'anchovy',
-      'anchovies',
-      'fish sauce',
-      'shrimp',
-      'prawn',
-      'crab',
-      'lobster',
-      'gelatin',
-      'gelatine',
-      'tallow',
-      'suet',
-      'shrimp paste',
-    ],
-  },
-  vegan: {
-    name: 'Vegan',
-    ingredientIds: [
-      'pork',
-      'beef',
-      'chicken',
-      'fish',
-      'shellfish',
-      'molluscs',
-      'gelatin',
-      'milk',
-      'eggs',
-      'honey',
-    ],
-    aliases: [
-      'pork',
-      'bacon',
-      'ham',
-      'lard',
-      'beef',
-      'chicken',
-      'chicken stock',
-      'chicken bones',
-      'fish',
-      'anchovy',
-      'anchovies',
-      'fish sauce',
-      'shrimp',
-      'prawn',
-      'crab',
-      'lobster',
-      'gelatin',
-      'gelatine',
-      'tallow',
-      'milk',
-      'whey',
-      'casein',
-      'butter',
-      'cream',
-      'cheese',
-      'yogurt',
-      'egg',
-      'albumin',
-      'honey',
-      'milk protein',
-      'shrimp paste',
-    ],
-  },
-  pescatarian: {
-    name: 'Pescatarian',
-    ingredientIds: ['pork', 'beef', 'chicken', 'gelatin'],
-    aliases: [
-      'pork',
-      'bacon',
-      'ham',
-      'lard',
-      'beef',
-      'chicken',
-      'chicken stock',
-      'chicken bones',
-      'gelatin',
-      'gelatine',
-      'tallow',
-    ],
-  },
-  gluten_free: {
-    name: 'Gluten-free',
-    ingredientIds: ['gluten', 'wheat', 'barley', 'rye'],
-    aliases: [
-      'wheat',
-      'wheat flour',
-      'flour',
-      'barley',
-      'rye',
-      'malt',
-      'spelt',
-      'wheat gluten',
-      'semolina',
-      'seitan',
-    ],
-  },
-  dairy_free: {
-    name: 'Dairy-free',
-    ingredientIds: ['milk', 'lactose'],
-    aliases: [
-      'milk',
-      'whey',
-      'casein',
-      'butter',
-      'cream',
-      'cheese',
-      'yogurt',
-      'lactose',
-      'milk protein',
-      'milk powder',
-    ],
-  },
-};
-
-const SEVERITY_RANK: Record<Severity, number> = { mild: 0, moderate: 1, severe: 2, anaphylaxis: 3 };
-
 interface Term {
-  ingredientId: string;
-  ingredientName: string;
-  severity: Severity;
+  foodId: string;
+  foodName: string;
+  level: RiskLevel;
+  byNameOnly: boolean;
   terms: string[];
 }
 
 function termsForProfile(profile: UserProfile): Term[] {
-  const catalogue = new Map<string, Ingredient>(INGREDIENTS.map((i) => [i.id, i]));
-  Object.values(profile.customIngredients).forEach((custom) => catalogue.set(custom.id, custom));
-
-  const list: Term[] = profile.restrictions.map((restriction: Restriction) => {
-    const ingredient = catalogue.get(restriction.ingredientId);
-    const words = ingredient ? [ingredient.name, ...ingredient.aliases] : [restriction.name];
+  const catalogue = new Map<string, Ingredient>(INGREDIENTS.map((item) => [item.id, item]));
+  return profile.foods.map((food: AvoidedFood) => {
+    const ingredient = food.allergenId ? catalogue.get(food.allergenId) : undefined;
+    const words = ingredient && !food.byNameOnly ? [ingredient.name, ...ingredient.aliases] : [food.name];
     return {
-      ingredientId: restriction.ingredientId,
-      ingredientName: restriction.name,
-      severity: restriction.severity,
+      foodId: food.id,
+      foodName: food.name,
+      level: food.level,
+      byNameOnly: food.byNameOnly,
       terms: words.map(normalize).filter(Boolean),
     };
   });
-
-  const dietRule = DIET_RULES[profile.diet];
-  if (dietRule) {
-    list.push({
-      ingredientId: `diet:${profile.diet}`,
-      ingredientName: dietRule.name,
-      severity: 'moderate',
-      terms: dietRule.aliases.map(normalize),
-    });
-  }
-  return list;
 }
 
 /** Finds the first term occurrence as a whole word and returns the matched label text. */
@@ -254,7 +79,19 @@ function kindRank(kind: TriggerKind): number {
   return { contains: 3, may_contain: 2, cross_contact: 1, unclear: 0 }[kind];
 }
 
-export function evaluateProduct(product: Product, profile: UserProfile): Verdict {
+/** The verdict kind one trigger produces on its own. */
+export function triggerVerdict(trigger: Pick<VerdictTrigger, 'kind' | 'level'>): VerdictKind {
+  if (trigger.kind === 'unclear') return 'caution';
+  return trigger.level === 'high' ? 'unsafe' : 'caution';
+}
+
+const KIND_RANK: Record<VerdictKind, number> = { safe: 0, unknown: 1, caution: 2, unsafe: 3 };
+
+export function evaluateProduct(
+  product: Product,
+  profile: UserProfile,
+  activeConditions: HealthConditionId[] = profile.conditions.map((condition) => condition.id),
+): Verdict {
   const ingredientsText = normalize(product.ingredientsText);
   const allergenText = normalize(product.allergenStatement ?? '');
   const mayContainText = normalize(product.mayContain.join(', '));
@@ -262,7 +99,7 @@ export function evaluateProduct(product: Product, profile: UserProfile): Verdict
 
   const containsStatement = allergenText.split(/\bmay contain\b/)[0] ?? '';
   const mayContainStatement = `${allergenText.split(/\bmay contain\b/)[1] ?? ''} ${mayContainText}`;
-  const crossContact = CROSS_CONTACT_PHRASES.some((p) => allergenText.includes(p));
+  const crossContact = CROSS_CONTACT_PHRASES.some((phrase) => allergenText.includes(phrase));
 
   const triggers: VerdictTrigger[] = [];
   const cleared: string[] = [];
@@ -274,11 +111,12 @@ export function evaluateProduct(product: Product, profile: UserProfile): Verdict
     const consider = (kind: TriggerKind, matchedText: string) => {
       if (!best || kindRank(kind) > kindRank(best.kind)) {
         best = {
-          ingredientId: term.ingredientId,
-          ingredientName: term.ingredientName,
+          ingredientId: term.foodId,
+          ingredientName: term.foodName,
           matchedText,
           kind,
-          severity: term.severity,
+          level: term.level,
+          byNameOnly: term.byNameOnly,
         };
       }
     };
@@ -292,42 +130,29 @@ export function evaluateProduct(product: Product, profile: UserProfile): Verdict
       if (crossContact && findTerm(combinedStatement, word)) consider('cross_contact', word);
     }
     if (best) triggers.push(best);
-    else cleared.push(term.ingredientId);
+    else cleared.push(term.foodId);
   }
-
-  // Caution level decides which trigger kinds count.
-  const level = profile.cautionLevel;
-  const counts = (kind: TriggerKind): boolean => {
-    if (kind === 'contains') return true;
-    if (kind === 'may_contain') return level !== 'ingredient';
-    if (kind === 'cross_contact') return level === 'cross_contact' || level === 'uncertain';
-    return level === 'uncertain';
-  };
-  const relevant = triggers.filter((t) => counts(t.kind));
 
   let kind: VerdictKind = 'safe';
-  if (relevant.some((t) => t.kind === 'contains')) kind = 'unsafe';
-  else if (
-    relevant.some(
-      (t) => t.kind !== 'contains' && SEVERITY_RANK[t.severity] >= SEVERITY_RANK.anaphylaxis,
-    )
-  )
-    kind = 'unsafe';
-  else if (relevant.length > 0) kind = 'caution';
-
-  const hasUnclear = UNCLEAR_TERMS.some((term) => ingredientsText.includes(term));
-  if (kind === 'safe' && (incomplete || (level === 'uncertain' && hasUnclear))) {
-    kind = incomplete ? 'unknown' : 'caution';
-    if (!incomplete && profile.restrictions[0]) {
-      relevant.push({
-        ingredientId: 'unclear',
-        ingredientName: profile.restrictions[0].name,
-        matchedText: UNCLEAR_TERMS.find((term) => ingredientsText.includes(term)) ?? '',
-        kind: 'unclear',
-        severity: 'mild',
-      });
-    }
+  for (const trigger of triggers) {
+    const own = triggerVerdict(trigger);
+    if (KIND_RANK[own] > KIND_RANK[kind]) kind = own;
   }
 
-  return { kind, triggers: relevant, clearedIngredientIds: cleared, incomplete };
+  const conditionNotes: ConditionNote[] = [];
+  const labelText = `${ingredientsText} ${allergenText}`;
+  for (const conditionId of activeConditions) {
+    for (const rule of CONDITION_RULES[conditionId] ?? []) {
+      for (const word of rule.terms) {
+        const matched = findTerm(labelText, normalize(word));
+        if (matched && !conditionNotes.some((note) => note.conditionId === conditionId && note.matchedText === matched)) {
+          conditionNotes.push({ conditionId, matchedText: matched, advice: rule.advice });
+        }
+      }
+    }
+  }
+  if (kind === 'safe' && conditionNotes.some((note) => note.advice === 'avoid')) kind = 'caution';
+  if (kind === 'safe' && incomplete) kind = 'unknown';
+
+  return { kind, triggers, clearedIngredientIds: cleared, conditionNotes, incomplete };
 }
